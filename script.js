@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        Control Panel for Twitter
 // @description Gives you more control over Twitter and adds missing features and UI improvements
-// @icon        https://raw.githubusercontent.com/insin/control-panel-for-twitter/master/icons/icon32.png
-// @namespace   https://github.com/insin/control-panel-for-twitter/
+// @icon        https://raw.githubusercontent.com/lolion1y/control-panel-for-twitter/master/icons/icon32.png
+// @namespace   https://github.com/lolion1y/control-panel-for-twitter/
 // @match       https://twitter.com/*
 // @match       https://mobile.twitter.com/*
 // @match       https://x.com/*
