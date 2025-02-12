@@ -47,9 +47,6 @@
   "disabledHomeTimelineRedirectOption_messages": {
     "message": "Mensajes"
   },
-  "disabledHomeTimelineRedirectOption_notifications": {
-    "message": "Notificaciones"
-  },
   "dontUseChirpFontLabel": {
     "message": "No usar la fuente Chirp"
   },
@@ -179,6 +176,9 @@
   "hideMoreTweetsLabel": {
     "message": "Ocultar tweets de \"Descubrir más\""
   },
+  "hideNotificationsLabel": {
+    "message": "Ocultar notificaciones"
+  },
   "hideProNavLabel": {
     "message": "Pro"
   },
@@ -220,6 +220,9 @@
   },
   "hideTimelineTweetBoxLabel": {
     "message": "Cuadro de tweet en timeline"
+  },
+  "hideToggleNavigationLabel": {
+    "message": "Ocultar activar/desactivar navegación"
   },
   "hideTotalTweetsMetricsLabel": {
     "message": "Tweets totales"
@@ -271,6 +274,12 @@
   },
   "navDensityLabel": {
     "message": "Densidad de navegación"
+  },
+  "notificationsLabel": {
+    "message": "Notificaciones"
+  },
+  "option_badges": {
+    "message": "Ocultar solo las insignias"
   },
   "option_comfortable": {
     "message": "Cómodo"
@@ -354,6 +363,12 @@
   },
   "sortRepliesLabel": {
     "message": "Predeterminado para Organizar respuestas"
+  },
+  "tweakNewLayoutInfo": {
+    "message": "Experimental - solo activar si tienes el nuevo diseño"
+  },
+  "tweakNewLayoutLabel": {
+    "message": "Ajustar nuevo diseño"
   },
   "tweakQuoteTweetsPageLabel": {
     "message": "Ocultar el tweet citado en la página de citados"

@@ -42,6 +42,8 @@ ${messages.uiImprovementsOptionsLabel}
 
 ${messages.xFixesLabel}
 
+• ${messages.tweakNewLayoutLabel}
+  • ${messages.hideToggleNavigationLabel}
 • ${messages.replaceLogoLabel}
 • ${messages.hideViewsLabel}
 • ${messages.hideVerifiedNotificationsTabLabel}
@@ -80,6 +82,8 @@ ${messages.reduceEngagementOptionsLabel}
   • ${messages.reducedInteractionModeInfo}
 • ${messages.disableHomeTimelineLabel}
   • ${messages.disableHomeTimelineInfo}
+• ${messages.notificationsLabel}
+  • ${messages.option_hide} / ${messages.option_badges}
 
 ${messages.hideUnusedUiItemsOptionsLabel}
 

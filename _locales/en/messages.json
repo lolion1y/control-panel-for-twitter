@@ -49,9 +49,6 @@
   "disabledHomeTimelineRedirectOption_messages": {
     "message": "Messages"
   },
-  "disabledHomeTimelineRedirectOption_notifications": {
-    "message": "Notifications"
-  },
   "dontUseChirpFontLabel": {
     "message": "Don't use the Chirp font"
   },
@@ -183,6 +180,9 @@
   "hideMoreTweetsLabel": {
     "message": "Hide \"Discover more\" tweets"
   },
+  "hideNotificationsLabel": {
+    "message": "Hide notifications"
+  },
   "hideProNavLabel": {
     "message": "Pro"
   },
@@ -224,6 +224,9 @@
   },
   "hideTimelineTweetBoxLabel": {
     "message": "Tweet box in timeline"
+  },
+  "hideToggleNavigationLabel": {
+    "message": "Hide Toggle navigation"
   },
   "hideTotalTweetsMetricsLabel": {
     "message": "Total tweets"
@@ -275,6 +278,12 @@
   },
   "navDensityLabel": {
     "message": "Navigation density"
+  },
+  "notificationsLabel": {
+    "message": "Notifications"
+  },
+  "option_badges": {
+    "message": "Hide badges only"
   },
   "option_comfortable": {
     "message": "Comfortable"
@@ -362,6 +371,12 @@
   },
   "sortRepliesLabel": {
     "message": "Default for Sort replies"
+  },
+  "tweakNewLayoutInfo": {
+    "message": "Experimental - only enable if you have the new layout"
+  },
+  "tweakNewLayoutLabel": {
+    "message": "Tweak new layout"
   },
   "tweakQuoteTweetsPageLabel": {
     "message": "Hide the quoted tweet when viewing Quote Tweets"

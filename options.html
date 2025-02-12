@@ -161,6 +161,23 @@
       <label id="xFixesLabel">X fixes</label>
       <section class="checkbox">
         <label>
+          <span id="tweakNewLayoutLabel">Tweak new layout</span>
+          <input type="checkbox" name="tweakNewLayout">
+          <span class="toggle"></span>
+        </label>
+        <p id="tweakNewLayoutInfo">
+          Experimental - only enable if you have the new layout
+        </p>
+        <section class="checkbox desktop">
+          <label>
+            <span id="hideToggleNavigationLabel">Hide Toggle navigation</span>
+            <input type="checkbox" name="hideToggleNavigation">
+            <span class="toggle"></span>
+          </label>
+        </section>
+      </section>
+      <section class="checkbox">
+        <label>
           <span id="replaceLogoLabel">Replace X branding changes</span>
           <input type="checkbox" name="replaceLogo">
           <span class="toggle"></span>
@@ -486,11 +503,21 @@
           <label>
             <span id="disabledHomeTimelineRedirectLabel">Redirect home timeline to</span>
             <select name="disabledHomeTimelineRedirect">
-              <option value="notifications" id="disabledHomeTimelineRedirectOption_notifications">Notifications</option>
+              <option value="notifications" class="notificationsLabel" id="disabledHomeTimelineRedirectOption_notifications">Notifications</option>
               <option value="messages" id="disabledHomeTimelineRedirectOption_messages">Messages</option>
             </select>
           </label>
         </section>
+      </section>
+      <section class="select">
+        <label>
+          <span class="notificationsLabel">Notifications</span>
+          <select name="hideNotifications">
+            <option value="ignore">Do nothing</option>
+            <option value="badges">Hide badges only</option>
+            <option value="hide">Hide</option>
+          </select>
+        </label>
       </section>
     </section>
 

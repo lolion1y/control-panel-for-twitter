@@ -31,6 +31,7 @@ export type Config = {
   hideMetrics: boolean
   hideMonetizationNav: boolean
   hideMoreTweets: boolean
+  hideNotifications: 'ignore' | 'badges' | 'hide'
   hideProfileRetweets: boolean
   hideQuoteTweetMetrics: boolean
   hideQuotesFrom: string[]
@@ -66,6 +67,7 @@ export type Config = {
   showBlueReplyVerifiedAccounts: boolean
   showBookmarkButtonUnderFocusedTweets: boolean
   sortReplies: 'relevant' | 'recent' | 'liked'
+  tweakNewLayout: boolean
   tweakQuoteTweetsPage: boolean
   twitterBlueChecks: 'ignore' | 'replace' | 'hide'
   unblurSensitiveContent: boolean
@@ -81,6 +83,7 @@ export type Config = {
   hideMessagesDrawer: boolean
   hideProNav: boolean
   hideSidebarContent: boolean
+  hideToggleNavigation: boolean
   navBaseFontSize: boolean
   navDensity: 'default' | 'comfortable' | 'compact'
   showRelevantPeople: boolean
@@ -127,6 +130,7 @@ export type LocaleKey =
   | 'TWITTER'
   | 'UNDO_RETWEET'
   | 'VIEW'
+  | 'WHATS_HAPPENING'
 
 export type NamedMutationObserver = MutationObserver & {name?: string}
 
