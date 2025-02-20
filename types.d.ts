@@ -1,5 +1,6 @@
 export type Config = {
   debug: boolean
+  debugLogTimelineStats: boolean
   version?: 'desktop' | 'mobile'
   // Shared
   addAddMutedWordMenuItem: boolean
@@ -20,6 +21,7 @@ export type Config = {
   hideBookmarkMetrics: boolean
   hideBookmarksNav: boolean
   hideCommunitiesNav: boolean
+  hideComposeTweet: boolean
   hideExplorePageContents: boolean
   hideFollowingMetrics: boolean
   hideForYouTimeline: boolean
@@ -30,6 +32,7 @@ export type Config = {
   hideListsNav: boolean
   hideMetrics: boolean
   hideMonetizationNav: boolean
+  // XXX This now controls hiding all "Discover" suggestions
   hideMoreTweets: boolean
   hideNotifications: 'ignore' | 'badges' | 'hide'
   hideProfileRetweets: boolean
@@ -41,7 +44,7 @@ export type Config = {
   hideShareTweetButton: boolean
   hideSpacesNav: boolean
   hideSubscriptions: boolean
-  hideTimelineTweetBox: boolean
+  // XXX This now controls hiding profile header metrics
   hideTotalTweetsMetrics: boolean
   hideTweetAnalyticsLinks: boolean
   hideTwitterBlueReplies: boolean
@@ -55,6 +58,7 @@ export type Config = {
   mutableQuoteTweets: boolean
   mutedQuotes: QuotedTweet[]
   quoteTweets: SharedTweetsConfig
+  redirectToTwitter: boolean
   reducedInteractionMode: boolean
   // XXX This now controls all replacement of X brand changes
   replaceLogo: boolean
@@ -73,7 +77,7 @@ export type Config = {
   unblurSensitiveContent: boolean
   uninvertFollowButtons: boolean
   // Experiments
-  // none currently
+  customCss: string
   // Desktop only
   fullWidthContent: boolean
   fullWidthMedia: boolean
@@ -83,11 +87,13 @@ export type Config = {
   hideMessagesDrawer: boolean
   hideProNav: boolean
   hideSidebarContent: boolean
+  hideTimelineTweetBox: boolean
   hideToggleNavigation: boolean
   navBaseFontSize: boolean
   navDensity: 'default' | 'comfortable' | 'compact'
   showRelevantPeople: boolean
   // Mobile only
+  preventNextVideoAutoplay: boolean
   hideMessagesBottomNavItem: boolean
 }
 
@@ -96,6 +102,7 @@ export type Locale = {
 }
 
 export type LocaleKey =
+  | 'ADD_ANOTHER_TWEET'
   | 'ADD_MUTED_WORD'
   | 'GROK_ACTIONS'
   | 'HOME'
@@ -118,7 +125,7 @@ export type LocaleKey =
   | 'SHARED_TWEETS'
   | 'SHOW'
   | 'SHOW_MORE_REPLIES'
-  | 'SORT_REPLIES'
+  | 'SORT_REPLIES_BY'
   | 'TURN_OFF_QUOTE_TWEETS'
   | 'TURN_OFF_RETWEETS'
   | 'TURN_ON_RETWEETS'

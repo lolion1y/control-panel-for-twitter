@@ -11,20 +11,17 @@
   "appStoreSubtitle": {
     "message": "Controla tu línea de tiempo"
   },
-  "debugCountdownLabel": {
-    "message": " (Opciones de desarrollo: haz click $DEBUG_COUNTDOWN$ veces más para activar)",
-    "placeholders": {
-      "debug_countdown": {
-        "content": "$1",
-        "example": "3"
-      }
-    }
+  "customCssLabel": {
+    "message": "CSS personalizado"
   },
   "debugInfo": {
     "message": "Activa los registros de debug y muestra estadísticas de debug en los tweets del Inicio"
   },
   "debugLabel": {
     "message": "Modo de desarrollo (debug)"
+  },
+  "debugLogTimelineStatsLabel": {
+    "message": "Registrar stats de timeline"
   },
   "debugOptionsLabel": {
     "message": "Opciones de desarrollo (debug)"
@@ -52,9 +49,6 @@
   },
   "dropdownMenuFontWeightLabel": {
     "message": "Usar grosor normal de fuentes en desplegables"
-  },
-  "experimentalNote": {
-    "message": "No hay experimentos en esta versión"
   },
   "experimentsOptionsLabel": {
     "message": "Experimentos"
@@ -122,6 +116,12 @@
   "hideCommunitiesNavLabel": {
     "message": "Comunidades"
   },
+  "hideComposeTweetLabel": {
+    "message": "Ocultar el botón de Redactar Tweet"
+  },
+  "hideDiscoverSuggestionsLabel": {
+    "message": "Ocultar sugerencias de \"Descubrir\""
+  },
   "hideExploreNavLabel": {
     "message": "Explorar"
   },
@@ -173,14 +173,14 @@
   "hideMoreSlideOutMenuItemsOptionsLabel_mobile": {
     "message": "Ocultar elementos no usados en el menú hamburguesa"
   },
-  "hideMoreTweetsLabel": {
-    "message": "Ocultar tweets de \"Descubrir más\""
-  },
   "hideNotificationsLabel": {
     "message": "Ocultar notificaciones"
   },
   "hideProNavLabel": {
     "message": "Pro"
+  },
+  "hideProfileHeaderMetricsLabel": {
+    "message": "Métricas del encabezado del perfil"
   },
   "hideProfileRetweetsLabel": {
     "message": "Ocultar Retweets en los perfiles de usuario"
@@ -223,9 +223,6 @@
   },
   "hideToggleNavigationLabel": {
     "message": "Ocultar activar/desactivar navegación"
-  },
-  "hideTotalTweetsMetricsLabel": {
-    "message": "Tweets totales"
   },
   "hideTweetAnalyticsLinksLabel": {
     "message": "\"Ver las interacciones de post\" debajo de tus tweets"
@@ -297,19 +294,28 @@
     "message": "No cambiar"
   },
   "option_liked": {
-    "message": "Más Me gusta"
+    "message": "Me gusta"
   },
   "option_recent": {
-    "message": "Más recientes"
+    "message": "Más reciente"
   },
   "option_relevant": {
-    "message": "Más relevantes"
+    "message": "Relevancia"
   },
   "option_separate": {
     "message": "Mostrar en pestaña aparte"
   },
+  "preventNextVideoAutoplayInfo": {
+    "message": "Los videos se repetirán en su lugar"
+  },
+  "preventNextVideoAutoplayLabel": {
+    "message": "Evitar la reproducción automática del siguiente video"
+  },
   "quoteTweetsLabel": {
     "message": "Citados"
+  },
+  "redirectToTwitterLabel": {
+    "message": "Redirigir a twitter.com"
   },
   "reduceAlgorithmicContentOptionsLabel": {
     "message": "Eliminar contenido algorítmico"
@@ -338,6 +344,9 @@
   "retweetsLabel": {
     "message": "Retweets"
   },
+  "saveAndApplyButton": {
+    "message": "Guardar y aplicar"
+  },
   "sharedTweetsOptionsLabel": {
     "message": "Tweets compartidos por otros usuarios"
   },
@@ -362,7 +371,7 @@
     "message": "Mostrar \"Personas relevantes\" al ver un tweet"
   },
   "sortRepliesLabel": {
-    "message": "Predeterminado para Organizar respuestas"
+    "message": "Orden predeterminado de las respuestas"
   },
   "tweakNewLayoutInfo": {
     "message": "Experimental - solo activar si tienes el nuevo diseño"

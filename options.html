@@ -103,6 +103,16 @@
 
     <section class="group labelled">
       <label id="uiImprovementsOptionsLabel">UI improvements</label>
+      <section class="checkbox mobile">
+        <label>
+          <span id="preventNextVideoAutoplayLabel">Prevent next video autoplaying</span>
+          <input type="checkbox" name="preventNextVideoAutoplay">
+          <span class="toggle"></span>
+        </label>
+        <p id="preventNextVideoAutoplayInfo">
+          Videos will loop instead
+        </p>
+      </section>
       <section class="checkbox">
         <label>
           <span id="addAddMutedWordMenuItemLabel_desktop" class="desktop">Add "Add muted word" to the "More" menu</span>
@@ -159,6 +169,13 @@
 
     <section class="group labelled">
       <label id="xFixesLabel">X fixes</label>
+      <section class="checkbox">
+        <label>
+          <span id="redirectToTwitterLabel">Redirect to twitter.com</span>
+          <input type="checkbox" name="redirectToTwitter">
+          <span class="toggle"></span>
+        </label>
+      </section>
       <section class="checkbox">
         <label>
           <span id="tweakNewLayoutLabel">Tweak new layout</span>
@@ -406,7 +423,7 @@
       </section>
       <section class="checkbox">
         <label>
-          <span id="hideMoreTweetsLabel">Hide "Discover more" tweets</span>
+          <span id="hideDiscoverSuggestionsLabel">Hide "Discover" suggestions</span>
           <input type="checkbox" name="hideMoreTweets">
           <span class="toggle"></span>
         </label>
@@ -473,7 +490,7 @@
           </section>
           <section class="checkbox">
             <label>
-              <span id="hideTotalTweetsMetricsLabel">Total tweets</span>
+              <span id="hideProfileHeaderMetricsLabel">Profile header metrics</span>
               <input type="checkbox" name="hideTotalTweetsMetrics">
               <span class="toggle"></span>
             </label>
@@ -489,6 +506,13 @@
         <p id="reducedInteractionModeInfo">
           Hide the action bar under tweets &ndash; replies are now the only means of interacting
         </p>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span id="hideComposeTweetLabel">Hide the Compose Tweet button</span>
+          <input type="checkbox" name="hideComposeTweet">
+          <span class="toggle"></span>
+        </label>
       </section>
       <section class="checkbox">
         <label>
@@ -690,13 +714,10 @@
           Experiments
         </summary>
         <section class="group">
-          <section class="checkbox">
-            <p id="showDebugOptions">
-              <span id="experimentalNote">
-                There are no experiments in this version
-              </span>
-              <small id="debugCountdown"></small>
-            </p>
+          <section class="textarea">
+            <label id="customCssLabel" for="customCss">Custom CSS</label>
+            <textarea id="customCss" rows="8"></textarea>
+            <button type="button" id="saveCustomCss" class="saveAndApplyButton">Save and apply</button>
           </section>
         </section>
       </details>
@@ -711,6 +732,13 @@
           <span class="toggle"></span>
         </label>
         <p id="debugInfo">Enables debug logging and displays tweet debug info in the timeline</p>
+        <section class="checkbox debugging">
+          <label>
+            <span id="debugLogTimelineStatsLabel">Log timeline stats</span>
+            <input type="checkbox" name="debugLogTimelineStats">
+            <span class="toggle"></span>
+          </label>
+        </section>
       </section>
       <section>
         <label class="button">
@@ -719,6 +747,8 @@
         </label>
       </section>
     </section>
+
+    <div id="version">v4.9.0<span id="debugCountdown"></span></div>
   </form>
   <script src="options.js"></script>
 </body>

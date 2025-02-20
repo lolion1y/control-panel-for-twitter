@@ -11,20 +11,17 @@
   "appStoreSubtitle": {
     "message": "타임라인을 통제하세요"
   },
-  "debugCountdownLabel": {
-    "message": " (디버그 옵션: $DEBUG_COUNTDOWN$번 더 클릭하여 활성화)",
-    "placeholders": {
-      "debug_countdown": {
-        "content": "$1",
-        "example": "3"
-      }
-    }
+  "customCssLabel": {
+    "message": "사용자 정의 CSS"
   },
   "debugInfo": {
     "message": "디버그 로깅을 활성화하고 타임라인에서 트윗 디버그 정보를 표시합니다"
   },
   "debugLabel": {
     "message": "디버그 모드"
+  },
+  "debugLogTimelineStatsLabel": {
+    "message": "타임라인 통계 로깅"
   },
   "debugOptionsLabel": {
     "message": "디버그 옵션"
@@ -52,9 +49,6 @@
   },
   "dropdownMenuFontWeightLabel": {
     "message": "드롭다운 메뉴에서 일반 글꼴 두께 사용"
-  },
-  "experimentalNote": {
-    "message": "이 버전에서는 실험이 없습니다"
   },
   "experimentsOptionsLabel": {
     "message": "실험"
@@ -122,6 +116,12 @@
   "hideCommunitiesNavLabel": {
     "message": "커뮤니티"
   },
+  "hideComposeTweetLabel": {
+    "message": "트윗 작성 버튼 숨기기"
+  },
+  "hideDiscoverSuggestionsLabel": {
+    "message": "\"발견\" 제안 숨기기"
+  },
   "hideExploreNavLabel": {
     "message": "탐색"
   },
@@ -173,14 +173,14 @@
   "hideMoreSlideOutMenuItemsOptionsLabel_mobile": {
     "message": "사용하지 않는 \"더 보기\" 메뉴 항목 숨기기 (모바일)"
   },
-  "hideMoreTweetsLabel": {
-    "message": "\"더 알아보기\" 트윗 숨기기"
-  },
   "hideNotificationsLabel": {
     "message": "알림 숨기기"
   },
   "hideProNavLabel": {
     "message": "Pro"
+  },
+  "hideProfileHeaderMetricsLabel": {
+    "message": "프로필 헤더 메트릭"
   },
   "hideProfileRetweetsLabel": {
     "message": "사용자 프로필에서 리트윗 숨기기"
@@ -223,9 +223,6 @@
   },
   "hideToggleNavigationLabel": {
     "message": "탐색 전환 숨기기"
-  },
-  "hideTotalTweetsMetricsLabel": {
-    "message": "총 트윗 수"
   },
   "hideTweetAnalyticsLinksLabel": {
     "message": "내 트윗 아래에 \"게시 참여수 조회\""
@@ -297,19 +294,28 @@
     "message": "아무것도 하지 않음"
   },
   "option_liked": {
-    "message": "마음에 들어요 순서"
+    "message": "마음에 들어요"
   },
   "option_recent": {
-    "message": "최신 순서"
+    "message": "최신"
   },
   "option_relevant": {
-    "message": "관련도 순서"
+    "message": "관련성"
   },
   "option_separate": {
     "message": "별도의 탭에 표시"
   },
+  "preventNextVideoAutoplayInfo": {
+    "message": "비디오는 반복 재생됩니다"
+  },
+  "preventNextVideoAutoplayLabel": {
+    "message": "다음 비디오 자동 재생 방지"
+  },
   "quoteTweetsLabel": {
     "message": "인용 트윗"
+  },
+  "redirectToTwitterLabel": {
+    "message": "twitter.com으로 리디렉션"
   },
   "reduceAlgorithmicContentOptionsLabel": {
     "message": "알고리즘 컨텐츠 제거"
@@ -338,6 +344,9 @@
   "retweetsLabel": {
     "message": "리트윗"
   },
+  "saveAndApplyButton": {
+    "message": "저장하고 적용"
+  },
   "sharedTweetsOptionsLabel": {
     "message": "다른 사용자가 공유한 트윗"
   },
@@ -362,7 +371,7 @@
     "message": "트윗 보기 시 \"연관된 사람\" 표시"
   },
   "sortRepliesLabel": {
-    "message": "답글 정렬하기의 기본값"
+    "message": "답글의 기본 정렬"
   },
   "tweakNewLayoutInfo": {
     "message": "실험적 기능 - 새 레이아웃이 있는 경우에만 활성화하세요"

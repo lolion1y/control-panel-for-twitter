@@ -22,8 +22,10 @@ for (let translationId of [
   'addAddMutedWordMenuItemLabel_desktop',
   'addAddMutedWordMenuItemLabel_mobile',
   'alwaysUseLatestTweetsLabel',
+  'customCssLabel',
   'debugInfo',
   'debugLabel',
+  'debugLogTimelineStatsLabel',
   'debugOptionsLabel',
   'defaultToLatestSearchLabel',
   'disableHomeTimelineInfo',
@@ -33,7 +35,6 @@ for (let translationId of [
   'disabledHomeTimelineRedirectOption_messages',
   'dontUseChirpFontLabel',
   'dropdownMenuFontWeightLabel',
-  'experimentalNote',
   'experimentsOptionsLabel',
   'exportConfigLabel',
   'fastBlockLabel',
@@ -50,6 +51,8 @@ for (let translationId of [
   'hideBlueReplyFollowingLabel',
   'hideBookmarkButtonLabel',
   'hideBookmarkMetricsLabel',
+  'hideComposeTweetLabel',
+  'hideDiscoverSuggestionsLabel',
   'hideExploreNavLabel',
   'hideExploreNavWithSidebarLabel',
   'hideExplorePageContentsLabel',
@@ -65,7 +68,7 @@ for (let translationId of [
   'hideMonetizationNavLabel',
   'hideMoreSlideOutMenuItemsOptionsLabel_desktop',
   'hideMoreSlideOutMenuItemsOptionsLabel_mobile',
-  'hideMoreTweetsLabel',
+  'hideProfileHeaderMetricsLabel',
   'hideProfileRetweetsLabel',
   'hideQuoteTweetMetricsLabel',
   'hideReplyMetricsLabel',
@@ -77,7 +80,6 @@ for (let translationId of [
   'hideSubscriptionsLabel',
   'hideTimelineTweetBoxLabel',
   'hideToggleNavigationLabel',
-  'hideTotalTweetsMetricsLabel',
   'hideTweetAnalyticsLinksLabel',
   'hideTwitterBlueRepliesLabel',
   'hideTwitterBlueUpsellsLabel',
@@ -91,7 +93,10 @@ for (let translationId of [
   'mutableQuoteTweetsLabel',
   'navBaseFontSizeLabel',
   'navDensityLabel',
+  'preventNextVideoAutoplayInfo',
+  'preventNextVideoAutoplayLabel',
   'quoteTweetsLabel',
+  'redirectToTwitterLabel',
   'reduceAlgorithmicContentOptionsLabel',
   'reduceEngagementOptionsLabel',
   'reducedInteractionModeInfo',
@@ -125,6 +130,7 @@ for (let translationClass of [
   'hideCommunitiesNavLabel',
   'hideListsNavLabel',
   'notificationsLabel',
+  'saveAndApplyButton',
 ]) {
   let translation = chrome.i18n.getMessage(translationClass)
   for (let $el of document.querySelectorAll(`.${translationClass}`)) {
@@ -153,6 +159,7 @@ if (navigator.userAgent.includes('Safari/') && !/Chrom(e|ium)\//.test(navigator.
 /** @type {import("./types").Config} */
 const defaultConfig = {
   debug: false,
+  debugLogTimelineStats: false,
   // Default based on the platform if the main script hasn't run on Twitter yet
   version: /(Android|iP(ad|hone))/.test(navigator.userAgent) ? 'mobile' : 'desktop',
   // Shared
@@ -173,6 +180,7 @@ const defaultConfig = {
   hideBookmarkMetrics: true,
   hideBookmarksNav: false,
   hideCommunitiesNav: false,
+  hideComposeTweet: false,
   hideExplorePageContents: true,
   hideFollowingMetrics: true,
   hideForYouTimeline: true,
@@ -193,7 +201,6 @@ const defaultConfig = {
   hideSeeNewTweets: false,
   hideShareTweetButton: false,
   hideSubscriptions: true,
-  hideTimelineTweetBox: false,
   hideTotalTweetsMetrics: true,
   hideTweetAnalyticsLinks: false,
   hideTwitterBlueReplies: false,
@@ -206,6 +213,7 @@ const defaultConfig = {
   mutableQuoteTweets: true,
   mutedQuotes: [],
   quoteTweets: 'ignore',
+  redirectToTwitter: false,
   reducedInteractionMode: false,
   replaceLogo: true,
   restoreLinkHeadlines: true,
@@ -223,7 +231,7 @@ const defaultConfig = {
   uninvertFollowButtons: true,
   unblurSensitiveContent: false,
   // Experiments
-  // none currently
+  customCss: '',
   // Desktop only
   fullWidthContent: false,
   fullWidthMedia: true,
@@ -234,11 +242,13 @@ const defaultConfig = {
   hideProNav: true,
   hideSidebarContent: true,
   hideSpacesNav: false,
+  hideTimelineTweetBox: false,
   hideToggleNavigation: false,
   navBaseFontSize: true,
   navDensity: 'default',
   showRelevantPeople: false,
   // Mobile only
+  preventNextVideoAutoplay: true,
   hideMessagesBottomNavItem: false,
 }
 //#endregion
@@ -266,13 +276,14 @@ let $hideQuotesFromLabel = /** @type {HTMLElement} */ (document.querySelector('#
 let $mutedQuotes =  /** @type {HTMLDivElement} */ (document.querySelector('#mutedQuotes'))
 let $mutedQuotesDetails =  /** @type {HTMLDetailsElement} */ (document.querySelector('details#mutedQuotesDetails'))
 let $mutedQuotesLabel = /** @type {HTMLElement} */ (document.querySelector('#mutedQuotesLabel'))
+let $saveCustomCssButton = document.querySelector('button#saveCustomCss')
 let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.querySelector('#showBlueReplyFollowersCountLabel'))
 //#endregion
 
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.7.0.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.9.0.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
@@ -368,6 +379,8 @@ function applyConfig() {
  * @param {Event} e
  */
 function onFormChanged(e) {
+  if (e.target instanceof HTMLTextAreaElement) return
+
   /** @type {Partial<import("./types").Config>} */
   let changedConfig = {}
 
@@ -411,6 +424,15 @@ function onStorageChanged(changes) {
   applyConfig()
 }
 
+function saveCustomCss() {
+  if (optionsConfig.customCss == $form.elements['customCss'].value) return
+
+  /** @type {Partial<import("./types").Config>} */
+  let changedConfig = {}
+  optionsConfig['customCss'] = changedConfig['customCss'] = $form.elements['customCss'].value
+  storeConfigChanges(changedConfig)
+}
+
 function shouldDisplayHideQuotesFrom() {
   return optionsConfig.mutableQuoteTweets && optionsConfig.hideQuotesFrom.length > 0
 }
@@ -438,6 +460,7 @@ function updateCheckboxGroups() {
 }
 
 function updateDisplay() {
+  $body.classList.toggle('debugging', optionsConfig.debug)
   $body.classList.toggle('chronological', optionsConfig.alwaysUseLatestTweets)
   $body.classList.toggle('disabledHomeTimeline', optionsConfig.disableHomeTimeline)
   $body.classList.toggle('fullWidthContent', optionsConfig.fullWidthContent)
@@ -530,7 +553,7 @@ function updateFormControls() {
 function updateFormControl($control, value) {
   if ($control instanceof RadioNodeList) {
     // If a checkbox displays in multiple sections, update them all
-    $control.forEach(input => input.checked = value)
+    $control.forEach(input => /** @type {HTMLInputElement} */ (input).checked = value)
   }
   else if ($control.type == 'checkbox') {
     $control.checked = value
@@ -552,20 +575,21 @@ function main() {
     optionsConfig = {...defaultConfig, ...storedConfig}
 
     $body.classList.toggle('debug', optionsConfig.debug === true)
-    // $experiments.open = (...)
+    $experiments.open = Boolean(optionsConfig.customCss)
     $exportConfig.addEventListener('click', exportConfig)
     $form.addEventListener('change', onFormChanged)
     $hideQuotesFromDetails.addEventListener('toggle', updateHideQuotesFromDisplay)
     $mutedQuotesDetails.addEventListener('toggle', updateMutedQuotesDisplay)
+    $saveCustomCssButton.addEventListener('click', saveCustomCss)
     chrome.storage.onChanged.addListener(onStorageChanged)
 
     if (!optionsConfig.debug) {
-      let $showDebugOptions = document.querySelector('#showDebugOptions')
+      let $version = document.querySelector('#version')
       let $debugCountdown = document.querySelector('#debugCountdown')
       let debugCountdown = 5
 
       function onClick(e) {
-        if (e.target === $showDebugOptions || $showDebugOptions.contains(/** @type {Node} */ (e.target))) {
+        if (e.target === $version || $version.contains(/** @type {Node} */ (e.target))) {
           debugCountdown--
         } else {
           debugCountdown = 5
@@ -575,15 +599,13 @@ function main() {
           $body.classList.add('debug')
           $debugCountdown.textContent = ''
           $form.removeEventListener('click', onClick)
-          $showDebugOptions.classList.remove('clickable')
         }
         else if (debugCountdown <= 3) {
-          $debugCountdown.textContent = chrome.i18n.getMessage('debugCountdownLabel', String(debugCountdown))
+          $debugCountdown.textContent = ` (${debugCountdown})`
         }
       }
 
       $form.addEventListener('click', onClick)
-      $showDebugOptions.classList.add('clickable')
     }
 
     applyConfig()

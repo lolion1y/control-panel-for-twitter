@@ -3,8 +3,8 @@
   "default_locale": "en",
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescriptionShort__",
-  "homepage_url": "https://jbscript.dev/control-panel-for-twitter",
-  "version": "4.7.0",
+  "homepage_url": "https://soitis.dev/control-panel-for-twitter",
+  "version": "4.9.0",
   "icons": {
     "48": "icon48.png",
     "96": "icon96.png",
