@@ -59,6 +59,7 @@ for (let translationId of [
   'hideFollowingMetricsLabel',
   'hideForYouTimelineLabel',
   'hideGrokLabel',
+  'hideGrokTweetsLabel',
   'hideInlinePrompts',
   'hideJobsLabel',
   'hideLikeMetricsLabel',
@@ -185,6 +186,7 @@ const defaultConfig = {
   hideFollowingMetrics: true,
   hideForYouTimeline: true,
   hideGrokNav: true,
+  hideGrokTweets: false,
   hideInlinePrompts: true,
   hideJobsNav: true,
   hideLikeMetrics: true,
@@ -239,7 +241,6 @@ const defaultConfig = {
   hideExploreNav: true,
   hideExploreNavWithSidebar: true,
   hideMessagesDrawer: true,
-  hideProNav: true,
   hideSidebarContent: true,
   hideSpacesNav: false,
   hideTimelineTweetBox: false,
@@ -338,28 +339,6 @@ function applyConfig() {
   $body.classList.toggle('mobile', mobile)
   $body.classList.toggle('desktop', desktop)
   checkboxGroups = new Map(Object.entries({
-    hideUnusedUiItems: [
-      'hideBookmarkButton',
-      'hideGrokNav',
-      'hideShareTweetButton',
-      'hideTweetAnalyticsLinks',
-      desktop && 'hideAccountSwitcher',
-      desktop && 'hideBookmarksNav',
-      desktop && 'hideCommunitiesNav',
-      desktop && 'hideExploreNav',
-      desktop && 'hideListsNav',
-      desktop && 'hideMessagesDrawer',
-      desktop && 'hideTimelineTweetBox',
-      mobile && 'hideMessagesBottomNavItem',
-    ].filter(Boolean),
-    hideMoreSlideOutMenuItems: [
-      'hideAdsNav',
-      'hideMonetizationNav',
-      desktop && 'hideProNav',
-      mobile && 'hideBookmarksNav',
-      mobile && 'hideCommunitiesNav',
-      mobile && 'hideListsNav',
-    ].filter(Boolean),
     hideAllMetrics: [
       'hideBookmarkMetrics',
       'hideFollowingMetrics',

@@ -80,6 +80,7 @@ const config = {
   hideFollowingMetrics: false,
   hideForYouTimeline: false,
   hideGrokNav: true,
+  hideGrokTweets: false,
   hideInlinePrompts: true,
   hideJobsNav: true,
   hideLikeMetrics: false,
@@ -154,7 +155,7 @@ const config = {
  */
 const locales = {
   'ar-x-fm': {
-    ADD_ANOTHER_TWEET: 'إضافة تغريدة أخرى',
+    ADD_ANOTHER_TWEET: 'ضافة تغريدة أخرى',
     ADD_MUTED_WORD: 'اضافة كلمة مكتومة',
     GROK_ACTIONS: 'إجراءات Grok',
     HOME: 'الرئيسيّة',
@@ -191,7 +192,7 @@ const locales = {
     WHATS_HAPPENING: 'ماذا يحدث؟',
   },
   ar: {
-    ADD_ANOTHER_TWEET: 'إضافة تغريدة أخرى',
+    ADD_ANOTHER_TWEET: 'ضافة تغريدة أخرى',
     ADD_MUTED_WORD: 'اضافة كلمة مكتومة',
     GROK_ACTIONS: 'إجراءات Grok',
     HOME: 'الرئيسيّة',
@@ -259,7 +260,7 @@ const locales = {
     TWEETS: 'Туитове',
     TWEET_ALL: 'Туитване на всички',
     TWEET_INTERACTIONS: 'Интеракции с туит',
-    TWEET_YOUR_REPLY: 'Отговори с туит',
+    TWEET_YOUR_REPLY: 'туит своя отговор',
     UNDO_RETWEET: 'Отмяна на ретуитването',
     VIEW: 'Преглед',
     WHATS_HAPPENING: 'Какво се случва?',
@@ -380,7 +381,6 @@ const locales = {
     ADD_MUTED_WORD: 'Tilføj skjult ord',
     GROK_ACTIONS: 'Grok-handlinger',
     HOME: 'Forside',
-    LIKES: 'Likes',
     MOST_RELEVANT: 'Mest relevante',
     MUTE_THIS_CONVERSATION: 'Skjul denne samtale',
     POST_ALL: 'Post alle',
@@ -550,7 +550,6 @@ const locales = {
   eu: {
     ADD_ANOTHER_TWEET: 'Gehitu beste txio bat',
     ADD_MUTED_WORD: 'Gehitu isilarazitako hitza',
-    GROK_ACTIONS: 'Grok actions',
     HOME: 'Hasiera',
     LIKES: 'Atsegiteak',
     MUTE_THIS_CONVERSATION: 'Isilarazi elkarrizketa hau',
@@ -565,7 +564,6 @@ const locales = {
     SHARED_TWEETS: 'Partekatutako',
     SHOW: 'Erakutsi',
     SHOW_MORE_REPLIES: 'Erakutsi erantzun gehiago',
-    SORT_REPLIES_BY: 'Sort replies by',
     TURN_OFF_QUOTE_TWEETS: 'Desaktibatu aipatu txioak',
     TURN_OFF_RETWEETS: 'Desaktibatu birtxioak',
     TURN_ON_RETWEETS: 'Aktibatu birtxioak',
@@ -683,7 +681,7 @@ const locales = {
     TWEETS: 'Mga Tweet',
     TWEET_ALL: 'I-tweet lahat',
     TWEET_INTERACTIONS: 'Interaksyon sa Tweet',
-    TWEET_YOUR_REPLY: 'I-Tweet ang sagot mo',
+    TWEET_YOUR_REPLY: 'I-Tweet ang reply mo',
     UNDO_RETWEET: 'Huwag nang I-retweet',
     VIEW: 'Tingnan',
     WHATS_HAPPENING: 'Ano ang nangyayari?',
@@ -724,7 +722,6 @@ const locales = {
   ga: {
     ADD_ANOTHER_TWEET: 'Cuir Tweet eile leis',
     ADD_MUTED_WORD: 'Cuir focal balbhaithe leis',
-    GROK_ACTIONS: 'Grok actions',
     HOME: 'Baile',
     LIKES: 'Thaitin siad seo le',
     MUTE_THIS_CONVERSATION: 'Balbhaigh an comhrá seo',
@@ -739,7 +736,6 @@ const locales = {
     SHARED_TWEETS: 'Tweetanna Roinnte',
     SHOW: 'Taispeáin',
     SHOW_MORE_REPLIES: 'Taispeáin tuilleadh freagraí',
-    SORT_REPLIES_BY: 'Sort replies by',
     TURN_OFF_QUOTE_TWEETS: 'Cas as Luaigh Tvuíteanna',
     TURN_OFF_RETWEETS: 'Cas as Atweetanna',
     TURN_ON_RETWEETS: 'Cas Atweetanna air',
@@ -754,7 +750,6 @@ const locales = {
   gl: {
     ADD_ANOTHER_TWEET: 'Engadir outro chío',
     ADD_MUTED_WORD: 'Engadir palabra silenciada',
-    GROK_ACTIONS: 'Grok actions',
     HOME: 'Inicio',
     LIKES: 'Gústames',
     MUTE_THIS_CONVERSATION: 'Silenciar esta conversa',
@@ -769,7 +764,6 @@ const locales = {
     SHARED_TWEETS: 'Chíos compartidos',
     SHOW: 'Amosar',
     SHOW_MORE_REPLIES: 'Amosar máis respostas',
-    SORT_REPLIES_BY: 'Sort replies by',
     TURN_OFF_QUOTE_TWEETS: 'Desactivar os chíos citados',
     TURN_OFF_RETWEETS: 'Desactivar os rechouchíos',
     TURN_ON_RETWEETS: 'Activar os rechouchíos',
@@ -851,7 +845,7 @@ const locales = {
     TWEETS: 'ציוצים',
     TWEET_ALL: 'צייץ הכול',
     TWEET_INTERACTIONS: 'אינטראקציות צייץ',
-    TWEET_YOUR_REPLY: 'צייץ את התשובה',
+    TWEET_YOUR_REPLY: 'צייץ התשובה',
     TWITTER: 'טוויטר',
     UNDO_RETWEET: 'ביטול ציוץ מחדש',
     VIEW: 'הצג',
@@ -925,7 +919,7 @@ const locales = {
     TWEETS: 'Tweetovi',
     TWEET_ALL: 'Tweetaj sve',
     TWEET_INTERACTIONS: 'Interakcije s Tweet',
-    TWEET_YOUR_REPLY: 'Pošaljite Tweet s odgovorom',
+    TWEET_YOUR_REPLY: 'Tweetajte odgovor',
     UNDO_RETWEET: 'Poništi prosljeđivanje tweeta',
     VIEW: 'Prikaz',
     WHATS_HAPPENING: 'Što se događa?',
@@ -1068,7 +1062,7 @@ const locales = {
     TWEETS: 'ツイート',
     TWEET_ALL: 'すべてツイート',
     TWEET_INTERACTIONS: 'ツイートの相互作用',
-    TWEET_YOUR_REPLY: '返信をツイートしましょう',
+    TWEET_YOUR_REPLY: '返信をツイート',
     UNDO_RETWEET: 'リツイートを取り消す',
     VIEW: '表示する',
     WHATS_HAPPENING: 'いまどうしてる？',
@@ -1142,7 +1136,7 @@ const locales = {
     TWEETS: '트윗',
     TWEET_ALL: '모두 트윗하기',
     TWEET_INTERACTIONS: '트윗 상호작용',
-    TWEET_YOUR_REPLY: '내 답글을 트윗하세요',
+    TWEET_YOUR_REPLY: '답글을 트윗하세요',
     TWITTER: '트위터',
     UNDO_RETWEET: '리트윗 취소',
     VIEW: '보기',
@@ -1180,7 +1174,7 @@ const locales = {
     TWEETS: 'ट्विट्स',
     TWEET_ALL: 'सर्व ट्विट करा',
     TWEET_INTERACTIONS: 'ट्वीट इंटरऍक्शन्स',
-    TWEET_YOUR_REPLY: 'आपल्या प्रत्युत्तरावर ट्विट करा',
+    TWEET_YOUR_REPLY: 'आपले प्रत्युत्तर ट्विट करा',
     UNDO_RETWEET: 'पुनर्ट्विट पूर्ववत करा',
     VIEW: 'पहा',
     WHATS_HAPPENING: 'ताज्या घडामोडी?',
@@ -1318,7 +1312,7 @@ const locales = {
     TWEETS: 'Tweety',
     TWEET_ALL: 'Tweetnij wszystko',
     TWEET_INTERACTIONS: 'Interakcje na Tweeta',
-    TWEET_YOUR_REPLY: 'Wyślij Tweeta z odpowiedzią',
+    TWEET_YOUR_REPLY: 'Tweeta swoją odpowiedź',
     UNDO_RETWEET: 'Cofnij podanie dalej',
     VIEW: 'Wyświetl',
     WHATS_HAPPENING: 'Co się dzieje?',
@@ -1684,7 +1678,7 @@ const locales = {
     TWEETS: 'Твіти',
     TWEET_ALL: 'Твітнути все',
     TWEET_INTERACTIONS: 'Взаємодія твітів',
-    TWEET_YOUR_REPLY: 'Твітніть свою відповідь',
+    TWEET_YOUR_REPLY: 'Твітніть відповідь',
     TWITTER: 'Твіттер',
     UNDO_RETWEET: 'Скасувати ретвіт',
     VIEW: 'Переглянути',
@@ -1693,7 +1687,6 @@ const locales = {
   ur: {
     ADD_ANOTHER_TWEET: 'ایک اور ٹویٹ شامل کریں',
     ADD_MUTED_WORD: 'میوٹ شدہ لفظ شامل کریں',
-    GROK_ACTIONS: 'Grok actions',
     HOME: 'ہوم',
     LIKES: 'لائک',
     MUTE_THIS_CONVERSATION: 'اس گفتگو کو میوٹ کریں',
@@ -1708,7 +1701,6 @@ const locales = {
     SHARED_TWEETS: 'مشترکہ ٹویٹس',
     SHOW: 'دکھائیں',
     SHOW_MORE_REPLIES: 'مزید جوابات دکھائیں',
-    SORT_REPLIES_BY: 'Sort replies by',
     TURN_OFF_QUOTE_TWEETS: 'ٹویٹ کو نقل کرنا بند کریں',
     TURN_OFF_RETWEETS: 'ری ٹویٹس غیر فعال کریں',
     TURN_ON_RETWEETS: 'ری ٹویٹس غیر فعال کریں',
@@ -1849,7 +1841,6 @@ const PagePaths = {
   ACCESSIBILITY_SETTINGS: '/settings/accessibility',
   ADD_MUTED_WORD: '/settings/add_muted_keyword',
   BOOKMARKS: '/i/bookmarks',
-  COMPOSE_MESSAGE: '/messages/compose',
   COMPOSE_TWEET: '/compose/post',
   CONNECT: '/i/connect',
   DISPLAY_SETTINGS: '/settings/display',
@@ -1858,6 +1849,16 @@ const PagePaths = {
   PROFILE_SETTINGS: '/settings/profile',
   SEARCH: '/search',
   TIMELINE_SETTINGS: '/home/pinned/edit',
+}
+
+/** @enum {string} */
+const ModalPaths = {
+  COMPOSE_DRAFTS: '/compose/post/unsent/drafts',
+  COMPOSE_MEDIA: '/compose/post/media',
+  COMPOSE_MESSAGE: '/messages/compose',
+  COMPOSE_SCHEDULE: '/compose/post/schedule',
+  COMPOSE_TWEET: '/compose/post',
+  GIF_SEARCH: '/i/foundmedia/search',
 }
 
 /** @enum {string} */
@@ -1930,6 +1931,12 @@ const HIGH_CONTRAST_DARK = new Map([
   ['purple500', 'rgb(172, 151, 255)'],
   ['orange500', 'rgb(255, 173, 97)'],
   ['green500', 'rgb(97, 214, 163)'],
+])
+const COMPOSE_TWEET_MODAL_PAGES = new Set([
+  ModalPaths.COMPOSE_DRAFTS,
+  ModalPaths.COMPOSE_MEDIA,
+  ModalPaths.COMPOSE_SCHEDULE,
+  ModalPaths.GIF_SEARCH,
 ])
 // <body> pseudo-selector for pages the full-width content feature works on
 const FULL_WIDTH_BODY_PSEUDO = ':is(.Community, .List, .HomeTimeline)'
@@ -2004,6 +2011,9 @@ let isDesktopMediaModalOpen = false
 
 /** Set to `true` when the compose tweet modal is open on desktop. */
 let isDesktopComposeTweetModalOpen = false
+
+/** @type {HTMLElement} */
+let $desktopComposeTweetModalPopup = null
 
 /**
  * Cache for the last page title which was used for the Home timeline.
@@ -2594,6 +2604,8 @@ function observeBodyBackgroundColor() {
  * @param {HTMLElement} $popup
  */
 async function observeDesktopComposeTweetModal($popup) {
+  if (!config.replaceLogo) return
+
   let $mask = await getElement('[data-testid="twc-cc-mask"]', {
     context: $popup,
     name: 'Compose Tweet modal mask',
@@ -4636,18 +4648,19 @@ function handlePopup($popup) {
     return result
   }
 
-  if (desktop && !isDesktopComposeTweetModalOpen && location.pathname.startsWith(PagePaths.COMPOSE_TWEET)) {
+  if (desktop && !isDesktopComposeTweetModalOpen &&
+      location.pathname.startsWith(ModalPaths.COMPOSE_TWEET)) {
     log('Compose Tweet modal opened')
     isDesktopComposeTweetModalOpen = true
-    if (config.replaceLogo) {
-      observeDesktopComposeTweetModal($popup)
-    }
+    $desktopComposeTweetModalPopup = $popup
+    observeDesktopComposeTweetModal($popup)
     return {
       tookAction: true,
       onPopupClosed() {
         log('Compose Tweet modal closed')
-        disconnectAllModalObservers()
         isDesktopComposeTweetModalOpen = false
+        $desktopComposeTweetModalPopup = null
+        disconnectAllModalObservers()
         // The Tweet button will re-render if the modal was opened to edit
         // multiple Tweets on the Home timeline.
         if (config.replaceLogo && isOnHomeTimelinePage()) {
@@ -4657,7 +4670,9 @@ function handlePopup($popup) {
     }
   }
 
-  if (desktop && !isDesktopMediaModalOpen && URL_MEDIA_RE.test(location.pathname) && currentPath != location.pathname) {
+  if (desktop && !isDesktopMediaModalOpen &&
+      URL_MEDIA_RE.test(location.pathname) &&
+      currentPath != location.pathname) {
     log('media modal opened')
     isDesktopMediaModalOpen = true
     observeDesktopModalTimeline($popup)
@@ -4977,6 +4992,10 @@ function onTimelineChange($timeline, page, options = {}) {
           }
         }
 
+        if (!hideItem && config.hideGrokTweets && $tweet.querySelector('a[href^="/i/grok/share/"]')) {
+          hideItem = true
+        }
+
         if (!hideItem && config.mutableQuoteTweets && (itemType == 'QUOTE_TWEET' || itemType == 'RETWEETED_QUOTE_TWEET')) {
           if (config.mutedQuotes.length > 0) {
             let quotedTweet = getQuotedTweetDetails($tweet)
@@ -5136,8 +5155,8 @@ function onIndividualTweetTimelineChange($timeline, options) {
         }
       }
 
-      if (!hideItem && config.restoreLinkHeadlines) {
-        restoreLinkHeadline($tweet)
+      if (!hideItem && config.hideGrokTweets && $tweet.querySelector('a[href^="/i/grok/share/"]')) {
+        hideItem = true
       }
 
       if (!hideItem && (config.twitterBlueChecks != 'ignore' || config.hideTwitterBlueReplies)) {
@@ -5173,6 +5192,10 @@ function onIndividualTweetTimelineChange($timeline, options) {
             ))
           }
         }
+      }
+
+      if (!hideItem && config.restoreLinkHeadlines) {
+        restoreLinkHeadline($tweet)
       }
     }
     else {
@@ -5336,18 +5359,30 @@ function onTitleChange(title) {
     // Media modal closed
     URL_MEDIA_RE.test(currentPath) ||
     // "Send via Direct Message" dialog opened
-    location.pathname == PagePaths.COMPOSE_MESSAGE ||
+    location.pathname == ModalPaths.COMPOSE_MESSAGE ||
     // "Send via Direct Message" dialog closed
-    currentPath == PagePaths.COMPOSE_MESSAGE ||
+    currentPath == ModalPaths.COMPOSE_MESSAGE ||
     // Compose Tweet dialog opened
-    location.pathname == PagePaths.COMPOSE_TWEET ||
+    location.pathname == ModalPaths.COMPOSE_TWEET ||
     // Compose Tweet dialog closed
-    currentPath == PagePaths.COMPOSE_TWEET
+    currentPath == ModalPaths.COMPOSE_TWEET
   )
 
   if (newPage == currentPage) {
     log(`ignoring duplicate title change`)
+    // Navigation within the Compose Tweet modal triggers duplcate title changes
+    if (isDesktopComposeTweetModalOpen) {
+      if (currentPath == ModalPaths.COMPOSE_TWEET && COMPOSE_TWEET_MODAL_PAGES.has(location.pathname)) {
+        log('navigated away from Compose Tweet editor')
+        disconnectAllModalObservers()
+      }
+      else if (COMPOSE_TWEET_MODAL_PAGES.has(currentPath) && location.pathname == ModalPaths.COMPOSE_TWEET) {
+        log('navigated back to Compose Tweet editor')
+        observeDesktopComposeTweetModal($desktopComposeTweetModalPopup)
+      }
+    }
     currentNotificationCount = notificationCount
+    currentPath = location.pathname
     return
   }
 
