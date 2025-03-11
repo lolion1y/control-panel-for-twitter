@@ -114,7 +114,7 @@ const config = {
   restoreLinkHeadlines: false,
   replaceLogo: true,
   restoreOtherInteractionLinks: false,
-  restoreQuoteTweetsLink: true,
+  restoreQuoteTweetsLink: false,
   retweets: '',
   showBlueReplyFollowersCountAmount: '1000000',
   showBlueReplyFollowersCount: false,
