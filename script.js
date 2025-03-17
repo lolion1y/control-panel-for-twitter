@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     189
+// @version     190
 // ==/UserScript==
 void function() {
 
@@ -2367,6 +2367,11 @@ function getStateEntities() {
   }
 }
 
+function getUserScreenName() {
+  let state = getState()
+  return state?.entities?.users?.entities?.[state?.session?.user_id]?.screen_name
+}
+
 function getThemeColorFromState() {
   let localState = getState().settings?.local
   let color = localState?.themeColor
@@ -3561,6 +3566,8 @@ const configureCss = (() => {
         '.OwnProfile [data-testid="analytics-preview"]',
         // Button in Communities header
         `body.Communities ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} a:is([href^="/i/premium"], [href^="/i/verified"])`,
+        // "This profile is verified" upsell
+        '[data-testid="verified_profile_upsell"]',
       )
       // Hide Highlights and Articles tabs in your own profile if you don't have Premium
       let profileTabsList = `body.OwnProfile:not(.PremiumProfile) ${Selectors.PRIMARY_COLUMN} nav div[role="tablist"]`
@@ -4018,7 +4025,7 @@ const configureCss = (() => {
       } else if (config.hideTwitterBlueUpsells) {
         // Hide "Subscribe to premium" individually
         hideCssSelectors.push(
-          `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div:nth-of-type(3)`
+          `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`
         )
       }
       if (config.hideShareTweetButton) {
@@ -5112,6 +5119,8 @@ function onIndividualTweetTimelineChange($timeline, options) {
   let hideAllSubsequentItems = false
   /** @type {string} */
   let opScreenName = /^\/([a-zA-Z\d_]{1,20})\//.exec(location.pathname)[1].toLowerCase()
+  /** @type {string} */
+  let userScreenName = getUserScreenName()
   /** @type {{$item: Element, hideItem?: boolean}[]} */
   let changes = []
   /** @type {import("./types").UserInfoObject} */
@@ -5134,6 +5143,10 @@ function onIndividualTweetTimelineChange($timeline, options) {
     let tweetVerifiedType = null
     /** @type {?string} */
     let screenName = null
+    /** @type {boolean} */
+    let isOp = false
+    /** @type {boolean} */
+    let isUser = false
 
     if (hideAllSubsequentItems) {
       hideItem = true
@@ -5174,10 +5187,19 @@ function onIndividualTweetTimelineChange($timeline, options) {
 
           tweetVerifiedType = verifiedType
           screenName = $userProfileLink.href.split('/').pop()
+          isOp = screenName.toLowerCase() == opScreenName
+          isUser = screenName == userScreenName
         }
 
-        // Replies to the focused tweet don't have the reply indicator
-        if (tweetVerifiedType && !isFocusedTweet && !isReply && screenName.toLowerCase() != opScreenName) {
+        if (tweetVerifiedType &&
+            // Don't hide the focused tweet
+            !isFocusedTweet &&
+            // Replies to the focused tweet don't have the reply indicator
+            !isReply &&
+            // Don't hide replies by the OP, as it's their thread
+            !isOp &&
+            // Don't hide replies by the user if they have Premium
+            !isUser) {
           itemType = `${tweetVerifiedType}_REPLY`
           if (!hideItem) {
             let user = userInfo[screenName]
@@ -5244,7 +5266,7 @@ function onIndividualTweetTimelineChange($timeline, options) {
     }
 
     if (debug && itemType != null) {
-      $item.firstElementChild.setAttribute('data-item-type', `${itemType}${isReply ? ' / REPLY' : ''}`)
+      $item.firstElementChild.setAttribute('data-item-type', `${itemType}${isReply ? ' / REPLY' : ''}${isOp ? ' / OP' : ''}`)
     }
 
     // Assume a non-identified item following an identified item is related
@@ -5321,22 +5343,26 @@ function onTitleChange(title) {
   let homeNavigationWasUsed = homeNavigationIsBeingUsed
   homeNavigationIsBeingUsed = false
 
+  // Ignore Flash of Uninitialised Title when navigating to a page for the first
+  // time, except in scenarios where we know an empty title is being set.
   if (title == 'X' || title == getString('TWITTER')) {
-    // Mobile uses "Twitter" when viewing media - we need to let these process
-    // so the next page will be re-processed when the media is closed.
+    // On mobile, the media viewer sets an empty title
     if (mobile && (URL_MEDIA_RE.test(location.pathname) || URL_MEDIAVIEWER_RE.test(location.pathname))) {
       log('viewing media on mobile')
     }
-    // Going to the root Settings page on desktop when the sidebar is hidden
-    // sets an empty title.
+    // On desktop, the root Settings page sets an empty title when the sidebar
+    // is hidden.
     else if (desktop && location.pathname == '/settings' && currentPath != '/settings') {
       log('viewing root Settings page')
     }
+    // On desktop, the root Messages page sometimes sets an empty title
+    else if (desktop && location.pathname == '/messages' && currentPath != '/messages') {
+      log('viewing root Messages page')
+    }
+    // The Bookmarks page sets an empty title
     else if (location.pathname.startsWith(PagePaths.BOOKMARKS) && !currentPath.startsWith(PagePaths.BOOKMARKS)) {
       log('viewing Bookmarks page')
     }
-    // Ignore Flash of Uninitialised Title when navigating to a page for the
-    // first time.
     else {
       log('ignoring Flash of Uninitialised Title')
       return
