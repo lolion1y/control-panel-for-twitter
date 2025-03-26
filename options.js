@@ -251,6 +251,7 @@ const defaultConfig = {
   // Mobile only
   preventNextVideoAutoplay: true,
   hideMessagesBottomNavItem: false,
+  hideLiveThreadsDesc: true,
 }
 //#endregion
 

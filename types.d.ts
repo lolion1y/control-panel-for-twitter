@@ -96,6 +96,7 @@ export type Config = {
   // Mobile only
   preventNextVideoAutoplay: boolean
   hideMessagesBottomNavItem: boolean
+  hideLiveThreadsDesc: boolean
 }
 
 export type Locale = {

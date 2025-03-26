@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190
+// @version     190.1
 // ==/UserScript==
 void function() {
 
@@ -146,6 +146,7 @@ const config = {
   // Mobile only
   preventNextVideoAutoplay: true,
   hideMessagesBottomNavItem: true,
+  hideLiveThreadsDesc: true,
 }
 //#endregion
 
@@ -3849,7 +3850,7 @@ const configureCss = (() => {
         `)
       }
       if (config.hideSeeNewTweets) {
-        hideCssSelectors.push(`body.HomeTimeline ${Selectors.PRIMARY_COLUMN} > div > div:first-child > div[style^="transform"]`)
+        hideCssSelectors.push(`body ${Selectors.PRIMARY_COLUMN} > div > div:first-child > div[style^="transform"]`)
       }
       if (config.hideTimelineTweetBox) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.PRIMARY_COLUMN} .TweetBox`)
@@ -4123,6 +4124,9 @@ const configureCss = (() => {
       }
       if (config.hideSeeNewTweets) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`)
+      }
+      if (config.hideLiveThreadsDesc) {
+        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]`)
       }
       if (config.hideExplorePageContents) {
         // Hide explore page contents so we don't get a brief flash of them
