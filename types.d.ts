@@ -88,6 +88,7 @@ export type Config = {
   hideMessagesDrawer: boolean
   hideProNav: boolean
   hideSidebarContent: boolean
+  hideSideNavNewTweetButton: boolean
   hideTimelineTweetBox: boolean
   hideToggleNavigation: boolean
   navBaseFontSize: boolean
@@ -97,6 +98,7 @@ export type Config = {
   preventNextVideoAutoplay: boolean
   hideMessagesBottomNavItem: boolean
   hideLiveThreadsDesc: boolean
+  hideFloatingTweetButton: boolean
 }
 
 export type Locale = {

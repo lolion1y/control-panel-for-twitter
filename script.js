@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190.1.1
+// @version     190.2
 // ==/UserScript==
 void function() {
 
@@ -137,6 +137,7 @@ const config = {
   hideMessagesDrawer: true,
   hideProNav: true,
   hideSidebarContent: true,
+  hideSideNavNewTweetButton: false,
   hideSpacesNav: true,
   hideTimelineTweetBox: false,
   hideToggleNavigation: false,
@@ -147,6 +148,7 @@ const config = {
   preventNextVideoAutoplay: true,
   hideMessagesBottomNavItem: true,
   hideLiveThreadsDesc: true,
+  hideFloatingTweetButton:true,
 }
 //#endregion
 
@@ -4029,6 +4031,9 @@ const configureCss = (() => {
           `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`
         )
       }
+      if (config.hideSideNavNewTweetButton) {
+        hideCssSelectors.push(`a[data-testid="SideNav_NewTweet_Button"]`)
+      }
       if (config.hideShareTweetButton) {
         hideCssSelectors.push(
           // In media modal
@@ -4125,9 +4130,6 @@ const configureCss = (() => {
       if (config.hideSeeNewTweets) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`)
       }
-      if (config.hideLiveThreadsDesc) {
-        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
-      }
       if (config.hideExplorePageContents) {
         // Hide explore page contents so we don't get a brief flash of them
         // before automatically switching the page to search mode.
@@ -4166,9 +4168,16 @@ const configureCss = (() => {
         hideCssSelectors.push(
           // Under timeline tweets
           '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(> a[href$="/analytics"])',
+          '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])',
           // In media viewer and media modal
           'body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(> a[href$="/analytics"])',
         )
+      }
+      if (config.hideLiveThreadsDesc) {
+        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
+      }
+      if (config.hideFloatingTweetButton) {
+        hideCssSelectors.push(`a[data-testid="FloatingActionButtons_Tweet_Button"]`)
       }
       //#endregion
     }
