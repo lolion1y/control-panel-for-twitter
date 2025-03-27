@@ -80,7 +80,7 @@ const config = {
   hideFollowingMetrics: false,
   hideForYouTimeline: false,
   hideGrokNav: true,
-  hideGrokTweets: false,
+  hideGrokTweets: true,
   hideInlinePrompts: true,
   hideJobsNav: true,
   hideLikeMetrics: false,
@@ -3998,7 +3998,7 @@ const configureCss = (() => {
         // Only show the first sidebar item by default
         // Re-show subsequent non-algorithmic sections on specific pages
         cssRules.push(`
-          body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:not(:first-of-type) {
+          body ${Selectors.SIDEBAR_WRAPPERS} > div > div:not(:first-of-type) {
             display: none;
           }
           ${Selectors.SIDEBAR_WRAPPERS} > div:not(:first-of-type) {
@@ -4028,11 +4028,13 @@ const configureCss = (() => {
       } else if (config.hideTwitterBlueUpsells) {
         // Hide "Subscribe to premium" individually
         hideCssSelectors.push(
-          `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`
+          `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
+          // Sidebar
+          `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
         )
       }
       if (config.hideSideNavNewTweetButton) {
-        hideCssSelectors.push(`a[data-testid="SideNav_NewTweet_Button"]`)
+        hideCssSelectors.push('a[data-testid="SideNav_NewTweet_Button"]')
       }
       if (config.hideShareTweetButton) {
         hideCssSelectors.push(
@@ -4177,7 +4179,7 @@ const configureCss = (() => {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
       }
       if (config.hideFloatingTweetButton) {
-        hideCssSelectors.push(`a[data-testid="FloatingActionButtons_Tweet_Button"]`)
+        hideCssSelectors.push('a[data-testid="FloatingActionButtons_Tweet_Button"]')
       }
       //#endregion
     }
