@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190.1
+// @version     190.1.1
 // ==/UserScript==
 void function() {
 
@@ -4126,7 +4126,7 @@ const configureCss = (() => {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`)
       }
       if (config.hideLiveThreadsDesc) {
-        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]`)
+        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
       }
       if (config.hideExplorePageContents) {
         // Hide explore page contents so we don't get a brief flash of them
