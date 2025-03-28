@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190.2.2
+// @version     190.2.3
 // ==/UserScript==
 void function() {
 
@@ -4037,7 +4037,7 @@ const configureCss = (() => {
               )
           }
           if (config.hideSidebarLive) {
-            hideCssSelectors.push(`body.Sidebar ${Selectors.SIDEBAR_WRAPPERS} div > div > div ~ div:has(h2[role="heading"]):has(div[data-testid="placementTracking"])`)
+            hideCssSelectors.push(`body.Sidebar ${Selectors.SIDEBAR} div > div > div ~ div:has(h2[role="heading"]):has(div[data-testid="placementTracking"])`)
           }
       }
       if (config.hideSideNavNewTweetButton) {
