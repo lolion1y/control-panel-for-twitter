@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190.2.1
+// @version     190.2.2
 // ==/UserScript==
 void function() {
 
@@ -138,6 +138,7 @@ const config = {
   hideProNav: true,
   hideSidebarContent: true,
   hideSideNavNewTweetButton: false,
+  hideSidebarLive: true,
   hideSpacesNav: true,
   hideTimelineTweetBox: false,
   hideToggleNavigation: false,
@@ -4026,13 +4027,18 @@ const configureCss = (() => {
           `)
         }
         hideCssSelectors.push(`body.HideSidebar ${Selectors.SIDEBAR}`)
-      } else if (config.hideTwitterBlueUpsells) {
-        // Hide "Subscribe to premium" individually
-        hideCssSelectors.push(
-          `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
-          // Sidebar
-          `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
-        )
+      } else {
+          if (config.hideTwitterBlueUpsells) {
+              // Hide "Subscribe to premium" individually
+              hideCssSelectors.push(
+                  `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
+                  // Sidebar
+                  `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
+              )
+          }
+          if (config.hideSidebarLive) {
+            hideCssSelectors.push(`body.Sidebar ${Selectors.SIDEBAR_WRAPPERS} div > div > div ~ div:has(h2[role="heading"]):has(div[data-testid="placementTracking"])`)
+          }
       }
       if (config.hideSideNavNewTweetButton) {
         hideCssSelectors.push('a[data-testid="SideNav_NewTweet_Button"]')
@@ -4177,6 +4183,40 @@ const configureCss = (() => {
       }
       if (config.hideLiveThreadsDesc) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
+        function findTimelineHeader(callback) {
+            const TimelineHeader = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`);
+            if (TimelineHeader) {
+                callback(TimelineHeader);
+            } else {
+                console.log('TimelineHeader not found, Retring...');
+                setTimeout(() => findTimelineHeader(callback), 200);
+            }
+        }
+        findTimelineHeader((TimelineHeader) => {
+            const transformValue = TimelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
+            console.log('Transform value stored:', transformValue);
+            if (transformValue) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        const hideLiveThreadsDescheight = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
+                        const hideLiveThreadsDesctransform = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
+                        if (hideLiveThreadsDescheight && hideLiveThreadsDescheight.style.height !== '0px' && hideLiveThreadsDescheight.style.height !== transformValue) {
+                            hideLiveThreadsDescheight.style.height = transformValue;
+                            console.log('Update height:', hideLiveThreadsDescheight.style.height);
+                        }
+                        if (hideLiveThreadsDesctransform && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== '0px' && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== transformValue) {
+                            hideLiveThreadsDesctransform.style.transform = hideLiveThreadsDesctransform.style.transform.replace(hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1], transformValue);
+                            console.log('Update transform:', hideLiveThreadsDesctransform.style.transform);
+                        }
+                    });
+                });
+                const gridDiv = document.querySelector('body [role="grid"]');
+                observer.observe(gridDiv, { attributes: true, attributeFilter: ['aria-hidden'] });
+            } else if (transformValue === '0px') {
+                console.log('Transform value is 0px, re-running callback...');
+                findTimelineHeader(TimelineHeader);
+            }
+        });
       }
       if (config.hideFloatingTweetButton) {
         hideCssSelectors.push('a[data-testid="FloatingActionButtons_Tweet_Button"]')

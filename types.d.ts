@@ -89,6 +89,7 @@ export type Config = {
   hideProNav: boolean
   hideSidebarContent: boolean
   hideSideNavNewTweetButton: boolean
+  hideSidebarLive: boolean
   hideTimelineTweetBox: boolean
   hideToggleNavigation: boolean
   navBaseFontSize: boolean
