@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190.2.4
+// @version     190.2.5
 // ==/UserScript==
 void function() {
 
@@ -3615,7 +3615,7 @@ const configureCss = (() => {
         // "Views" under the focused tweet
         '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2)',
         '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2) + div[dir]:last-child',
-        '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])'
+        '[role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])'
       )
     }
     if (config.hideWhoToFollowEtc) {
