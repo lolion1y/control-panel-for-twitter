@@ -6730,7 +6730,25 @@ async function main() {
     } catch(e) {
       error('error parsing initial settings', e)
     }
+  }
 
+  if (config.debug) {
+    debug = true
+  }
+
+  // Don't run on URLs used for OAuth
+  if (location.pathname.startsWith('/i/oauth2/authorize') ||
+      location.pathname.startsWith('/oauth/authorize')) {
+    log('Not running on OAuth URL')
+    return
+  }
+
+  // Don't run if we're redirecting to twitter.com
+  if (redirectToTwitter()) {
+    return
+  }
+
+  if ($settings) {
     let settingsChangeObserver = new MutationObserver(() => {
       /** @type {Partial<import("./types").Config>} */
       let configChanges
@@ -6753,14 +6771,6 @@ async function main() {
       configChanged(configChanges)
     })
     settingsChangeObserver.observe($settings, {childList: true})
-  }
-
-  if (config.debug) {
-    debug = true
-  }
-
-  if (redirectToTwitter()) {
-    return
   }
 
   observeTitle()
