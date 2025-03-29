@@ -105,6 +105,7 @@ const config = {
   hideVerifiedNotificationsTab: true,
   hideViews: true,
   hideWhoToFollowEtc: true,
+  hideYourAnalytics: true,
   listRetweets: 'ignore',
   mutableQuoteTweets: false,
   mutedQuotes: [],
@@ -3572,6 +3573,8 @@ const configureCss = (() => {
         `body.Communities ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} a:is([href^="/i/premium"], [href^="/i/verified"])`,
         // "This profile is verified" upsell
         '[data-testid="verified_profile_upsell"]',
+        // Get Premium Analytics upsell
+        '[data-testid="profileAnalyticsUpsell"]',
       )
       // Hide Highlights and Articles tabs in your own profile if you don't have Premium
       let profileTabsList = `body.OwnProfile:not(.PremiumProfile) ${Selectors.PRIMARY_COLUMN} nav div[role="tablist"]`
@@ -3617,6 +3620,9 @@ const configureCss = (() => {
     }
     if (config.hideWhoToFollowEtc) {
       hideCssSelectors.push(`body.Profile ${Selectors.PRIMARY_COLUMN} aside[role="complementary"]`)
+    }
+    if (config.hideYourAnalytics) {
+      hideCssSelectors.push(`${menuRole} a[href="/i/account_analytics"]`)
     }
     if (config.reducedInteractionMode) {
       hideCssSelectors.push(
@@ -4084,6 +4090,9 @@ const configureCss = (() => {
           '[aria-modal="true"] > div > div:first-of-type [role="group"] > div:has(> a[href$="/analytics"])',
         )
       }
+      if (config.hideYourAnalytics) {
+        hideCssSelectors.push(`${Selectors.PRIMARY_NAV_DESKTOP} a[href="/i/account_analytics"]`)
+      }
       if (config.retweets != 'separate' && config.quoteTweets != 'separate') {
         hideCssSelectors.push('#tnt_separated_tweets_tab')
       }
@@ -4232,8 +4241,11 @@ const configureCss = (() => {
       if (config.hideFloatingTweetButton) {
         hideCssSelectors.push('a[data-testid="FloatingActionButtons_Tweet_Button"]')
       }
-      //#endregion
+      if (config.hideYourAnalytics) {
+        hideCssSelectors.push(`${Selectors.PRIMARY_NAV_MOBILE} a[href="/i/account_analytics"]`)
+      }
     }
+    //#endregion
 
     if (hideCssSelectors.length > 0) {
       cssRules.push(`
