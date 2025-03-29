@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     190.2.3
+// @version     190.2.4
 // ==/UserScript==
 void function() {
 
@@ -4184,12 +4184,23 @@ const configureCss = (() => {
       if (config.hideLiveThreadsDesc) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
         function findTimelineHeader(callback) {
-            const TimelineHeader = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`);
-            if (TimelineHeader) {
-                callback(TimelineHeader);
+            if (location.pathname.startsWith(PagePaths.HOME)) {
+                const TimelineHeader = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`);
+                if (TimelineHeader) {
+                    callback(TimelineHeader);
+                } else {
+                    console.log('TimelineHeader not found, Retrying...');
+                    setTimeout(() => findTimelineHeader(callback), 600);
+                }
             } else {
-                console.log('TimelineHeader not found, Retring...');
-                setTimeout(() => findTimelineHeader(callback), 200);
+                const observer = new MutationObserver(() => {
+                    console.log('Not on Timeline');
+                    if (location.pathname.startsWith(PagePaths.HOME)) {
+                        observer.disconnect();
+                        findTimelineHeader(callback);
+                    }
+                });
+                observer.observe(document.body, { attributes: true });
             }
         }
         findTimelineHeader((TimelineHeader) => {
@@ -4197,7 +4208,7 @@ const configureCss = (() => {
             console.log('Transform value stored:', transformValue);
             if (transformValue) {
                 const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
+                    mutations.forEach(() => {
                         const hideLiveThreadsDescheight = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
                         const hideLiveThreadsDesctransform = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
                         if (hideLiveThreadsDescheight && hideLiveThreadsDescheight.style.height !== '0px' && hideLiveThreadsDescheight.style.height !== transformValue) {
