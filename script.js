@@ -2963,11 +2963,44 @@ async function observeSidebar() {
   let $sidebarContainer = $primaryColumn.parentElement
   pageObservers.push(
     observeElement($sidebarContainer, () => {
-      let $sidebar = $sidebarContainer.querySelector(Selectors.SIDEBAR)
+      let $sidebar = /** @type {HTMLElement} */ ($sidebarContainer.querySelector(Selectors.SIDEBAR))
       log(`sidebar ${$sidebar ? 'appeared' : 'disappeared'}`)
       $body.classList.toggle('Sidebar', Boolean($sidebar))
       if ($sidebar && config.twitterBlueChecks != 'ignore' && !isOnSearchPage() && !isOnExplorePage()) {
         observeSearchForm()
+      }
+      if ($sidebar && !config.hideSidebarContent) {
+        // The Explore page has a different sidebar implementation
+        if (isOnExplorePage()) {
+          if (config.twitterBlueChecks != 'ignore') {
+            processBlueChecks($sidebar)
+          }
+          return
+        }
+        // Hide the ad in What's happening if we're not hiding sidebar content
+        void async function() {
+          let $sidebarTimeline = await getElement('section > div[aria-label] > div', {
+            name: 'hideSidebarWhatsHappeningAd: sidebar timeline',
+            context: $sidebar,
+            stopIf: pageIsNot(currentPage),
+            timeout: 2000,
+          })
+          if (!$sidebarTimeline) return
+          // The sidebar timeline loads asynchronously and refreshes every time
+          // the page regains refocus.
+          pageObservers.push(
+            observeElement($sidebarTimeline, () => {
+              let $firstTrend = $sidebarTimeline.querySelector(':scope > div:has([data-testid="trend"])')
+              if ($firstTrend && !$firstTrend.previousElementSibling.querySelector('h2')) {
+                log('hideSidebarWhatsHappeningAd: hiding ad')
+                $firstTrend.previousElementSibling.classList.add('HiddenAd')
+              }
+              if (config.twitterBlueChecks != 'ignore') {
+                processBlueChecks($sidebar)
+              }
+            }, 'sidebar timeline')
+          )
+        }()
       }
     }, 'sidebar container')
   )
@@ -3388,7 +3421,7 @@ const configureCss = (() => {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       }
     `]
-    let hideCssSelectors = ['.HiddenTweet', '.HiddenTweet + [role="separator"]']
+    let hideCssSelectors = ['.HiddenTweet', '.HiddenTweet + [role="separator"]', '.HiddenAd']
     let menuRole = `[role="${desktop ? 'menu' : 'dialog'}"]`
 
     // Theme colours for custom UI items
@@ -3455,6 +3488,14 @@ const configureCss = (() => {
           '[data-testid="tweet"][tabindex="-1"] [role="group"][id^="id__"] > div:has(> button[data-testid$="ookmark"])',
         )
       }
+    }
+    if (!config.hideExplorePageContents) {
+      hideCssSelectors.push(
+        // Hide the ad at the top of Explore…
+        'body.Explore [data-testid="eventHero"]',
+        // …and its floating button
+        'body.Explore [data-testid="eventHero"] + div',
+      )
     }
     if (config.hideListsNav) {
       hideCssSelectors.push(`${menuRole} a[href$="/lists"]`)
