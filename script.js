@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     191
+// @version     191.1
 // ==/UserScript==
 void function() {
 
@@ -134,11 +134,10 @@ const config = {
   hideAccountSwitcher: false,
   hideExploreNav: false,
   hideExploreNavWithSidebar: false,
-  hideLiveBroadcasts: false,
+  hideLiveBroadcasts: true,
   hideMessagesDrawer: true,
   hideSidebarContent: true,
   hideSideNavNewTweetButton: false,
-  hideSidebarLive: true,
   hideSpacesNav: true,
   hideSuggestedFollows: false,
   hideTimelineTweetBox: false,
@@ -4204,9 +4203,6 @@ const configureCss = (() => {
                     // Sidebar
                   `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
               )
-          }
-          if (config.hideSidebarLive) {
-            hideCssSelectors.push(`body.Sidebar ${Selectors.SIDEBAR} div > div > div ~ div:has(h2[role="heading"]):has(div[data-testid="placementTracking"])`)
           }
       }
       if (config.hideSideNavNewTweetButton) {
