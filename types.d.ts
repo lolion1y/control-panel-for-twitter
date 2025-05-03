@@ -55,7 +55,6 @@ export type Config = {
   hideVerifiedNotificationsTab: boolean
   hideViews: boolean
   hideWhoToFollowEtc: boolean
-  hideYourAnalytics: boolean
   listRetweets: 'ignore' | 'hide'
   mutableQuoteTweets: boolean
   mutedQuotes: QuotedTweet[]
@@ -86,19 +85,22 @@ export type Config = {
   hideAccountSwitcher: boolean
   hideExploreNav: boolean
   hideExploreNavWithSidebar: boolean
+  hideLiveBroadcasts: boolean
   hideMessagesDrawer: boolean
-  hideProNav: boolean
   hideSidebarContent: boolean
+  hideSuggestedFollows: boolean
   hideSideNavNewTweetButton: boolean
   hideSidebarLive: boolean
   hideTimelineTweetBox: boolean
   hideToggleNavigation: boolean
+  hideWhatsHappening: boolean
   navBaseFontSize: boolean
   navDensity: 'default' | 'comfortable' | 'compact'
   showRelevantPeople: boolean
   // Mobile only
-  preventNextVideoAutoplay: boolean
+  hideLiveBroadcastBar: boolean
   hideMessagesBottomNavItem: boolean
+  preventNextVideoAutoplay: boolean
   hideLiveThreadsDesc: boolean
   hideFloatingTweetButton: boolean
 }
@@ -113,6 +115,7 @@ export type LocaleKey =
   | 'GROK_ACTIONS'
   | 'HOME'
   | 'LIKES'
+  | 'LIVE_ON_X'
   | 'MOST_RELEVANT'
   | 'MUTE_THIS_CONVERSATION'
   | 'POST_ALL'

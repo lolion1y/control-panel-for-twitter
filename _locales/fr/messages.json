@@ -158,6 +158,12 @@
   "hideListsNavLabel": {
     "message": "Listes"
   },
+  "hideLiveBroadcastBarLabel": {
+    "message": "Masquer la barre de diffusion en direct"
+  },
+  "hideLiveBroadcastsLabel": {
+    "message": "Masquer les diffusions en direct"
+  },
   "hideMessagesBottomNavItemLabel": {
     "message": "Messages"
   },
@@ -178,9 +184,6 @@
   },
   "hideNotificationsLabel": {
     "message": "Masquer les notifications"
-  },
-  "hideProNavLabel": {
-    "message": "Pro"
   },
   "hideProfileHeaderMetricsLabel": {
     "message": "Métriques de l'en-tête du profil"
@@ -221,6 +224,9 @@
   "hideSubscriptionsLabel": {
     "message": "Masquer \"Souscriptions\""
   },
+  "hideSuggestedFollowsLabel": {
+    "message": "Masquer les suggestions de suivi"
+  },
   "hideTimelineTweetBoxLabel": {
     "message": "Zone de tweet dans le fil"
   },
@@ -248,11 +254,11 @@
   "hideViewsLabel": {
     "message": "Masquer les vues sous les tweets"
   },
+  "hideWhatsHappeningLabel": {
+    "message": "Masquer Ce qui se passe"
+  },
   "hideWhoToFollowEtcLabel": {
     "message": "Masquer \"Qui suivre\", \"Suivre certains sujets\", etc. dans le fil"
-  },
-  "hideYourAnalyticsLabel": {
-    "message": "Vos statistiques"
   },
   "homeTimelineOptionsLabel": {
     "message": "Fil d'actualités"
@@ -375,6 +381,9 @@
   },
   "showRelevantPeopleLabel": {
     "message": "Afficher \"Personnes pertinentes\" lors de l'affichage d'un tweet"
+  },
+  "sidebarLabel": {
+    "message": "Barre latérale"
   },
   "sortRepliesLabel": {
     "message": "Tri par défaut des réponses"

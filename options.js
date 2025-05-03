@@ -63,6 +63,8 @@ for (let translationId of [
   'hideInlinePrompts',
   'hideJobsLabel',
   'hideLikeMetricsLabel',
+  'hideLiveBroadcastBarLabel',
+  'hideLiveBroadcastsLabel',
   'hideMessagesBottomNavItemLabel',
   'hideMessagesDrawerLabel',
   'hideMetricsLabel',
@@ -79,6 +81,7 @@ for (let translationId of [
   'hideSidebarContentLabel',
   'hideSpacesNavLabel',
   'hideSubscriptionsLabel',
+  'hideSuggestedFollowsLabel',
   'hideTimelineTweetBoxLabel',
   'hideToggleNavigationLabel',
   'hideTweetAnalyticsLinksLabel',
@@ -88,6 +91,7 @@ for (let translationId of [
   'hideUnusedUiItemsOptionsLabel',
   'hideVerifiedNotificationsTabLabel',
   'hideViewsLabel',
+  'hideWhatsHappeningLabel',
   'hideWhoToFollowEtcLabel',
   'homeTimelineOptionsLabel',
   'listRetweetsLabel',
@@ -107,6 +111,7 @@ for (let translationId of [
   'restoreOtherInteractionLinksLabel',
   'restoreQuoteTweetsLinkLabel',
   'retweetsLabel',
+  'sidebarLabel',
   'showBlueReplyFollowersCountAmountLabel',
   'showBlueReplyVerifiedAccountsLabel',
   'showBookmarkButtonUnderFocusedTweetsLabel',
@@ -130,7 +135,6 @@ for (let translationClass of [
   'hideBookmarksNavLabel',
   'hideCommunitiesNavLabel',
   'hideListsNavLabel',
-  'hideYourAnalyticsLabel',
   'notificationsLabel',
   'saveAndApplyButton',
 ]) {
@@ -212,7 +216,6 @@ const defaultConfig = {
   hideVerifiedNotificationsTab: true,
   hideViews: true,
   hideWhoToFollowEtc: true,
-  hideYourAnalytics: true,
   listRetweets: 'ignore',
   mutableQuoteTweets: true,
   mutedQuotes: [],
@@ -242,17 +245,21 @@ const defaultConfig = {
   hideAccountSwitcher: false,
   hideExploreNav: true,
   hideExploreNavWithSidebar: true,
+  hideLiveBroadcasts: false,
   hideMessagesDrawer: true,
   hideSidebarContent: true,
   hideSpacesNav: false,
+  hideSuggestedFollows: false,
   hideTimelineTweetBox: false,
   hideToggleNavigation: false,
+  hideWhatsHappening: false,
   navBaseFontSize: true,
   navDensity: 'default',
   showRelevantPeople: false,
   // Mobile only
-  preventNextVideoAutoplay: true,
+  hideLiveBroadcastBar: false,
   hideMessagesBottomNavItem: false,
+  preventNextVideoAutoplay: true,
   hideLiveThreadsDesc: true,
 }
 //#endregion
@@ -287,7 +294,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.10.0.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.10.1.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
@@ -455,6 +462,7 @@ function updateDisplay() {
   $body.classList.toggle('hidingTwitterBlueReplies', optionsConfig.hideTwitterBlueReplies)
   $body.classList.toggle('mutingQuotes', shouldDisplayMutedQuotes())
   $body.classList.toggle('showingBlueReplyFollowersCount', optionsConfig.showBlueReplyFollowersCount)
+  $body.classList.toggle('showingSidebarContent', !optionsConfig.hideSidebarContent)
   $body.classList.toggle('tweakingNewLayout', optionsConfig.tweakNewLayout)
   $body.classList.toggle('uninvertedFollowButtons', optionsConfig.uninvertFollowButtons)
   $showBlueReplyFollowersCountLabel.textContent = chrome.i18n.getMessage(

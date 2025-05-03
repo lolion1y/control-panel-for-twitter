@@ -161,6 +161,12 @@
   "hideListsNavLabel": {
     "message": "Lists"
   },
+  "hideLiveBroadcastBarLabel": {
+    "message": "Hide Live broadcast bar"
+  },
+  "hideLiveBroadcastsLabel": {
+    "message": "Hide Live broadcasts"
+  },
   "hideMessagesBottomNavItemLabel": {
     "message": "Messages"
   },
@@ -181,9 +187,6 @@
   },
   "hideNotificationsLabel": {
     "message": "Hide notifications"
-  },
-  "hideProNavLabel": {
-    "message": "Pro"
   },
   "hideProfileHeaderMetricsLabel": {
     "message": "Profile header metrics"
@@ -224,6 +227,9 @@
   "hideSubscriptionsLabel": {
     "message": "Hide Subscriptions"
   },
+  "hideSuggestedFollowsLabel": {
+    "message": "Hide suggested follows"
+  },
   "hideTimelineTweetBoxLabel": {
     "message": "Tweet box in timeline"
   },
@@ -251,11 +257,11 @@
   "hideViewsLabel": {
     "message": "Hide Views under tweets"
   },
+  "hideWhatsHappeningLabel": {
+    "message": "Hide What's happening"
+  },
   "hideWhoToFollowEtcLabel": {
     "message": "Hide \"Who to follow\", \"Follow some Topics\" etc. in the timeline"
-  },
-  "hideYourAnalyticsLabel": {
-    "message": "Your Analytics"
   },
   "homeTimelineOptionsLabel": {
     "message": "Home timeline"
@@ -382,6 +388,9 @@
   },
   "showRelevantPeopleLabel": {
     "message": "Show \"Relevant people\" when viewing a tweet"
+  },
+  "sidebarLabel": {
+    "message": "Sidebar"
   },
   "sortRepliesLabel": {
     "message": "Default sorting of replies"
