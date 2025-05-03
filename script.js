@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     191.1
+// @version     191.2
 // ==/UserScript==
 void function() {
 
@@ -4362,6 +4362,7 @@ const configureCss = (() => {
       }
       if (config.hideLiveThreadsDesc) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
+        // Determine baseline value
         function findTimelineHeader(callback) {
             if (location.pathname.startsWith(PagePaths.HOME)) {
                 const TimelineHeader = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`);
@@ -4369,7 +4370,7 @@ const configureCss = (() => {
                     callback(TimelineHeader);
                 } else {
                     console.log('TimelineHeader not found, Retrying...');
-                    setTimeout(() => findTimelineHeader(callback), 600);
+                    setTimeout(() => findTimelineHeader(callback), 600); // 600ms delay
                 }
             } else {
                 const observer = new MutationObserver(() => {
@@ -4387,21 +4388,23 @@ const configureCss = (() => {
             console.log('Transform value stored:', transformValue);
             if (transformValue) {
                 const observer = new MutationObserver((mutations) => {
-                    mutations.forEach(() => {
-                        const hideLiveThreadsDescheight = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
-                        const hideLiveThreadsDesctransform = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
-                        if (hideLiveThreadsDescheight && hideLiveThreadsDescheight.style.height !== '0px' && hideLiveThreadsDescheight.style.height !== transformValue) {
-                            hideLiveThreadsDescheight.style.height = transformValue;
-                            console.log('Update height:', hideLiveThreadsDescheight.style.height);
-                        }
-                        if (hideLiveThreadsDesctransform && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== '0px' && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== transformValue) {
-                            hideLiveThreadsDesctransform.style.transform = hideLiveThreadsDesctransform.style.transform.replace(hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1], transformValue);
-                            console.log('Update transform:', hideLiveThreadsDesctransform.style.transform);
-                        }
-                    });
+                    setTimeout(() => {
+                        mutations.forEach(() => {
+                            const hideLiveThreadsDescheight = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
+                            const hideLiveThreadsDesctransform = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
+                            if (hideLiveThreadsDescheight && hideLiveThreadsDescheight.style.height !== '0px' && hideLiveThreadsDescheight.style.height !== transformValue) {
+                                hideLiveThreadsDescheight.style.height = transformValue;
+                                console.log('Update height:', hideLiveThreadsDescheight.style.height);
+                            }
+                            if (hideLiveThreadsDesctransform && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== '0px' && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== transformValue) {
+                                hideLiveThreadsDesctransform.style.transform = hideLiveThreadsDesctransform.style.transform.replace(hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1], transformValue);
+                                console.log('Update transform:', hideLiveThreadsDesctransform.style.transform);
+                            }
+                        });
+                    }, 300); // 300ms delay
                 });
-                const gridDiv = document.querySelector('body [role="grid"]');
-                observer.observe(gridDiv, { attributes: true, attributeFilter: ['aria-hidden'] });
+                const obsElement = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`);
+                observer.observe(obsElement, { attributes: true, attributeFilter: ["style"] });
             } else if (transformValue === '0px') {
                 console.log('Transform value is 0px, re-running callback...');
                 findTimelineHeader(TimelineHeader);
