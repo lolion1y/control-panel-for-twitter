@@ -90,7 +90,6 @@ export type Config = {
   hideSidebarContent: boolean
   hideSuggestedFollows: boolean
   hideSideNavNewTweetButton: boolean
-  hideSidebarLive: boolean
   hideTimelineTweetBox: boolean
   hideToggleNavigation: boolean
   hideWhatsHappening: boolean
