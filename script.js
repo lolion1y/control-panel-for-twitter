@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     191.2
+// @version     191.3
 // ==/UserScript==
 void function() {
 
@@ -152,6 +152,7 @@ const config = {
   hideLiveThreadsDesc: true,
   hideFloatingTweetButton:true,
   preventNextVideoAutoplay: true,
+  disableVibrate: true,
 }
 //#endregion
 
@@ -4413,6 +4414,10 @@ const configureCss = (() => {
       }
       if (config.hideFloatingTweetButton) {
         hideCssSelectors.push('a[data-testid="FloatingActionButtons_Tweet_Button"]')
+      }
+      if (config.disableVibrate && navigator.vibrate) {
+          // const originalVibrate = navigator.vibrate.bind(navigator);
+          navigator.vibrate = function () { return false; }
       }
     }
     //#endregion

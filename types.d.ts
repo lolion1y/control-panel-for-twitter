@@ -102,6 +102,7 @@ export type Config = {
   preventNextVideoAutoplay: boolean
   hideLiveThreadsDesc: boolean
   hideFloatingTweetButton: boolean
+  disableVibrate: boolean
 }
 
 export type Locale = {
