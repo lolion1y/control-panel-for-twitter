@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     191.3.1
+// @version     192
 // ==/UserScript==
 void function() {
 
@@ -3022,17 +3022,23 @@ async function observeSidebar() {
         observeSearchForm()
       }
       // Process blue checks in the sidebar user box
-      if (config.twitterBlueChecks != 'ignore' && (!config.hideSidebarContent || config.showRelevantPeople && isOnIndividualTweetPage())) {
+      if (!config.hideSidebarContent) {
         void async function() {
-          let $aside = await getElement('aside[role="complementary"]', {
+          // Avoid false positive from Premium upsells in the sidebar
+          let $aside = await getElement('aside[role="complementary"]:not(:has(a[href^="/i/premium"]))', {
             name: 'sidebar aside box',
             context: $sidebar,
             stopIf: pageIsNot(currentPage),
             timeout: 2000,
           })
           if (!$aside) return
-          processBlueChecks($aside)
-          if (!isOnIndividualTweetPage()) $aside.parentElement.parentElement.classList.add('SuggestedFollows')
+          if (config.twitterBlueChecks != 'ignore') processBlueChecks($aside)
+          let $container = $aside.parentElement
+          while (!$container.nextElementSibling) $container = $container.parentElement
+          $container.classList.toggle(
+            'SuggestedFollows',
+            config.hideSuggestedFollows && !(config.showRelevantPeople && isOnIndividualTweetPage())
+          )
         }()
       }
       if (!config.hideSidebarContent && !isOnExplorePage()) {
@@ -3056,7 +3062,7 @@ async function observeSidebar() {
               }
             }, "sidebar What's happening timeline", {childList: true, subtree: true})
           )
-          $whatsHappeningTimeline.closest('section').parentElement.classList.add('WhatsHappening')
+          if (config.hideWhatsHappening) $whatsHappeningTimeline.closest('section').parentElement.classList.add('WhatsHappening')
         }()
       }
       if (!config.hideSidebarContent) {
@@ -5759,6 +5765,7 @@ function processCurrentPage() {
   }
 
   // Hooks for styling pages
+  if (!$body) $body = document.body
   $body.classList.toggle('Bookmarks', isOnBookmarksPage())
   $body.classList.toggle('Community', isOnCommunityPage())
   $body.classList.toggle('Communities', isOnCommunitiesPage())
@@ -6756,7 +6763,7 @@ async function tweakProfilePage() {
       ), {
         name: "you aren't verified yet premium upsell",
         stopIf: pageIsNot(currentPage),
-        timeout: 200,
+        timeout: 1000,
       }).then($upsell => {
         if ($upsell) {
           $upsell.classList.add('PremiumUpsell')
