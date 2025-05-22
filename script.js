@@ -3759,7 +3759,8 @@ const configureCss = (() => {
       `)
       // Hide upsell on the Likes tab in your own profile
       cssRules.push(`
-        body.OwnProfile ${Selectors.PRIMARY_COLUMN} div:has(> a[href^="/i/premium"]) {
+        body.OwnProfile ${Selectors.PRIMARY_COLUMN} div:has(> a[href^="/i/premium"]),
+        body.Profile ${Selectors.PRIMARY_COLUMN} div:has(> div > a[href^="/i/premium"]) {
           display: none;
         }
       `)
