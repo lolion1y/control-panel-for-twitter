@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     192.1
+// @version     192.2
 // ==/UserScript==
 void function() {
 
@@ -3761,8 +3761,9 @@ const configureCss = (() => {
       `)
       // Hide upsell on the Likes tab in your own profile
       cssRules.push(`
-        body.OwnProfile ${Selectors.PRIMARY_COLUMN} div:has(> a[href^="/i/premium"]),
-        body.Profile ${Selectors.PRIMARY_COLUMN} div:has(> div > a[href^="/i/premium"]) {
+        // body.OwnProfile ${Selectors.PRIMARY_COLUMN} div:has(> a[href^="/i/premium"]),
+        // body.Profile ${Selectors.PRIMARY_COLUMN} div:has(> div > a[href^="/i/premium"]),
+        body.OwnProfile ${Selectors.PRIMARY_COLUMN} nav + div:has(a[href^="/i/premium"]) {
           display: none;
         }
       `)
