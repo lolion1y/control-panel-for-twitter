@@ -277,7 +277,6 @@ const defaultConfig = {
   hideLiveBroadcastBar: false,
   hideMessagesBottomNavItem: false,
   preventNextVideoAutoplay: true,
-  hideLiveThreadsDesc: true,
 }
 //#endregion
 
