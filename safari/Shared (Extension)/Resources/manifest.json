@@ -4,13 +4,17 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescriptionShort__",
   "homepage_url": "https://soitis.dev/control-panel-for-twitter",
-  "version": "4.11.1",
+  "version": "4.12.1",
   "icons": {
     "48": "icon48.png",
     "96": "icon96.png",
     "128": "icon128.png",
     "256": "icon256.png",
     "512": "icon512.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {

@@ -1,6 +1,17 @@
 document.title = chrome.i18n.getMessage(`extensionName`)
 
 for (let optionValue of [
+  '1000',
+  '10000',
+  '100000',
+  '1000000',
+]) {
+  for (let $option of document.querySelectorAll(`option[value="${optionValue}"]`)) {
+    $option.textContent = formatFollowerCount(Number(optionValue))
+  }
+}
+
+for (let optionValue of [
   'badges',
   'comfortable',
   'compact',
@@ -35,6 +46,7 @@ for (let translationId of [
   'disabledHomeTimelineRedirectOption_messages',
   'dontUseChirpFontLabel',
   'dropdownMenuFontWeightLabel',
+  'enabled',
   'experimentsOptionsLabel',
   'exportConfigLabel',
   'fastBlockLabel',
@@ -47,8 +59,6 @@ for (let translationId of [
   'hideAccountSwitcherLabel',
   'hideAdsNavLabel',
   'hideAllMetricsLabel',
-  'hideBlueReplyFollowedByLabel',
-  'hideBlueReplyFollowingLabel',
   'hideBookmarkButtonLabel',
   'hideBookmarkMetricsLabel',
   'hideComposeTweetLabel',
@@ -110,12 +120,16 @@ for (let translationId of [
   'restoreLinkHeadlinesLabel',
   'restoreOtherInteractionLinksLabel',
   'restoreQuoteTweetsLinkLabel',
+  'restoreTweetSourceLabel',
   'retweetsLabel',
-  'sidebarLabel',
   'showBlueReplyFollowersCountAmountLabel',
-  'showBlueReplyVerifiedAccountsLabel',
   'showBookmarkButtonUnderFocusedTweetsLabel',
+  'showPremiumReplyBusinessLabel',
+  'showPremiumReplyFollowedByLabel',
+  'showPremiumReplyFollowingLabel',
+  'showPremiumReplyGovernmentLabel',
   'showRelevantPeopleLabel',
+  'sidebarLabel',
   'sortRepliesLabel',
   'tweakNewLayoutInfo',
   'tweakNewLayoutLabel',
@@ -181,8 +195,6 @@ const defaultConfig = {
   fastBlock: true,
   followButtonStyle: 'monochrome',
   hideAdsNav: true,
-  hideBlueReplyFollowedBy: false,
-  hideBlueReplyFollowing: false,
   hideBookmarkButton: false,
   hideBookmarkMetrics: true,
   hideBookmarksNav: false,
@@ -227,11 +239,15 @@ const defaultConfig = {
   restoreLinkHeadlines: true,
   restoreOtherInteractionLinks: false,
   restoreQuoteTweetsLink: true,
+  restoreTweetSource: true,
   retweets: 'separate',
-  showBlueReplyFollowersCountAmount: '1000000',
   showBlueReplyFollowersCount: false,
-  showBlueReplyVerifiedAccounts: false,
+  showBlueReplyFollowersCountAmount: '1000000',
   showBookmarkButtonUnderFocusedTweets: true,
+  showPremiumReplyBusiness: true,
+  showPremiumReplyFollowedBy: true,
+  showPremiumReplyFollowing: true,
+  showPremiumReplyGovernment: true,
   sortReplies: 'relevant',
   tweakNewLayout: false,
   tweakQuoteTweetsPage: true,
@@ -295,7 +311,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.11.1.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.12.1.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))

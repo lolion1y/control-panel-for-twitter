@@ -16,8 +16,6 @@ export type Config = {
   fastBlock: boolean
   followButtonStyle: 'monochrome' | 'themed'
   hideAdsNav: boolean
-  hideBlueReplyFollowedBy: boolean
-  hideBlueReplyFollowing: boolean
   hideBookmarkButton: boolean
   hideBookmarkMetrics: boolean
   hideBookmarksNav: boolean
@@ -67,11 +65,15 @@ export type Config = {
   restoreLinkHeadlines: boolean
   restoreQuoteTweetsLink: boolean
   restoreOtherInteractionLinks: boolean
+  restoreTweetSource: boolean
   retweets: SharedTweetsConfig
-  showBlueReplyFollowersCountAmount: string
   showBlueReplyFollowersCount: boolean
-  showBlueReplyVerifiedAccounts: boolean
+  showBlueReplyFollowersCountAmount: string
   showBookmarkButtonUnderFocusedTweets: boolean
+  showPremiumReplyBusiness: boolean
+  showPremiumReplyFollowedBy: boolean
+  showPremiumReplyFollowing: boolean
+  showPremiumReplyGovernment: boolean
   sortReplies: 'relevant' | 'recent' | 'liked'
   tweakNewLayout: boolean
   tweakQuoteTweetsPage: boolean
@@ -176,10 +178,11 @@ export type TweetType =
 export type TimelineItemType =
   | TweetType
   | 'BLUE_REPLY'
-  | 'VERIFIED_ORG_REPLY'
+  | 'BUSINESS_REPLY'
   | 'DISCOVER_MORE_HEADING'
   | 'DISCOVER_MORE_TWEET'
   | 'FOCUSED_TWEET'
+  | 'GOVERNMENT_REPLY'
   | 'HEADING'
   | 'INLINE_PROMPT'
   | 'SHOW_MORE'
@@ -199,6 +202,12 @@ export type TimelineOptions = {
 
 export type IndividualTweetTimelineOptions = {
   observers: Map<string, Disconnectable>
+  seen: WeakMap<Element, IndividualTweetDetails>
+}
+
+export type IndividualTweetDetails = {
+  itemType: TimelineItemType,
+  hidden: boolean | null,
 }
 
 export type UserInfo = {
@@ -209,4 +218,4 @@ export type UserInfo = {
 
 export type UserInfoObject = {[index: string]: UserInfo}
 
-export type VerifiedType = 'BLUE' | 'VERIFIED_ORG'
+export type VerifiedType = 'BLUE' | 'BUSINESS' | 'GOVERNMENT'

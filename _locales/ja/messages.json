@@ -50,6 +50,9 @@
   "dropdownMenuFontWeightLabel": {
     "message": "ドロップダウンメニューを通常のフォントの太さにする"
   },
+  "enabled": {
+    "message": "有効"
+  },
   "experimentsOptionsLabel": {
     "message": "実験的機能"
   },
@@ -64,6 +67,9 @@
   },
   "extensionName": {
     "message": "Control Panel for Twitter"
+  },
+  "extensionNameDisabled": {
+    "message": "Control Panel for Twitter (無効)"
   },
   "fastBlockLabel": {
     "message": "即ブロック（確認画面をスキップする）"
@@ -97,12 +103,6 @@
   },
   "hideAllMetricsLabel": {
     "message": "すべて非表示"
-  },
-  "hideBlueReplyFollowedByLabel": {
-    "message": "私をフォローしている人を非表示にする"
-  },
-  "hideBlueReplyFollowingLabel": {
-    "message": "フォローしている人を非表示にする"
   },
   "hideBookmarkButtonLabel": {
     "message": "ツイート下部のブックマークボタン"
@@ -353,6 +353,9 @@
   "restoreQuoteTweetsLinkLabel": {
     "message": "ツイートの下にある「引用ツイート」リンクを復元する"
   },
+  "restoreTweetSourceLabel": {
+    "message": "ツイートのソースラベルを復元"
+  },
   "retweetsLabel": {
     "message": "リツイート"
   },
@@ -366,18 +369,27 @@
     "message": "フォロワー数"
   },
   "showBlueReplyFollowersCountLabel": {
-    "message": "$AMOUNT$ 人以上のフォロワーを表示する",
+    "message": "フォロワー数が$AMOUNT$人を超えるアカウントを表示",
     "placeholders": {
       "amount": {
         "content": "$1"
       }
     }
   },
-  "showBlueReplyVerifiedAccountsLabel": {
-    "message": "「認証済み」アカウントを表示"
-  },
   "showBookmarkButtonUnderFocusedTweetsLabel": {
     "message": "フォーカスされたツイートの下に表示"
+  },
+  "showPremiumReplyBusinessLabel": {
+    "message": "認証済みビジネスアカウントを表示"
+  },
+  "showPremiumReplyFollowedByLabel": {
+    "message": "自分をフォローしているアカウントを表示"
+  },
+  "showPremiumReplyFollowingLabel": {
+    "message": "フォロー中のアカウントを表示"
+  },
+  "showPremiumReplyGovernmentLabel": {
+    "message": "認証済み政府機関アカウントを表示"
   },
   "showRelevantPeopleLabel": {
     "message": "ツイート閲覧時に「おすすめユーザー」を表示する"

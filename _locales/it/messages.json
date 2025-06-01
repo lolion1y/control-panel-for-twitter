@@ -50,6 +50,9 @@
   "dropdownMenuFontWeightLabel": {
     "message": "Usa il peso normale per il font dei menu a tendina"
   },
+  "enabled": {
+    "message": "Abilitato"
+  },
   "experimentsOptionsLabel": {
     "message": "Esperimenti"
   },
@@ -64,6 +67,9 @@
   },
   "extensionName": {
     "message": "Control Panel for Twitter"
+  },
+  "extensionNameDisabled": {
+    "message": "Control Panel for Twitter (disabilitato)"
   },
   "fastBlockLabel": {
     "message": "Blocco rapido (salta la conferma)"
@@ -97,12 +103,6 @@
   },
   "hideAllMetricsLabel": {
     "message": "Nascondi tutte"
-  },
-  "hideBlueReplyFollowedByLabel": {
-    "message": "Nascondi i miei seguaci"
-  },
-  "hideBlueReplyFollowingLabel": {
-    "message": "Nascondi i miei seguiti"
   },
   "hideBookmarkButtonLabel": {
     "message": "Tasto segnalibro sotto i tweet"
@@ -353,6 +353,9 @@
   "restoreQuoteTweetsLinkLabel": {
     "message": "Ripristina link dei tweet di citazione sotto ai tweet"
   },
+  "restoreTweetSourceLabel": {
+    "message": "Ripristina etichetta della fonte del Tweet"
+  },
   "retweetsLabel": {
     "message": "Retweet"
   },
@@ -366,7 +369,7 @@
     "message": "Numero di seguaci"
   },
   "showBlueReplyFollowersCountLabel": {
-    "message": "Mostra persone con più di $AMOUNT$ seguaci",
+    "message": "Mostra account con più di $AMOUNT$ follower",
     "placeholders": {
       "amount": {
         "content": "$1",
@@ -374,11 +377,20 @@
       }
     }
   },
-  "showBlueReplyVerifiedAccountsLabel": {
-    "message": "Mostra account \"verificati\""
-  },
   "showBookmarkButtonUnderFocusedTweetsLabel": {
     "message": "Mostra sotto ai tweet selezionati"
+  },
+  "showPremiumReplyBusinessLabel": {
+    "message": "Mostra account aziendali verificati"
+  },
+  "showPremiumReplyFollowedByLabel": {
+    "message": "Mostra account che mi seguono"
+  },
+  "showPremiumReplyFollowingLabel": {
+    "message": "Mostra account che seguo"
+  },
+  "showPremiumReplyGovernmentLabel": {
+    "message": "Mostra account governativi verificati"
   },
   "showRelevantPeopleLabel": {
     "message": "Mostra \"Persone rilevanti\" quando visualizzi un tweet"

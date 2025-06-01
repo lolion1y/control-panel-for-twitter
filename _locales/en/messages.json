@@ -51,6 +51,9 @@
   "dropdownMenuFontWeightLabel": {
     "message": "Use normal font weight in dropdown menus"
   },
+  "enabled": {
+    "message": "Enabled"
+  },
   "experimentsOptionsLabel": {
     "message": "Experiments"
   },
@@ -67,6 +70,9 @@
   },
   "extensionName": {
     "message": "Control Panel for Twitter"
+  },
+  "extensionNameDisabled": {
+    "message": "Control Panel for Twitter (disabled)"
   },
   "fastBlockLabel": {
     "message": "Fast blocking (skips confirm dialog)"
@@ -100,12 +106,6 @@
   },
   "hideAllMetricsLabel": {
     "message": "Hide all"
-  },
-  "hideBlueReplyFollowedByLabel": {
-    "message": "Hide people who follow me"
-  },
-  "hideBlueReplyFollowingLabel": {
-    "message": "Hide people I follow"
   },
   "hideBookmarkButtonLabel": {
     "message": "Bookmark button under tweets"
@@ -359,6 +359,9 @@
   "restoreQuoteTweetsLinkLabel": {
     "message": "Restore Quote Tweets link under Tweets"
   },
+  "restoreTweetSourceLabel": {
+    "message": "Restore Tweet source label"
+  },
   "retweetsLabel": {
     "message": "Retweets"
   },
@@ -372,7 +375,7 @@
     "message": "Number of followers"
   },
   "showBlueReplyFollowersCountLabel": {
-    "message": "Show people with over $AMOUNT$ followers",
+    "message": "Show accounts with over $AMOUNT$ followers",
     "placeholders": {
       "amount": {
         "content": "$1",
@@ -380,11 +383,20 @@
       }
     }
   },
-  "showBlueReplyVerifiedAccountsLabel": {
-    "message": "Show \"verified\" accounts"
-  },
   "showBookmarkButtonUnderFocusedTweetsLabel": {
     "message": "Show under focused tweets"
+  },
+  "showPremiumReplyBusinessLabel": {
+    "message": "Show verified Business accounts"
+  },
+  "showPremiumReplyFollowedByLabel": {
+    "message": "Show accounts which follow me"
+  },
+  "showPremiumReplyFollowingLabel": {
+    "message": "Show accounts I follow"
+  },
+  "showPremiumReplyGovernmentLabel": {
+    "message": "Show verified Government accounts"
   },
   "showRelevantPeopleLabel": {
     "message": "Show \"Relevant people\" when viewing a tweet"

@@ -9,7 +9,7 @@
 <body>
   <form>
     <section class="group">
-      <label class="checkbox">
+      <label class="checkbox" style="align-items: center;">
         <span style="display: flex; align-items: center; gap: .5em;">
           <img src="options-icon.png" class="icon">
           <span id="enabled">Enabled</span>
@@ -233,6 +233,13 @@
       </section>
       <section class="checkbox">
         <label>
+          <span id="restoreTweetSourceLabel">Restore Tweet source label</span>
+          <input type="checkbox" name="restoreTweetSource">
+          <span class="toggle"></span>
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
           <span id="restoreLinkHeadlinesLabel">Restore headlines under external links</span>
           <input type="checkbox" name="restoreLinkHeadlines">
           <span class="toggle"></span>
@@ -280,21 +287,35 @@
         </label>
         <section class="checkbox hidingTwitterBlueReplies">
           <label>
-            <span id="hideBlueReplyFollowingLabel">Hide people I follow</span>
-            <input type="checkbox" name="hideBlueReplyFollowing">
+            <span id="showPremiumReplyFollowingLabel">Show accounts I follow</span>
+            <input type="checkbox" name="showPremiumReplyFollowing">
             <span class="toggle"></span>
           </label>
         </section>
         <section class="checkbox hidingTwitterBlueReplies">
           <label>
-            <span id="hideBlueReplyFollowedByLabel">Hide people who follow me</span>
-            <input type="checkbox" name="hideBlueReplyFollowedBy">
+            <span id="showPremiumReplyFollowedByLabel">Show accounts which follow me</span>
+            <input type="checkbox" name="showPremiumReplyFollowedBy">
+            <span class="toggle"></span>
+          </label>
+        </section>
+        <section class="checkbox hidingTwitterBlueReplies">
+          <label>
+            <span id="showPremiumReplyBusinessLabel">Show verified Business accounts</span>
+            <input type="checkbox" name="showPremiumReplyBusiness">
+            <span class="toggle"></span>
+          </label>
+        </section>
+        <section class="checkbox hidingTwitterBlueReplies">
+          <label>
+            <span id="showPremiumReplyGovernmentLabel">Show verified Government accounts</span>
+            <input type="checkbox" name="showPremiumReplyGovernment">
             <span class="toggle"></span>
           </label>
         </section>
         <section class="checkbox group hidingTwitterBlueReplies">
           <label>
-            <span id="showBlueReplyFollowersCountLabel">Show people with over 1 million followers</span>
+            <span id="showBlueReplyFollowersCountLabel">Show accounts with over 1 million followers</span>
             <input type="checkbox" name="showBlueReplyFollowersCount">
             <span class="toggle"></span>
           </label>
@@ -309,13 +330,6 @@
               </select>
             </label>
           </section>
-        </section>
-        <section class="checkbox hidingTwitterBlueReplies">
-          <label>
-            <span id="showBlueReplyVerifiedAccountsLabel">Show "verified" accounts</span>
-            <input type="checkbox" name="showBlueReplyVerifiedAccounts">
-            <span class="toggle"></span>
-          </label>
         </section>
       </section>
       <section class="checkbox">
@@ -779,7 +793,7 @@
       </section>
     </section>
 
-    <div id="version">v4.11.1<span id="debugCountdown"></span></div>
+    <div id="version">v4.12.1<span id="debugCountdown"></span></div>
   </form>
   <script src="options.js"></script>
 </body>

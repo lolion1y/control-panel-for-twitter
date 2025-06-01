@@ -42,7 +42,15 @@ body:not(.uninvertedFollowButtons) .uninvertedFollowButtons {
 }
 
 .icon {
-  height: 1.25em;
+  height: 1.25rem;
+}
+
+body.macOS.safari .icon {
+  display: none;
+}
+
+body.iOS.safari .icon {
+  height: 1.75rem;
 }
 
 body.disabled .icon {
@@ -210,7 +218,7 @@ body.macOS.safari form > section:not(:first-of-type) {
   margin-top: 20px;
 }
 /* Add colons to option group labels */
-body.macOS.safari section.group > label:not(.checkbox)::after {
+body.macOS.safari form > section.group > label:not(.checkbox)::after {
   content: ":";
 }
 body.macOS.safari form > section.group > label {

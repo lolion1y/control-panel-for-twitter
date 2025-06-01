@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     193
+// @version     195
 // ==/UserScript==
 void function() {
 
@@ -114,13 +114,18 @@ const config = {
   reducedInteractionMode: false,
   restoreLinkHeadlines: false,
   replaceLogo: true,
+  restoreLinkHeadlines: true,
   restoreOtherInteractionLinks: false,
-  restoreQuoteTweetsLink: false,
-  retweets: '',
-  showBlueReplyFollowersCountAmount: '1000000',
+  restoreQuoteTweetsLink: true,
+  restoreTweetSource: true,
+  retweets: 'separate',
   showBlueReplyFollowersCount: false,
-  showBlueReplyVerifiedAccounts: false,
+  showBlueReplyFollowersCountAmount: '1000000',
   showBookmarkButtonUnderFocusedTweets: false,
+  showPremiumReplyBusiness: true,
+  showPremiumReplyFollowedBy: true,
+  showPremiumReplyFollowing: true,
+  showPremiumReplyGovernment: true,
   sortReplies: 'relevant',
   tweakNewLayout: false,
   tweakQuoteTweetsPage: true,
@@ -2007,8 +2012,12 @@ const URL_MEDIAVIEWER_RE = /^\/[a-zA-Z\d_]{1,20}\/status\/\d+\/mediaviewer$/i
 const URL_PROFILE_RE = /^\/([a-zA-Z\d_]{1,20})(?:\/(affiliates|with_replies|superfollows|highlights|articles|media|likes))?\/?$/
 // Matches URLs which show a user's Followers you know / Followers / Following tab
 const URL_PROFILE_FOLLOWS_RE = /^\/[a-zA-Z\d_]{1,20}\/(?:verified_followers|follow(?:ing|ers|ers_you_follow)|creator-subscriptions\/subscriptions)\/?$/
+/** Matches the start of any individual Tweet URL, capturing the user and id */
+const URL_TWEET_BASE_RE = /^\/([a-zA-Z\d_]{1,20})\/status\/(\d+)/
+/** Matches the entire URL when viewing an individual Tweet, including optional end slash */
 const URL_TWEET_RE = /^\/([a-zA-Z\d_]{1,20})\/status\/(\d+)\/?$/
-const URL_TWEET_ENGAGEMENT_RE = /^\/[a-zA-Z\d_]{1,20}\/status\/\d+\/(quotes|retweets|reposts|likes)\/?$/
+/** Matches Tweet interactions page URLs, capturing the path segment for the current tab */
+const URL_TWEET_INTERACTIONS_RE = /^\/[a-zA-Z\d_]{1,20}\/status\/\d+\/(quotes|retweets|reposts|likes)\/?$/
 
 // The Twitter Media Assist exension adds a new button at the end of the action
 // bar (#346)
@@ -2183,6 +2192,10 @@ function isOnMessagesPage() {
   return currentPath.startsWith('/messages')
 }
 
+function isOnComposeTweetPage() {
+  return currentPath.startsWith(PagePaths.COMPOSE_TWEET)
+}
+
 function isOnNotificationsPage() {
   return currentPath.startsWith('/notifications')
 }
@@ -2195,8 +2208,7 @@ function isOnProfilePage() {
 }
 
 function isOnQuoteTweetsPage() {
-  let match = currentPath.match(URL_TWEET_ENGAGEMENT_RE)
-  return match?.[1] == 'quotes'
+  return currentPath.match(URL_TWEET_INTERACTIONS_RE)?.[1] == 'quotes'
 }
 
 function isOnSearchPage() {
@@ -2238,7 +2250,7 @@ function blueCheck($svg) {
     warn('blueCheck was given', $svg)
     return
   }
-  $svg.classList.add('tnt_blue_check')
+  $svg.classList.add('cpft_blue_check')
   // Safari doesn't support using `d: path(…)` to replace paths in an SVG, so
   // we have to manually patch the path in it.
   if (isSafari && config.twitterBlueChecks == 'replace') {
@@ -2253,7 +2265,7 @@ function twitterLogo($svgPath) {
   // Safari doesn't support using `d: path(…)` to replace paths in an SVG, so
   // we have to manually patch the path in it.
   $svgPath.setAttribute('d', Svgs.TWITTER_LOGO_PATH)
-  $svgPath.classList.add('tnt_logo')
+  $svgPath.classList.add('cpft_logo')
 }
 
 /**
@@ -2431,16 +2443,16 @@ function getThemeColorFromState() {
 /**
  * Gets cached tweet info from React state.
  */
-function getTweetInfo(id) {
+function getTweetInfo(tweetId) {
   let tweetEntities = getStateEntities()?.tweets?.entities
   if (tweetEntities) {
-    let tweetInfo = tweetEntities[id]
+    let tweetInfo = tweetEntities[tweetId]
     if (!tweetInfo) {
-      warn('tweet info not found')
+      warn('tweet info not found', tweetId)
     }
     return tweetInfo
   } else {
-    warn('tweet entities not found')
+    warn('tweet entities not found', tweetId)
   }
 }
 
@@ -2596,7 +2608,7 @@ function setTweetButtonText($tweetButtonText) {
 }
 
 function storeConfigChanges(changes) {
-  window.postMessage({type: 'tntConfigChange', changes})
+  window.postMessage({type: 'cpftConfigChange', changes})
 }
 //#endregion
 
@@ -2637,6 +2649,7 @@ function observeBodyBackgroundColor() {
  * @param {HTMLElement} $popup
  */
 async function observeDesktopComposeTweetModal($popup) {
+  $popup.classList.add('ComposeTweetModal')
   if (!config.replaceLogo) return
 
   let $mask = await getElement('[data-testid="twc-cc-mask"]', {
@@ -2769,8 +2782,9 @@ async function observeDesktopModalTimeline($popup) {
    * @param {HTMLElement} $timeline
    */
   function observeModalTimelineItems($timeline) {
+    let seen = new Map()
     observeElement($timeline, () => {
-      onIndividualTweetTimelineChange($timeline, {observers: modalObservers})
+      onIndividualTweetTimelineChange($timeline, {observers: modalObservers, seen})
     }, {
       name: 'modal timeline',
       observers: modalObservers,
@@ -2782,8 +2796,9 @@ async function observeDesktopModalTimeline($popup) {
         for (let $newTimeline of mutation.addedNodes) {
           if (!($newTimeline instanceof HTMLElement)) continue
           log('modal timeline replaced')
+          seen = new Map()
           observeElement($newTimeline, () => {
-            onIndividualTweetTimelineChange($newTimeline, {observers: modalObservers})
+            onIndividualTweetTimelineChange($newTimeline, {observers: modalObservers, seen})
           }, {
             name: 'modal timeline',
             observers: modalObservers,
@@ -3322,8 +3337,9 @@ async function observeIndividualTweetTimeline(page) {
    * @param {HTMLElement} $timeline
    */
   function observeTimelineItems($timeline) {
+    let seen = new WeakMap()
     observeElement($timeline, () => {
-      onIndividualTweetTimelineChange($timeline, {observers: pageObservers})
+      onIndividualTweetTimelineChange($timeline, {observers: pageObservers, seen})
     }, {
       leading: true,
       name: 'individual tweet timeline',
@@ -3378,7 +3394,7 @@ async function addAddMutedWordMenuItem($link, linkSelector) {
   }
 
   let $addMutedWord = /** @type {HTMLElement} */ ($link.parentElement.cloneNode(true))
-  $addMutedWord.classList.add('tnt_menu_item')
+  $addMutedWord.classList.add('cpft_menu_item')
   $addMutedWord.querySelector('a').href = PagePaths.ADD_MUTED_WORD
   $addMutedWord.querySelector('span').textContent = getString('ADD_MUTED_WORD')
   $addMutedWord.querySelector('svg').innerHTML = Svgs.MUTE
@@ -3416,7 +3432,7 @@ async function addMuteQuotesMenuItems($blockMenuItem) {
   }
 
   let $muteQuotes = /** @type {HTMLElement} */ ($blockMenuItem.previousElementSibling.cloneNode(true))
-  $muteQuotes.classList.add('tnt_menu_item')
+  $muteQuotes.classList.add('cpft_menu_item')
   $muteQuotes.querySelector('span').textContent = getString('MUTE_THIS_CONVERSATION')
   $muteQuotes.addEventListener('click', (e) => {
     e.preventDefault()
@@ -3434,7 +3450,7 @@ async function addMuteQuotesMenuItems($blockMenuItem) {
 
   if (quotedTweet?.quotedBy) {
     let $toggleQuotes = /** @type {HTMLElement} */ ($blockMenuItem.previousElementSibling.cloneNode(true))
-    $toggleQuotes.classList.add('tnt_menu_item')
+    $toggleQuotes.classList.add('cpft_menu_item')
     $toggleQuotes.querySelector('span').textContent = getString(`TURN_OFF_QUOTE_TWEETS`)
     $toggleQuotes.querySelector('svg').innerHTML = Svgs.RETWEETS_OFF
     $toggleQuotes.addEventListener('click', (e) => {
@@ -3501,7 +3517,7 @@ async function addToggleListRetweetsMenuItem($switchMenuItem) {
   }
 
   let $toggleRetweets = /** @type {HTMLElement} */ ($switchMenuItem.cloneNode(true))
-  $toggleRetweets.classList.add('tnt_menu_item')
+  $toggleRetweets.classList.add('cpft_menu_item')
   $toggleRetweets.querySelector('span').textContent = getString(`TURN_${config.listRetweets == 'ignore' ? 'OFF' : 'ON'}_RETWEETS`)
   $toggleRetweets.querySelector('svg').innerHTML = config.listRetweets == 'ignore' ? Svgs.RETWEETS_OFF : Svgs.RETWEET
   // Remove subtitle if the cloned menu item has one
@@ -3603,8 +3619,14 @@ const configureCss = (() => {
     }
 
     let cssRules = [`
-      .tnt_font_family {
+      .cpft_font_family, .cpft_text {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      .cpft_separator {
+        padding: 0 4px;
+      }
+      .cpft_text {
+        color: var(--color);
       }
     `]
     let hideCssSelectors = [
@@ -3636,7 +3658,7 @@ const configureCss = (() => {
         --color-emphasis: rgb(247, 249, 249);
         --hover-bg-color: rgb(22, 24, 28);
       }
-      .tnt_menu_item:hover { background-color: var(--hover-bg-color) !important; }
+      .cpft_menu_item:hover { background-color: var(--hover-bg-color) !important; }
     `)
 
     if (config.alwaysUseLatestTweets && config.hideForYouTimeline) {
@@ -3816,6 +3838,8 @@ const configureCss = (() => {
         '[data-testid="super-upsell-UpsellCardRenderProperties"]',
         // "you aren't verified yet" in Premium user profile
         '[data-testid="verified_profile_visitor_upsell"]',
+        // "Upgrade to Premium+ to write longer posts" in Tweet composer
+        `${mobile ? 'body.ComposeTweetPage' : ':is(.ComposeTweetModal, .TweetBox)'} [aria-live="polite"][role="status"]:has(a[href="/i/premium_sign_up?referring_page=post-composer"])`,
       )
       // Hide Highlights and Articles tabs in your own profile if you don't have Premium
       let profileTabsList = `body.OwnProfile:not(.PremiumProfile) ${Selectors.PRIMARY_COLUMN} nav div[role="tablist"]`
@@ -3854,11 +3878,8 @@ const configureCss = (() => {
       `)
     }
     if (config.hideViews) {
-      hideCssSelectors.push(
-        // "Views" under the focused tweet
-        '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2)',
-        '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2) + div[dir]:last-child'
-      )
+      // "Views" under the focused tweet
+      hideCssSelectors.push('.Views')
     }
     if (config.hideWhoToFollowEtc) {
       hideCssSelectors.push(`body.Profile ${Selectors.PRIMARY_COLUMN} aside[role="complementary"]`)
@@ -3870,25 +3891,33 @@ const configureCss = (() => {
       )
     }
     if (config.restoreLinkHeadlines) {
+      cssRules.push(`
+        .cpft_link_headline[hidden] {
+          display: block;
+          border-top: 1px solid var(--border-color);
+          padding: 14px;
+        }
+      `)
       hideCssSelectors.push(
         // Existing headline overlaid on the card
-        '.tnt_overlay_headline',
+        '.cpft_overlay_headline',
         // From <domain> link after the card
         'div[data-testid="card.wrapper"] + a',
       )
-    } else {
-      hideCssSelectors.push('.tnt_link_headline')
     }
     if (config.restoreQuoteTweetsLink || config.restoreOtherInteractionLinks) {
       cssRules.push(`
-        #tntInteractionLinks a {
+        #cpftInteractionLinks[hidden] {
+          display: block;
+        }
+        #cpftInteractionLinks a {
           text-decoration: none;
           color: var(--color);
         }
-        #tntInteractionLinks a:hover span:last-child {
+        #cpftInteractionLinks a:hover span:last-child {
           text-decoration: underline;
         }
-        #tntQuoteTweetCount, #tntRetweetCount, #tntLikeCount {
+        #cpftQuoteTweetCount, #cpftRetweetCount, #cpftLikeCount {
           margin-right: 2px;
           font-weight: 700;
           color: var(--color-emphasis);
@@ -3898,25 +3927,26 @@ const configureCss = (() => {
           display: none;
         }
       `)
-    } else {
-      hideCssSelectors.push('#tntInteractionLinks')
     }
     if (!config.restoreQuoteTweetsLink) {
-      hideCssSelectors.push('#tntQuoteTweetsLink')
+      hideCssSelectors.push('#cpftQuoteTweetsLink')
     }
     if (!config.restoreOtherInteractionLinks) {
-      hideCssSelectors.push('#tntRetweetsLink', '#tntLikesLink')
+      hideCssSelectors.push('#cpftRetweetsLink', '#cpftLikesLink')
+    }
+    if (config.restoreTweetSource) {
+      cssRules.push('.TweetSource[hidden] { display: inline; }')
     }
     if (config.tweakQuoteTweetsPage) {
       // Hide the quoted tweet, which is repeated in every quote tweet
       hideCssSelectors.push('body.QuoteTweets [data-testid="tweet"] [aria-labelledby] > div:last-child')
     }
     if (config.twitterBlueChecks == 'hide') {
-      hideCssSelectors.push('.tnt_blue_check')
+      hideCssSelectors.push('.cpft_blue_check')
     }
     if (config.twitterBlueChecks == 'replace') {
       cssRules.push(`
-        :is(${Selectors.VERIFIED_TICK}, svg[data-testid="verificationBadge"]).tnt_blue_check path {
+        :is(${Selectors.VERIFIED_TICK}, svg[data-testid="verificationBadge"]).cpft_blue_check path {
           d: path("${Svgs.BLUE_LOGO_PATH}");
         }
       `)
@@ -3926,14 +3956,14 @@ const configureCss = (() => {
       if (hasNewLayout()) {
         // The new layout only has colour to distinguish the active tab
         cssRules.push(`
-          body:not(.SeparatedTweets) #tnt_separated_tweets_tab > a > div > div,
-          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#tnt_separated_tweets_tab) > a > div > div {
+          body:not(.SeparatedTweets) #cpftSeparatedTweetsTab > a > div > div,
+          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#cpftSeparatedTweetsTab) > a > div > div {
             color: var(--color) !important;
           }
-          body.SeparatedTweets #tnt_separated_tweets_tab > a > div > div {
+          body.SeparatedTweets #cpftSeparatedTweetsTab > a > div > div {
             color: var(--color-emphasis) !important;
           }
-          body.Desktop #tnt_separated_tweets_tab:hover > a > div > div {
+          body.Desktop #cpftSeparatedTweetsTab:hover > a > div > div {
             color: var(--color-emphasis) !important;
           }
         `)
@@ -3948,25 +3978,25 @@ const configureCss = (() => {
           body.LightsOut {
             --tab-hover: rgba(231, 233, 234, 0.1);
           }
-          body.Desktop #tnt_separated_tweets_tab:hover,
-          body.Mobile:not(.SeparatedTweets) #tnt_separated_tweets_tab:hover,
-          body.Mobile #tnt_separated_tweets_tab:active {
+          body.Desktop #cpftSeparatedTweetsTab:hover,
+          body.Mobile:not(.SeparatedTweets) #cpftSeparatedTweetsTab:hover,
+          body.Mobile #cpftSeparatedTweetsTab:active {
             background-color: var(--tab-hover);
           }
-          body:not(.SeparatedTweets) #tnt_separated_tweets_tab > a > div > div,
-          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#tnt_separated_tweets_tab) > a > div > div {
+          body:not(.SeparatedTweets) #cpftSeparatedTweetsTab > a > div > div,
+          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#cpftSeparatedTweetsTab) > a > div > div {
             font-weight: normal !important;
             color: var(--color) !important;
           }
-          body.SeparatedTweets #tnt_separated_tweets_tab > a > div > div {
+          body.SeparatedTweets #cpftSeparatedTweetsTab > a > div > div {
             font-weight: bold;
             color: var(--color-emphasis); !important;
           }
-          body:not(.SeparatedTweets) #tnt_separated_tweets_tab > a > div > div > div,
-          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#tnt_separated_tweets_tab) > a > div > div > div {
+          body:not(.SeparatedTweets) #cpftSeparatedTweetsTab > a > div > div > div,
+          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#cpftSeparatedTweetsTab) > a > div > div > div {
             height: 0 !important;
           }
-          body.SeparatedTweets #tnt_separated_tweets_tab > a > div > div > div {
+          body.SeparatedTweets #cpftSeparatedTweetsTab > a > div > div > div {
             height: 4px !important;
             min-width: 56px;
             width: 100%;
@@ -4339,7 +4369,7 @@ const configureCss = (() => {
         )
       }
       if (config.retweets != 'separate' && config.quoteTweets != 'separate') {
-        hideCssSelectors.push('#tnt_separated_tweets_tab')
+        hideCssSelectors.push('#cpftSeparatedTweetsTab')
       }
     }
     //#endregion
@@ -4586,13 +4616,13 @@ function configureHideMetricsCss(cssRules, hideCssSelectors) {
   }
 
   if (config.hideQuoteTweetMetrics) {
-    hideCssSelectors.push('#tntQuoteTweetCount')
+    hideCssSelectors.push('#cpftQuoteTweetCount')
   }
   if (config.hideRetweetMetrics) {
-    hideCssSelectors.push('#tntRetweetCount')
+    hideCssSelectors.push('#cpftRetweetCount')
   }
   if (config.hideLikeMetrics) {
-    hideCssSelectors.push('#tntLikeCount')
+    hideCssSelectors.push('#cpftLikeCount')
   }
 }
 
@@ -4627,8 +4657,8 @@ const configureDynamicCss = (() => {
 
     if (fontSize != null && config.navBaseFontSize) {
       cssRules.push(`
-        ${Selectors.PRIMARY_NAV_DESKTOP} div[dir] span { font-size: ${fontSize}; font-weight: normal; }
-        ${Selectors.PRIMARY_NAV_DESKTOP} div[dir] { margin-top: -4px; }
+        ${Selectors.PRIMARY_NAV_DESKTOP} div[dir]:not([aria-live]) span { font-size: ${fontSize}; font-weight: normal; }
+        ${Selectors.PRIMARY_NAV_DESKTOP} div[dir]:not([aria-live]) { margin-top: -4px; }
       `)
     }
 
@@ -4740,7 +4770,7 @@ const configureThemeCss = (() => {
     // Active tab colour for custom tabs
     if (themeColor != null && shouldShowSeparatedTweetsTab()) {
       cssRules.push(`
-        body.SeparatedTweets #tnt_separated_tweets_tab > a > div > div > div {
+        body.SeparatedTweets #cpftSeparatedTweetsTab > a > div > div > div {
           background-color: ${themeColor} !important;
         }
       `)
@@ -4752,7 +4782,7 @@ const configureThemeCss = (() => {
           fill: ${THEME_BLUE};
           d: path("${Svgs.TWITTER_LOGO_PATH}");
         }
-        .tnt_logo {
+        .cpft_logo {
           fill: ${THEME_BLUE};
         }
         svg path[d="${Svgs.X_HOME_ACTIVE_PATH}"] {
@@ -5183,7 +5213,7 @@ function handlePopup($popup) {
       let $verificationBadge = /** @type {HTMLElement} */ ($popup.querySelector('[data-testid="sheetDialog"] [data-testid="verificationBadge"]'))
       if ($verificationBadge) {
         result.tookAction = true
-        let $headerBlueCheck = document.querySelector(`body.Profile ${Selectors.MOBILE_TIMELINE_HEADER} .tnt_blue_check`)
+        let $headerBlueCheck = document.querySelector(`body.Profile ${Selectors.MOBILE_TIMELINE_HEADER} .cpft_blue_check`)
         if ($headerBlueCheck) {
           blueCheck($verificationBadge)
         }
@@ -5199,7 +5229,7 @@ function handlePopup($popup) {
         }).then(($verificationBadge) => {
           if (!$verificationBadge) return
 
-          let $headerBlueCheck = document.querySelector(`body.Profile ${Selectors.PRIMARY_COLUMN} > div > div:first-of-type h2 .tnt_blue_check`)
+          let $headerBlueCheck = document.querySelector(`body.Profile ${Selectors.PRIMARY_COLUMN} > div > div:first-of-type h2 .cpft_blue_check`)
           if (!$headerBlueCheck) return
 
           // Wait for the hovercard to render its contents
@@ -5242,7 +5272,9 @@ function getVerifiedType($svg) {
       // Ignore Twitter associated checks
       return null
     if (props.verifiedType == 'Business')
-      return 'VERIFIED_ORG'
+      return 'BUSINESS'
+    if (props.verifiedType == 'Government')
+      return 'GOVERNMENT'
     if (props.isBlueVerified)
       return 'BLUE'
   }
@@ -5489,12 +5521,16 @@ function onTimelineChange($timeline, page, options = {}) {
 function onIndividualTweetTimelineChange($timeline, options) {
   let startTime = Date.now()
 
+  let {seen} = options
   let itemTypes = {}
   let hiddenItemCount = 0
   let hiddenItemTypes = {}
+  let processedCount = 0
 
+  /** @type {Element} */
+  let $previousItem
   /** @type {?boolean} */
-  let hidPreviousItem = null
+  let hidPreviousItem
   /** @type {boolean} */
   let hideAllSubsequentItems = false
   /** @type {string} */
@@ -5509,6 +5545,12 @@ function onIndividualTweetTimelineChange($timeline, options) {
   let $focusedTweet
 
   for (let $item of $timeline.children) {
+    if (seen.has($item)) {
+      $previousItem = $item
+      hidPreviousItem = seen.get($previousItem).hidden
+      continue
+    }
+
     /** @type {?import("./types").TimelineItemType} */
     let itemType = null
     /** @type {?boolean} */
@@ -5581,17 +5623,20 @@ function onIndividualTweetTimelineChange($timeline, options) {
             // Don't hide replies by the user if they have Premium
             !isUser) {
           itemType = `${tweetVerifiedType}_REPLY`
-          if (!hideItem) {
+          if (config.hideTwitterBlueReplies) {
             let user = userInfo[screenName]
-            let shouldHideBasedOnVerifiedType = config.hideTwitterBlueReplies && (
-              tweetVerifiedType == 'BLUE' ||
-              tweetVerifiedType == 'VERIFIED_ORG' && !config.showBlueReplyVerifiedAccounts
+            if (!user && config.debugLogTimelineStats) {
+              log('hideTwitterBlueReplies: user info not found for', screenName)
+            }
+            hideItem = !(
+              config.showPremiumReplyBusiness && tweetVerifiedType == 'BUSINESS' ||
+              config.showPremiumReplyGovernment && tweetVerifiedType == 'GOVERNMENT' ||
+              (user != null && (
+                config.showPremiumReplyFollowing && user.following ||
+                config.showPremiumReplyFollowedBy && user.followedBy ||
+                config.showBlueReplyFollowersCount && user.followersCount >= Number(config.showBlueReplyFollowersCountAmount)
+              ))
             )
-            hideItem = shouldHideBasedOnVerifiedType && (user == null || !(
-              user.following && !config.hideBlueReplyFollowing ||
-              user.followedBy && !config.hideBlueReplyFollowedBy ||
-              config.showBlueReplyFollowersCount && user.followersCount >= Number(config.showBlueReplyFollowersCountAmount)
-            ))
           }
         }
       }
@@ -5679,18 +5724,28 @@ function onIndividualTweetTimelineChange($timeline, options) {
       }
     }
 
+    if (debug && config.debugLogTimelineStats && (itemType == null || hideItem == null)) {
+      warn('unhandled timeline item', {$item, itemType, hideItem})
+    }
+
+    $previousItem = $item
     hidPreviousItem = hideItem
+    seen.set($item, {itemType, hidden: hideItem})
+    processedCount++
   }
 
   for (let change of changes) {
     change.$item.firstElementChild.classList.toggle('HiddenTweet', change.hideItem)
   }
 
-  tweakFocusedTweet($focusedTweet, options)
+  if ($focusedTweet && !seen.has($focusedTweet)) {
+    tweakFocusedTweet($focusedTweet, options)
+    seen.set($focusedTweet, {itemType: 'FOCUSED_TWEET', hidden: false})
+  }
 
   if (debug && config.debugLogTimelineStats) {
     log(
-      `processed ${$timeline.children.length} thread item${s($timeline.children.length)} in ${Date.now() - startTime}ms`,
+      `processed ${processedCount} new thread item${s(processedCount)} in ${Date.now() - startTime}ms`,
       itemTypes, `hid ${hiddenItemCount}`, hiddenItemTypes
     )
   }
@@ -5855,7 +5910,7 @@ function onTitleChange(title) {
  * @param {HTMLElement} $el
  */
 function processBlueChecks($el) {
-  for (let $svg of $el.querySelectorAll(`${Selectors.VERIFIED_TICK}:not(.tnt_blue_check)`)) {
+  for (let $svg of $el.querySelectorAll(`${Selectors.VERIFIED_TICK}:not(.cpft_blue_check)`)) {
     if (isBlueVerified($svg)) {
       blueCheck($svg)
     }
@@ -5898,6 +5953,8 @@ function processCurrentPage() {
   $body.classList.toggle('Settings', isOnSettingsPage())
   $body.classList.toggle('MobileMedia', mobile && URL_MEDIA_RE.test(location.pathname))
   $body.classList.toggle('MediaViewer', mobile && URL_MEDIAVIEWER_RE.test(location.pathname))
+  $body.classList.toggle('ComposeTweetPage', mobile && isOnComposeTweetPage())
+  // Always remove this as it's a fake page
   $body.classList.remove('SeparatedTweets')
 
   if (desktop) {
@@ -5941,7 +5998,7 @@ function processCurrentPage() {
   else if (isOnSearchPage()) {
     tweakSearchPage()
   }
-  else if (URL_TWEET_ENGAGEMENT_RE.test(currentPath)) {
+  else if (URL_TWEET_INTERACTIONS_RE.test(currentPath)) {
     tweakTweetEngagementPage()
   }
   else if (isOnListPage()) {
@@ -5971,7 +6028,7 @@ function processCurrentPage() {
 
   // On mobile, these are pages instead of modals
   if (mobile) {
-    if (currentPath == PagePaths.COMPOSE_TWEET) {
+    if (isOnComposeTweetPage()) {
       tweakMobileComposeTweetPage()
     }
     else if (URL_MEDIAVIEWER_RE.test(currentPath)) {
@@ -6005,7 +6062,7 @@ function redirectToTwitter() {
  */
 function removeMobileTimelineHeaderElements() {
   if (mobile) {
-    document.querySelector('#tnt_separated_tweets_tab')?.remove()
+    document.querySelector('#cpftSeparatedTweetsTab')?.remove()
   }
 }
 
@@ -6020,8 +6077,8 @@ function restoreLinkHeadline($tweet) {
   if ($link && !$link.dataset.headlineRestored) {
     let [site, ...rest] = $link.getAttribute('aria-label').split(' ')
     let headline = rest.join(' ')
-    $link.lastElementChild?.classList.add('tnt_overlay_headline')
-    $link.insertAdjacentHTML('beforeend', `<div class="tnt_link_headline ${fontFamilyRule?.selectorText?.replace('.', '') || 'tnt_font_family'}" style="border-top: 1px solid var(--border-color); padding: 14px;">
+    $link.lastElementChild?.classList.add('cpft_overlay_headline')
+    $link.insertAdjacentHTML('beforeend', `<div class="cpft_link_headline ${fontFamilyRule?.selectorText?.replace('.', '') || 'cpft_font_family'}" hidden>
       <div style="color: var(--color); margin-bottom: 2px;">${site}</div>
       <div style="color: var(--color-emphasis)">${headline}</div>
     </div>`)
@@ -6032,20 +6089,20 @@ function restoreLinkHeadline($tweet) {
 /**
  * @param {HTMLElement} $focusedTweet
  */
-function restoreTweetInteractionsLinks($focusedTweet) {
+function restoreTweetInteractionsLinks($focusedTweet, tweetInfo) {
   if (!config.restoreQuoteTweetsLink && !config.restoreOtherInteractionLinks) return
 
-  let [tweetLink, tweetId] = location.pathname.match(/^\/[a-zA-Z\d_]{1,20}\/status\/(\d+)/) ?? []
-  let tweetInfo = getTweetInfo(tweetId)
-  log('focused tweet', {tweetLink, tweetId, tweetInfo})
-  if (!tweetInfo) return
+  if (!tweetInfo) {
+    warn('restoreTweetInteractionsLinks: focused tweet info not available')
+    return
+  }
 
   let isOwnTweet = Boolean($focusedTweet.querySelector('a[data-testid="analyticsButton"]'))
   let shouldDisplayLinks = (
     (config.restoreQuoteTweetsLink && tweetInfo.quote_count > 0) ||
     (config.restoreOtherInteractionLinks && (tweetInfo.retweet_count > 0 || isOwnTweet && tweetInfo.favorite_count > 0))
   )
-  let $existingLinks = $focusedTweet.querySelector('#tntInteractionLinks')
+  let $existingLinks = $focusedTweet.querySelector('#cpftInteractionLinks')
   if (!shouldDisplayLinks || $existingLinks) {
     if (!shouldDisplayLinks) $existingLinks?.remove()
     return
@@ -6054,23 +6111,24 @@ function restoreTweetInteractionsLinks($focusedTweet) {
   let $group = $focusedTweet.querySelector('[role="group"][id^="id__"]')
   if (!$group) return warn('focused tweet action bar not found')
 
+  let tweetLink = location.pathname.match(URL_TWEET_BASE_RE)?.[0]
   $group.parentElement.insertAdjacentHTML('beforebegin', `
-    <div id="tntInteractionLinks">
-      <div class="${fontFamilyRule?.selectorText?.replace('.', '') || 'tnt_font_family'}" style="padding: 16px 4px; border-top: 1px solid var(--border-color); display: flex; gap: 20px;">
-        ${tweetInfo.quote_count > 0 ? `<a id="tntQuoteTweetsLink" class="quoteTweets" href="${tweetLink}/quotes" dir="auto" role="link">
-          <span id="tntQuoteTweetCount">
+    <div id="cpftInteractionLinks" hidden>
+      <div class="${fontFamilyRule?.selectorText?.replace('.', '') || 'cpft_font_family'}" style="padding: 16px 4px; border-top: 1px solid var(--border-color); display: flex; gap: 20px;">
+        ${tweetInfo.quote_count > 0 ? `<a id="cpftQuoteTweetsLink" class="quoteTweets" href="${tweetLink}/quotes" dir="auto" role="link">
+          <span id="cpftQuoteTweetCount">
             ${Intl.NumberFormat(lang, {notation: tweetInfo.quote_count < 10000 ? 'standard' : 'compact', compactDisplay: 'short'}).format(tweetInfo.quote_count)}
           </span>
           <span>${getString(tweetInfo.quote_count == 1 ? (config.replaceLogo ? 'QUOTE_TWEET' : 'QUOTE') : (config.replaceLogo ? 'QUOTE_TWEETS' : 'QUOTES'))}</span>
         </a>` : ''}
-        ${tweetInfo.retweet_count > 0 ? `<a id="tntRetweetsLink" data-tab="2" href="${tweetLink}/retweets" dir="auto" role="link">
-          <span id="tntRetweetCount">
+        ${tweetInfo.retweet_count > 0 ? `<a id="cpftRetweetsLink" data-tab="2" href="${tweetLink}/retweets" dir="auto" role="link">
+          <span id="cpftRetweetCount">
             ${Intl.NumberFormat(lang, {notation: tweetInfo.retweet_count < 10000 ? 'standard' : 'compact', compactDisplay: 'short'}).format(tweetInfo.retweet_count)}
           </span>
           <span>${getString(config.replaceLogo ? 'RETWEETS' : 'REPOSTS')}</span>
         </a>` : ''}
-        ${isOwnTweet && tweetInfo.favorite_count > 0 ? `<a id="tntLikesLink" data-tab="3" href="${tweetLink}/likes" dir="auto" role="link">
-          <span id="tntLikeCount">
+        ${isOwnTweet && tweetInfo.favorite_count > 0 ? `<a id="cpftLikesLink" data-tab="3" href="${tweetLink}/likes" dir="auto" role="link">
+          <span id="cpftLikeCount">
             ${Intl.NumberFormat(lang, {notation: tweetInfo.favorite_count < 10000 ? 'standard' : 'compact', compactDisplay: 'short'}).format(tweetInfo.favorite_count)}
           </span>
           <span>${getString('LIKES')}</span>
@@ -6079,7 +6137,7 @@ function restoreTweetInteractionsLinks($focusedTweet) {
     </div>
   `)
 
-  let links = /** @type {NodeListOf<HTMLAnchorElement>} */ ($focusedTweet.querySelectorAll('#tntInteractionLinks a'))
+  let links = /** @type {NodeListOf<HTMLAnchorElement>} */ ($focusedTweet.querySelectorAll('#cpftInteractionLinks a'))
   links.forEach(($link) => {
     $link.addEventListener('click', async (e) => {
       let $caret = /** @type {HTMLElement} */ ($focusedTweet.querySelector('[data-testid="caret"]'))
@@ -6364,55 +6422,66 @@ function tweakDisplaySettingsPage() {
   }
 }
 
-const tweakFocusedTweet = (() => {
-  let waitingForFocusedTweetEditor = false
-
-  /**
-   * @param {HTMLElement} $focusedTweet
-   * @param {import("./types").IndividualTweetTimelineOptions} options
-   */
-  return async function tweakFocusedTweet($focusedTweet, options) {
-    let {observers} = options
-
-    if (!$focusedTweet) {
-      if (desktop) {
-        waitingForFocusedTweetEditor = false
-        observers.get('tweet editor')?.disconnect()
-      }
-      return
-    }
-
-    tweakOwnFocusedTweet($focusedTweet)
-    restoreTweetInteractionsLinks($focusedTweet)
-
-    if (desktop && config.replaceLogo &&
-        !waitingForFocusedTweetEditor &&
-        !observers.has('tweet editor')) {
-      waitingForFocusedTweetEditor = true
-      /** @type {HTMLElement} */
-      let $editorRoot
-      try {
-        $editorRoot = await getElement('.DraftEditor-root', {
-          context: $focusedTweet.parentElement,
-          name: 'tweet editor in focused tweet',
-          timeout: 500,
-          stopIf: () => !waitingForFocusedTweetEditor
-        })
-      } finally {
-        waitingForFocusedTweetEditor = false
-      }
-      if ($editorRoot) {
-        observeDesktopTweetEditorPlaceholder($editorRoot, {
-          name: 'tweet editor',
-          placeholder: getString('TWEET_YOUR_REPLY'),
-          observers,
-        })
-      }
-    } else {
-      observers.get('tweet editor')?.disconnect()
-    }
+function restoreTweetSource($permalinkBar, tweetInfo) {
+  if (!config.restoreTweetSource) return
+  if ($permalinkBar.hasAttribute('cpft-tweet-source-restored')) return
+  if (!tweetInfo?.source_name) {
+    warn('source_name not available in focused tweet info', tweetInfo)
+    return
   }
-})()
+  let $separator = document.createElement('span')
+  $separator.className = 'TweetSource cpft_separator cpft_text'
+  $separator.setAttribute('aria-hidden', 'true')
+  $separator.setAttribute('hidden', '')
+  $separator.textContent = '·'
+  let $sourceLabel = document.createElement('span')
+  $sourceLabel.className = 'TweetSource cpft_text'
+  $sourceLabel.setAttribute('hidden', '')
+  $sourceLabel.textContent = tweetInfo.source_name
+  $permalinkBar.append($separator, $sourceLabel)
+  $permalinkBar.setAttribute('cpft-tweet-source-restored', '')
+}
+
+/**
+ * @param {HTMLElement} $focusedTweet
+ * @param {import("./types").IndividualTweetTimelineOptions} options
+ */
+async function tweakFocusedTweet($focusedTweet, options) {
+  log('tweaking focused tweet')
+  let {observers} = options
+  let tweetId = location.pathname.match(URL_TWEET_BASE_RE)?.[2]
+  let tweetInfo = getTweetInfo(tweetId)
+
+  // Tag View elements and restore Tweet source
+  let $permalinkBar = $focusedTweet.querySelector('div:has(> div > a > time)')
+  if ($permalinkBar) {
+    $permalinkBar.children[1].classList.toggle('Views', config.hideViews)
+    $permalinkBar.children[2].classList.toggle('Views', config.hideViews)
+    restoreTweetSource($permalinkBar, tweetInfo)
+  } else {
+    warn('focused tweet permalink bar not found')
+  }
+
+  tweakOwnFocusedTweet($focusedTweet)
+  restoreTweetInteractionsLinks($focusedTweet, tweetInfo)
+
+  if (desktop && config.replaceLogo) {
+    void async function() {
+      let $editorRoot = await getElement('.DraftEditor-root', {
+        context: $focusedTweet.parentElement,
+        name: 'tweet editor in focused tweet',
+        timeout: 1000,
+        stopIf: pageIsNot(currentPage)
+      })
+      if (!$editorRoot) return
+      observeDesktopTweetEditorPlaceholder($editorRoot, {
+        name: 'tweet editor',
+        placeholder: getString('TWEET_YOUR_REPLY'),
+        observers,
+      })
+    }()
+  }
+}
 
 async function tweakFollowListPage() {
   // These tabs are dynamic as "Followers you know" only appears when applicable
@@ -6506,35 +6575,24 @@ async function tweakHomeIcon() {
   }
 }
 
-const tweakOwnFocusedTweet = (() => {
-  let waitingForAnalyticsUpsell = false
+async function tweakOwnFocusedTweet($focusedTweet) {
+  if (!config.hideTwitterBlueUpsells || $focusedTweet.hasAttribute('cpft-analytics-upsell-tagged')) return
 
-  return async function tweakOwnFocusedTweet($focusedTweet) {
-    // Only your own focused Tweets have an analytics button
-    let $analyticsButton = $focusedTweet.querySelector('a[data-testid="analyticsButton"]')
-    if (!$analyticsButton) return
+  // Only your own focused Tweets have an analytics button
+  let $analyticsButton = $focusedTweet.querySelector('a[data-testid="analyticsButton"]')
+  if (!$analyticsButton) return
 
-    $analyticsButton.parentElement.classList.add('AnalyticsButton')
-
-    if (!config.hideTwitterBlueUpsells ||
-        waitingForAnalyticsUpsell ||
-        $focusedTweet.getAttribute('data-upselltagged')) return
-    waitingForAnalyticsUpsell = true
-    try {
-      let $accountAnalyticsUpsell = await getElement(':scope > div > div > div > div:has(a[href="/i/account_analytics"])', {
-        context: $focusedTweet,
-        name: 'account analytics upsell',
-        timeout: 200,
-      })
-      if ($accountAnalyticsUpsell) {
-        $accountAnalyticsUpsell.classList.add('PremiumUpsell')
-        $focusedTweet.setAttribute('data-upselltagged', 'true')
-      }
-    } finally {
-      waitingForAnalyticsUpsell = false
-    }
-  }
-})()
+  $analyticsButton.parentElement.classList.add('AnalyticsButton')
+  let $accountAnalyticsUpsell = await getElement(':scope > div > div > div > div:has(a[href="/i/account_analytics"])', {
+    context: $focusedTweet,
+    name: 'account analytics upsell',
+    timeout: 1000,
+    stopIf: pageIsNot(currentPage)
+  })
+  if (!$accountAnalyticsUpsell) return
+  $accountAnalyticsUpsell.classList.add('PremiumUpsell')
+  $focusedTweet.setAttribute('cpft-analytics-upsell-tagged', 'true')
+}
 
 /**
  * Restores "Tweet" button text.
@@ -6766,7 +6824,7 @@ async function tweakTimelineTabs($timelineTabs) {
   }
 
   if (shouldShowSeparatedTweetsTab()) {
-    let $newTab = /** @type {HTMLElement} */ ($timelineTabs.querySelector('#tnt_separated_tweets_tab'))
+    let $newTab = /** @type {HTMLElement} */ ($timelineTabs.querySelector('#cpftSeparatedTweetsTab'))
     if ($newTab) {
       log('separated tweets timeline tab already present')
       $newTab.querySelector('span').textContent = separatedTweetsTimelineTitle
@@ -6774,7 +6832,7 @@ async function tweakTimelineTabs($timelineTabs) {
     else {
       log('inserting separated tweets tab')
       $newTab = /** @type {HTMLElement} */ ($followingTabLink.parentElement.cloneNode(true))
-      $newTab.id = 'tnt_separated_tweets_tab'
+      $newTab.id = 'cpftSeparatedTweetsTab'
       $newTab.querySelector('span').textContent = separatedTweetsTimelineTitle
       let $link = $newTab.querySelector('a')
       $link.removeAttribute('aria-selected')
@@ -7059,8 +7117,8 @@ async function main() {
     return
   }
 
-  observeTitle()
   observeFavicon()
+  observeTitle()
 
   let $appWrapper = await getElement('#layers + div', {name: 'app wrapper'})
 
@@ -7117,7 +7175,7 @@ async function main() {
       observingPageChanges = true
 
       // Remove the loading stylesheet if the content script added one
-      let $loadingStylesheet = document.querySelector('style#cpft_loading')
+      let $loadingStylesheet = document.querySelector('style#cpftLoading')
       if ($loadingStylesheet) {
         requestAnimationFrame(() => $loadingStylesheet.remove())
       }
@@ -7149,6 +7207,8 @@ function configChanged(changes) {
   if ('enabled' in changes) {
     log(`${changes.enabled ? 'en' : 'dis'}abling extension functionality`)
     if (changes.enabled) {
+      // Process the current page if we've just been enabled on it
+      observingPageChanges = true
       main()
     } else {
       // These functions have teardowns when disabled
@@ -7156,8 +7216,10 @@ function configChanged(changes) {
       configureFont()
       configureDynamicCss()
       configureThemeCss()
-      document.querySelector('#tnt_separated_tweets_tab')?.remove()
-      // TODO Show all tweets if a timeline is visible
+      // Manually remove custom UI elements which clone existing elements, as
+      // adding a hidden attribute won't hide them by default.
+      document.querySelector('#cpftSeparatedTweetsTab')?.remove()
+      document.querySelectorAll('.cpft_menu_item').forEach(el => el.remove())
       disconnectObservers(modalObservers, 'modal')
       disconnectObservers(pageObservers, 'page')
       disconnectObservers(globalObservers, 'global')
@@ -7216,7 +7278,7 @@ function configChanged(changes) {
 }
 
 // Initial config and config changes are injected into a <script> element
-let $settings = /** @type {HTMLScriptElement} */ (document.querySelector('script#tnt_settings'))
+let $settings = /** @type {HTMLScriptElement} */ (document.querySelector('script#cpftSettings'))
 if ($settings) {
   try {
     Object.assign(config, JSON.parse($settings.innerText))
