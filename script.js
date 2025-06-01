@@ -70,8 +70,6 @@ const config = {
   fastBlock: true,
   followButtonStyle: 'monochrome',
   hideAdsNav: true,
-  hideBlueReplyFollowedBy: false,
-  hideBlueReplyFollowing: false,
   hideBookmarkButton: true,
   hideBookmarkMetrics: true,
   hideBookmarksNav: true,
@@ -112,12 +110,11 @@ const config = {
   quoteTweets: 'ignore',
   redirectToTwitter: false,
   reducedInteractionMode: false,
-  restoreLinkHeadlines: false,
   replaceLogo: true,
-  restoreLinkHeadlines: true,
+  restoreLinkHeadlines: false,
   restoreOtherInteractionLinks: false,
-  restoreQuoteTweetsLink: true,
-  restoreTweetSource: true,
+  restoreQuoteTweetsLink: false,
+  restoreTweetSource: false,
   retweets: 'separate',
   showBlueReplyFollowersCount: false,
   showBlueReplyFollowersCountAmount: '1000000',
@@ -4315,8 +4312,8 @@ const configureCss = (() => {
           if (config.hideTwitterBlueUpsells) {
                 // Hide "Subscribe to premium" individually
                 hideCssSelectors.push(
-                    `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
-                    // Sidebar
+                  `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
+                  // Sidebar
                   `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
               )
           }
