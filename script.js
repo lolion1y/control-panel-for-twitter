@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     195
+// @version     196
 // ==/UserScript==
 void function() {
 
@@ -6452,8 +6452,8 @@ async function tweakFocusedTweet($focusedTweet, options) {
   // Tag View elements and restore Tweet source
   let $permalinkBar = $focusedTweet.querySelector('div:has(> div > a > time)')
   if ($permalinkBar) {
-    $permalinkBar.children[1].classList.toggle('Views', config.hideViews)
-    $permalinkBar.children[2].classList.toggle('Views', config.hideViews)
+    $permalinkBar.children[1]?.classList.toggle('Views', config.hideViews)
+    $permalinkBar.children[2]?.classList.toggle('Views', config.hideViews)
     restoreTweetSource($permalinkBar, tweetInfo)
   } else {
     warn('focused tweet permalink bar not found')
