@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     196.3
+// @version     196.4
 // ==/UserScript==
 void function() {
 
@@ -115,7 +115,7 @@ const config = {
   restoreOtherInteractionLinks: false,
   restoreQuoteTweetsLink: false,
   restoreTweetSource: false,
-  retweets: 'separate',
+  retweets: 'ignore',
   showBlueReplyFollowersCount: false,
   showBlueReplyFollowersCountAmount: '1000000',
   showBookmarkButtonUnderFocusedTweets: false,
@@ -1954,6 +1954,7 @@ const Svgs = {
   X_HOME_ACTIVE_PATH: 'M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z',
   X_HOME_INACTIVE_PATH: 'M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913h6.638c.511 0 .929-.41.929-.913v-7.075h3.008v7.075c0 .502.418.913.929.913h6.639c.51 0 .928-.41.928-.913V7.904c0-.301-.158-.584-.408-.758zM20 20l-4.5.01.011-7.097c0-.502-.418-.913-.928-.913H9.44c-.511 0-.929.41-.929.913L8.5 20H4V8.773l8.011-5.342L20 8.764z',
   PLUS_PATH: 'M11 11V4h2v7h7v2h-7v7h-2v-7H4v-2h7z',
+  ANALYTICS_PATH: 'M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z',
 }
 
 /** @enum {string} */
@@ -4127,7 +4128,7 @@ const configureCss = (() => {
         `)
       }
       if (config.hideSeeNewTweets) {
-        hideCssSelectors.push(`body ${Selectors.PRIMARY_COLUMN} > div > div:first-child > div[style^="transform"]`)
+        hideCssSelectors.push(`body.HomeTimeline ${Selectors.PRIMARY_COLUMN} > div > div:first-child > div[style^="transform"]`)
       }
       if (config.hideTimelineTweetBox) {
         hideCssSelectors.push(`body.HomeTimeline ${Selectors.PRIMARY_COLUMN} .TweetBox`)
@@ -4361,10 +4362,10 @@ const configureCss = (() => {
         hideCssSelectors.push(
           // Under timeline tweets
           '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(> a[href$="/analytics"])',
-          '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])',
+          `[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
           // In media modal
           '[aria-modal="true"] > div > div:first-of-type [role="group"] > div:has(> a[href$="/analytics"])',
-          '[aria-modal="true"] > div > div:first-of-type [role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])',
+          `[aria-modal="true"] > div > div:first-of-type [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
         )
       }
       if (config.retweets != 'separate' && config.quoteTweets != 'separate') {
@@ -4469,61 +4470,61 @@ const configureCss = (() => {
         hideCssSelectors.push(
           // Under timeline tweets
           '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(> a[href$="/analytics"])',
-          '[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])',
+          `[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
           // In media viewer and media modal
           'body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(> a[href$="/analytics"])',
-          'body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(path[d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"])',
+          `body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
         )
       }
       if (config.hideLiveThreadsDesc) {
-        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`)
-        // Determine baseline value
+        const LiveThreadsDesc = `body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`;
+        const timelineHeader = document.querySelector(LiveThreadsDesc);
+        hideCssSelectors.push(LiveThreadsDesc)
+        // func
         function findTimelineHeader(callback) {
-            if (location.pathname.startsWith(PagePaths.HOME)) {
-                const TimelineHeader = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`);
-                if (TimelineHeader) {
-                    callback(TimelineHeader);
-                } else {
-                    console.log('TimelineHeader not found, Retrying...');
-                    setTimeout(() => findTimelineHeader(callback), 600); // 600ms delay
-                }
+          if (isOnHomeTimelinePage()) {
+            if (timelineHeader) {
+              callback(timelineHeader);
             } else {
-                const observer = new MutationObserver(() => {
-                    console.log('Not on Timeline');
-                    if (location.pathname.startsWith(PagePaths.HOME)) {
-                        observer.disconnect();
-                        findTimelineHeader(callback);
-                    }
-                });
-                observer.observe(document.body, { attributes: true });
+              const observer = new MutationObserver(() => {
+                console.log('Timeline Header not found, Retrying...');
+                observer.disconnect();
+                findTimelineHeader(callback);
+              });
+              observer.observe(document.body, { attributes: true, subtree: true });
             }
+          } else {
+            const observer = new MutationObserver(() => {
+              console.log('Not on Timeline');
+              observer.disconnect();
+              findTimelineHeader(callback);
+            });
+            observer.observe(document.body, { attributes: true });
+          }
         }
-        findTimelineHeader((TimelineHeader) => {
-            const transformValue = TimelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
-            console.log('Transform value stored:', transformValue);
-            if (transformValue) {
-                const observer = new MutationObserver((mutations) => {
-                    setTimeout(() => {
-                        mutations.forEach(() => {
-                            const hideLiveThreadsDescheight = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
-                            const hideLiveThreadsDesctransform = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
-                            if (hideLiveThreadsDescheight && hideLiveThreadsDescheight.style.height !== '0px' && hideLiveThreadsDescheight.style.height !== transformValue) {
-                                hideLiveThreadsDescheight.style.height = transformValue;
-                                console.log('Update height:', hideLiveThreadsDescheight.style.height);
-                            }
-                            if (hideLiveThreadsDesctransform && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== '0px' && hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1] !== transformValue) {
-                                hideLiveThreadsDesctransform.style.transform = hideLiveThreadsDesctransform.style.transform.replace(hideLiveThreadsDesctransform.style.transform.match(/translateY\((\d+px)\)/)[1], transformValue);
-                                console.log('Update transform:', hideLiveThreadsDesctransform.style.transform);
-                            }
-                        });
-                    }, 300); // 300ms delay
-                });
-                const obsElement = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`);
-                observer.observe(obsElement, { attributes: true, attributeFilter: ["style"] });
-            } else if (transformValue === '0px') {
-                console.log('Transform value is 0px, re-running callback...');
-                findTimelineHeader(TimelineHeader);
-            }
+        findTimelineHeader((timelineHeader) => {
+          const headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
+          console.log('Timeline Header transform stored:', headerTransform);
+          const heightElem = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
+          const transformElem = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
+          if (headerTransform) {
+            const observer = new MutationObserver(() => {
+              const heightStyle = heightElem.style.height;
+              const transformStyle = transformElem.style.transform.match(/translateY\((\d+px)\)/)[1];
+              if (heightElem && heightStyle !== '0px' && heightStyle !== headerTransform) {
+                heightElem.style.height = headerTransform;
+                console.log('Update height:', heightStyle);
+              }
+              if (transformElem && transformStyle !== '0px' && transformStyle !== headerTransform) {
+                transformElem.style.transform = transformElem.style.transform.replace(transformStyle, headerTransform);
+                console.log('Update transform:', transformElem.style.transform);
+              }
+            });
+            observer.observe(timelineHeader, { attributes: true, attributeFilter: ["style"] });
+          } else if (headerTransform === '0px') {
+            console.log('Transform value is 0px, re-running callback...');
+            findTimelineHeader(timelineHeader);
+          }
         });
       }
       if (config.hideFloatingTweetButton) {
