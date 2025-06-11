@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     196.1
+// @version     196.2
 // ==/UserScript==
 void function() {
 
@@ -4308,19 +4308,17 @@ const configureCss = (() => {
         if (config.hideSuggestedFollows) {
           hideCssSelectors.push('.SuggestedFollows')
         }
-        {
-          if (config.hideTwitterBlueUpsells) {
-                // Hide "Subscribe to premium" individually
-                hideCssSelectors.push(
-                  `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
-                  // Sidebar
-                  `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
-              )
-          }
+        if (config.hideTwitterBlueUpsells) {
+          // Hide "Subscribe to premium" individually
+          hideCssSelectors.push(
+            `body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:nth-of-type(3)`,
+            // Sidebar
+            `body ${Selectors.SIDEBAR_WRAPPERS} > div > div > div:has(a[href^="/i/premium"])`,
+          )
+        }
       }
       if (config.hideSideNavNewTweetButton) {
         hideCssSelectors.push('a[data-testid="SideNav_NewTweet_Button"]')
-        }
       }
       if (config.hideShareTweetButton) {
         hideCssSelectors.push(
