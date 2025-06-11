@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     196
+// @version     196.1
 // ==/UserScript==
 void function() {
 
@@ -127,12 +127,12 @@ const config = {
   tweakNewLayout: false,
   tweakQuoteTweetsPage: true,
   twitterBlueChecks: 'replace',
-  unblurSensitiveContent: false,
-  uninvertFollowButtons: true,
+  unblurSensitiveContent: true,
+  uninvertFollowButtons: false,
   // Experiments
   customCss: '',
   // Desktop only
-  fullWidthContent: true,
+  fullWidthContent: false,
   fullWidthMedia: true,
   hideAccountSwitcher: false,
   hideExploreNav: false,
@@ -140,7 +140,7 @@ const config = {
   hideLiveBroadcasts: true,
   hideMessagesDrawer: true,
   hideSidebarContent: true,
-  hideSideNavNewTweetButton: false,
+  hideSideNavNewTweetButton: true,
   hideSpacesNav: true,
   hideSuggestedFollows: false,
   hideTimelineTweetBox: false,
