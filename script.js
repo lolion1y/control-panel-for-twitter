@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     196.2
+// @version     196.3
 // ==/UserScript==
 void function() {
 
@@ -139,6 +139,7 @@ const config = {
   hideExploreNavWithSidebar: false,
   hideLiveBroadcasts: true,
   hideMessagesDrawer: true,
+  hideMessageSideNav: true,
   hideSidebarContent: true,
   hideSideNavNewTweetButton: true,
   hideSpacesNav: true,
@@ -4352,6 +4353,9 @@ const configureCss = (() => {
       }
       if (config.hideMessagesDrawer) {
         cssRules.push(`div[data-testid="DMDrawer"] { visibility: hidden; }`)
+      }
+      if (config.hideMessageSideNav)  {
+        hideCssSelectors.push('a[data-testid="AppTabBar_DirectMessage_Link"]')
       }
       if (config.hideViews) {
         hideCssSelectors.push(
