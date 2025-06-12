@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     196.4
+// @version     196.4.1
 // ==/UserScript==
 void function() {
 
@@ -4478,11 +4478,11 @@ const configureCss = (() => {
       }
       if (config.hideLiveThreadsDesc) {
         const LiveThreadsDesc = `body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`;
-        const timelineHeader = document.querySelector(LiveThreadsDesc);
         hideCssSelectors.push(LiveThreadsDesc)
         // func
         function findTimelineHeader(callback) {
           if (isOnHomeTimelinePage()) {
+            const timelineHeader = document.querySelector(LiveThreadsDesc);
             if (timelineHeader) {
               callback(timelineHeader);
             } else {
@@ -4506,7 +4506,7 @@ const configureCss = (() => {
           const headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
           console.log('Timeline Header transform stored:', headerTransform);
           const heightElem = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
-          const transformElem = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:last-child`);
+          const transformElem = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`);
           if (headerTransform) {
             const observer = new MutationObserver(() => {
               const heightStyle = heightElem.style.height;
@@ -4520,7 +4520,7 @@ const configureCss = (() => {
                 console.log('Update transform:', transformElem.style.transform);
               }
             });
-            observer.observe(timelineHeader, { attributes: true, attributeFilter: ["style"] });
+            observer.observe(transformElem, { attributes: true, attributeFilter: ["style"] });
           } else if (headerTransform === '0px') {
             console.log('Transform value is 0px, re-running callback...');
             findTimelineHeader(timelineHeader);
