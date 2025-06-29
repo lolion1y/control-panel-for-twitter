@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     197.1
+// @version     197.2
 // ==/UserScript==
 void function() {
 
@@ -4517,8 +4517,8 @@ const configureCss = (() => {
         findTimelineHeader((timelineHeader) => {
           const headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
           console.log('Timeline Header transform stored:', headerTransform);
-          const heightElem = document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]');
-          const transformElem = document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`);
+          const heightElem = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
+          const transformElem = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
           if (headerTransform) {
             const observer = new MutationObserver(() => {
               const heightStyle = heightElem.style.height;
