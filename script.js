@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     197
+// @version     197.1
 // ==/UserScript==
 void function() {
 
@@ -141,7 +141,8 @@ const config = {
   hideMessagesDrawer: true,
   hideMessageSideNav: true,
   hideSidebarContent: true,
-  hideSideNavNewTweetButton: true,
+  hideSidebarNewTweetButton: true,
+  hideSidebarSearchBox: true,
   hideSpacesNav: true,
   hideSuggestedFollows: false,
   hideTimelineTweetBox: false,
@@ -4300,6 +4301,16 @@ const configureCss = (() => {
             }
           `)
         }
+        if (config.hideSidebarSearchBox) {
+          hideCssSelectors.push(
+            `${Selectors.SIDEBAR_WRAPPERS} > div:first-of-type`,
+          )
+          cssRules.push(`
+            ${Selectors.SIDEBAR_WRAPPERS} > div:nth-of-type(2) {
+              height: 0;
+          }
+        `)
+        }
         hideCssSelectors.push(`body.HideSidebar ${Selectors.SIDEBAR}`)
       } else {
         if (config.hideLiveBroadcasts) {
@@ -4320,7 +4331,7 @@ const configureCss = (() => {
           )
         }
       }
-      if (config.hideSideNavNewTweetButton) {
+      if (config.hideSidebarNewTweetButton) {
         hideCssSelectors.push('a[data-testid="SideNav_NewTweet_Button"]')
       }
       if (config.hideShareTweetButton) {
