@@ -2022,6 +2022,8 @@ const URL_TWEET_INTERACTIONS_RE = /^\/[a-zA-Z\d_]{1,20}\/status\/\d+\/(quotes|re
 // The Twitter Media Assist exension adds a new button at the end of the action
 // bar (#346)
 const TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR = '.tva-download-icon, .tva-modal-download-icon'
+
+const CUSTOM_COPY_ICON_SELECTOR = '.custom-copy-icon'
 //#endregion
 
 //#region Variables
@@ -3724,9 +3726,9 @@ const configureCss = (() => {
     if (config.hideShareTweetButton) {
       hideCssSelectors.push(
         // Under timeline tweets
-        `[data-testid="tweet"][tabindex="0"] [role="group"] > div[style]:not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR})`,
+        `[data-testid="tweet"][tabindex="0"] [role="group"] > div[style]:not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR}, ${CUSTOM_COPY_ICON_SELECTOR})`,
         // Under the focused tweet
-        `[data-testid="tweet"][tabindex="-1"] [role="group"] > div[style]:not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR})`,
+        `[data-testid="tweet"][tabindex="-1"] [role="group"] > div[style]:not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR}, ${CUSTOM_COPY_ICON_SELECTOR})`,
       )
     }
     if (config.hideSubscriptions) {
@@ -4337,7 +4339,7 @@ const configureCss = (() => {
       if (config.hideShareTweetButton) {
         hideCssSelectors.push(
           // In media modal
-          `[aria-modal="true"] div > div:first-of-type [role="group"] > div[style]:not([role]):not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR})`,
+          `[aria-modal="true"] div > div:first-of-type [role="group"] > div[style]:not([role]):not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR}, ${CUSTOM_COPY_ICON_SELECTOR})`,
         )
       }
       if (config.hideExploreNav) {
@@ -4475,7 +4477,7 @@ const configureCss = (() => {
       if (config.hideShareTweetButton) {
         hideCssSelectors.push(
           // In media viewer and media modal
-          `body:is(.MediaViewer, .MobileMedia) [role="group"] > div[style]:not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR})`,
+          `body:is(.MediaViewer, .MobileMedia) [role="group"] > div[style]:not(${TWITTER_MEDIA_ASSIST_BUTTON_SELECTOR}, ${CUSTOM_COPY_ICON_SELECTOR})`,
         )
       }
       if (config.hideViews) {
