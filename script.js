@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     197.3
+// @version     197.4
 // ==/UserScript==
 void function() {
 
@@ -2871,10 +2871,14 @@ async function observeDesktopModalTimeline($popup) {
 const observeFavicon = (() => {
   /** @type {HTMLLinkElement} */
   let $shortcutIcon
-
+  /** @type {HTMLLinkElement} */
+  let $appleTouchIcon
   async function observeFavicon() {
     $shortcutIcon = /** @type {HTMLLinkElement} */ (await getElement('link[rel~="icon"]', {
       name: 'shortcut icon'
+    }))
+    $appleTouchIcon = /** @type {HTMLLinkElement} */ (await getElement('link[rel="apple-touch-icon"]', {
+      name: 'apple-touch-icon'
     }))
 
     observeElement($shortcutIcon, () => {
@@ -2905,6 +2909,29 @@ const observeFavicon = (() => {
       attributes: true,
       attributeFilter: ['href'],
     })
+    observeElement($appleTouchIcon, () => {
+      let href = $appleTouchIcon.href
+      if (config.replaceLogo) {
+        if (href.startsWith('data:')) return
+        let icon = config.hideNotifications != 'ignore' && href.includes('-pip') ? (
+          Images.TWITTER_PIP_FAVICON
+        ) : (
+          Images.TWITTER_FAVICON
+        )
+        $appleTouchIcon.href = icon
+      } else {
+        if (config.hideNotifications != 'ignore' && href.includes('-pip')) {
+          $appleTouchIcon.href = href.replace('-pip', '')
+        }
+      }
+    }, {
+      leading: true,
+      name: 'apple-touch-icon href',
+      observers: globalObservers,
+    }, {
+      attributes: true,
+      attributeFilter: ['href'],
+    })
   }
 
   observeFavicon.forceUpdate = function(showPip) {
@@ -2922,6 +2949,21 @@ const observeFavicon = (() => {
     }
     if (href != $shortcutIcon.href) {
       $shortcutIcon.href = href
+    }
+    let appleIconhref = $appleTouchIcon.href
+    if (config.replaceLogo) {
+      appleIconhref = config.hideNotifications == 'ignore' && showPip ? (
+        Images.TWITTER_PIP_FAVICON
+      ) : (
+        Images.TWITTER_FAVICON
+      )
+    } else {
+      appleIconhref = `//abs.twimg.com/favicons/twitter${
+        config.hideNotifications == 'ignore' && showPip ? '-pip' : ''
+      }.3.ico`
+    }
+    if (appleIconhref != $appleTouchIcon.href) {
+      $appleTouchIcon.href = href
     }
   }
 
