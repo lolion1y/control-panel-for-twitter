@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     197.4
+// @version     197.5
 // ==/UserScript==
 void function() {
 
@@ -4535,14 +4535,22 @@ const configureCss = (() => {
       if (config.hideLiveThreadsDesc) {
         const LiveThreadsDesc = `body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`;
         hideCssSelectors.push(LiveThreadsDesc)
+        let timelineHeader
+        let observer
+
+        let headerTransform
+        let heightElem
+        let transformElem
+        let heightStyle
+        let transformStyle
         // func
         function findTimelineHeader(callback) {
           if (isOnHomeTimelinePage()) {
-            const timelineHeader = document.querySelector(LiveThreadsDesc);
+            timelineHeader = document.querySelector(LiveThreadsDesc);
             if (timelineHeader) {
               callback(timelineHeader);
             } else {
-              const observer = new MutationObserver(() => {
+              observer = new MutationObserver(() => {
                 console.log('Timeline Header not found, Retrying...');
                 observer.disconnect();
                 findTimelineHeader(callback);
@@ -4550,7 +4558,7 @@ const configureCss = (() => {
               observer.observe(document.body, { attributes: true, subtree: true });
             }
           } else {
-            const observer = new MutationObserver(() => {
+            observer = new MutationObserver(() => {
               console.log('Not on Timeline');
               observer.disconnect();
               findTimelineHeader(callback);
@@ -4559,14 +4567,14 @@ const configureCss = (() => {
           }
         }
         findTimelineHeader((timelineHeader) => {
-          const headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
+          headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
           console.log('Timeline Header transform stored:', headerTransform);
-          const heightElem = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
-          const transformElem = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
+          heightElem = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
+          transformElem = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
           if (headerTransform) {
-            const observer = new MutationObserver(() => {
-              const heightStyle = heightElem.style.height;
-              const transformStyle = transformElem.style.transform.match(/translateY\((\d+px)\)/)[1];
+            observer = new MutationObserver(() => {
+              heightStyle = heightElem.style.height;
+              transformStyle = transformElem.style.transform.match(/translateY\((\d+px)\)/)[1];
               if (heightElem && heightStyle !== '0px' && heightStyle !== headerTransform) {
                 heightElem.style.height = headerTransform;
                 console.log('Update height:', heightStyle);
