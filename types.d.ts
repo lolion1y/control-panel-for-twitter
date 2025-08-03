@@ -34,6 +34,7 @@ export type Config = {
   hideMonetizationNav: boolean
   // XXX This now controls hiding all "Discover" suggestions
   hideMoreTweets: boolean
+  hideNotificationLikes: boolean
   hideNotifications: 'ignore' | 'badges' | 'hide'
   hideProfileRetweets: boolean
   hideQuoteTweetMetrics: boolean
@@ -190,6 +191,9 @@ export type TimelineItemType =
   | 'SHOW_MORE'
   | 'SUBSEQUENT_ITEM'
   | 'UNAVAILABLE'
+  | `NOTIFICATION_${NotificationType}`
+
+export type NotificationType = 'AD' | 'FOLLOW' | 'LIKE' | 'RETWEET'
 
 export type TimelineOptions = {
   classifyTweets?: boolean
