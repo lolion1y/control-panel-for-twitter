@@ -7,6 +7,7 @@ export type Config = {
   addAddMutedWordMenuItem: boolean
   // XXX This is now more like "use the Following tab by default"
   alwaysUseLatestTweets: boolean
+  bypassAgeVerification: boolean
   defaultToLatestSearch: boolean
   disableHomeTimeline: boolean
   disabledHomeTimelineRedirect: 'notifications' | 'messages'
@@ -19,6 +20,7 @@ export type Config = {
   hideBookmarkButton: boolean
   hideBookmarkMetrics: boolean
   hideBookmarksNav: boolean
+  hideChatNav: boolean
   hideCommunitiesNav: boolean
   hideComposeTweet: boolean
   hideExplorePageContents: boolean
