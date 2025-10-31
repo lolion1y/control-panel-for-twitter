@@ -114,6 +114,7 @@ const config = {
   redirectToTwitter: false,
   reducedInteractionMode: false,
   replaceLogo: true,
+  replaceManifest: true,
   restoreLinkHeadlines: false,
   restoreOtherInteractionLinks: false,
   restoreQuoteTweetsLink: false,
@@ -537,6 +538,7 @@ const locales = {
     UNDO_RETWEET: 'Undo Retweet',
     VIEW: 'View',
     WHATS_HAPPENING: "What's happening?",
+    MANIFEST: 'manifest-zh.json',
   },
   es: {
     ADD_ANOTHER_TWEET: 'Agregar otro Tweet',
@@ -1881,6 +1883,7 @@ const locales = {
     UNDO_RETWEET: '撤销转推',
     VIEW: '查看',
     WHATS_HAPPENING: '有什么新鲜事？',
+    MANIFEST: 'manifest-zh.json',
   },
 }
 
@@ -2991,6 +2994,36 @@ const observeFavicon = (() => {
   }
 
   return observeFavicon
+})()
+
+const observeManifest = (() => {
+  /** @type {HTMLLinkElement} */
+  let $manifest
+  async function observeManifest() {
+    $manifest = /** @type {HTMLLinkElement} */ (await getElement('link[rel="manifest"]', {
+      name: 'manifest'
+    }))
+    observeElement($manifest, () => {
+      let href = $manifest.href
+      let crossorigin = $manifest.crossOrigin
+      let manifestName = getString('MANIFEST')
+      if (config.replaceManifest) {
+        if (href.endsWith(manifestName)) return
+        $manifest.href = `https://raw.githubusercontent.com/lolion1y/control-panel-for-twitter/refs/heads/master/manifest/${manifestName}`
+        if (crossorigin === 'anonymous') return
+        $manifest.crossOrigin = 'anonymous'
+      }
+    }, {
+      leading: true,
+      name: 'manifest href',
+      observers: globalObservers,
+    }, {
+      attributes: true,
+      attributeFilter: ['href'],
+    })
+  }
+
+  return observeManifest
 })()
 
 /**
@@ -7277,6 +7310,7 @@ async function main() {
   }
 
   observeFavicon()
+  observeManifest()
   observeTitle()
 
   let $appWrapper = await getElement('#layers + div', {name: 'app wrapper'})
