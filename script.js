@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     200.4
+// @version     200.5
 // ==/UserScript==
 void function() {
 
