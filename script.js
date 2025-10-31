@@ -1967,6 +1967,15 @@ const Images = {
   TWITTER_PIP_FAVICON: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAALASURBVHgB7VZNchJBFP5eM9FoRWV2WiZmbmBuIJ4g5ASBRWJlRXIC4ASQVUqxCo4QTwDegJzAiYlFXM1YZWmVQD9fQ6YyAwMMGBZW8i2G6e7He1+/3wHuOih4+fWieJhiKsirA0ZbE44fXZUaWDIGBH4/L+UUUB897DMfPf5ermKJUOaRIhTiDlNEBSwZlnkwY2vCuYOEWD/xMrCoKC41utISRlcc3Or2dfnqwHbDcj9X0fbztn9DAHxOoM0xrZILSIBXtR9F0VGKbJIhz7kVi3Lr770yAz4p2iYm188/awVi6lo4Ns4mETEDLz94uTHjIxDDRaWoohhOSjwi/9mKEFjtlKsayAuRM7M2HmFJwCRVIIqLSAAJjS822v0Vaip1E1oKC6XrXtrExjnxnJ6ldoVKFj0+ujywW3FKTTzJoibmAXP+Yt9uBEsrfLbWRelJzS/0B8z4WoKa6zW/1dd83Hlnn0Z0peAQkqNHvNPZi+qIELBWUNU97LLJ4hDESMZSlNmo+b5UTEvC85m0JCipTQREE+BhdzypIwSkLvyn4LKYrEzQkSZCloiyw+xJbnygfxX+VAJrPWnBoC9ixBXdDm4XflD7YajIinFq3L0E45J7fBa3HyEg7mhgeWjPJODu223J/iMsATzhcmp04+ueXTW1OsiD2zIuVfNNLockBAyIkdaaPxHGs3YR0JTQWnGbWkFCQZX5imwCmBoX++nGpONYD1zu2S0a9IN/g3jSNcNnqsy0ww2ZdPJzCKLXWAAy1N6ay2BRAgEcGZ+aqDnaoqdbjw6dhQgYwz1S2xKOQyQ0Phy7vDPr5iH5ITY+elmtpddLFyQzZBTP3xGl3FJ95NzQJ1hiAgMSw5jnJOZvMA/EMBNKSW89kUAAp+45+g+yojRjljL9NoP4GxdLYzk334vy3lYP0HBjhsw97vHf4C/b8RLHAOr+CQAAAABJRU5ErkJggg==',
 }
 
+/** @enum {string} */
+const TwitterLinks = {
+  MASK_ICON: 'https://abs.twimg.com/responsive-web/client-web/icon-svg.168b89da.svg',
+  // SHORTCUT_ICON: 'https://abs.twimg.com/favicons/twitter.2.ico',
+  APPLE_TOUCH_ICON: 'https://abs.twimg.com/responsive-web/client-web/icon-ios.b1fc727a.png',
+  FAVICON: 'https://abs.twimg.com/favicons/twitter.2.ico',
+  FAVICON_PIP: 'https://abs.twimg.com/favicons/twitter-pip.2.ico'
+};
+
 const THEME_BLUE = 'rgb(29, 155, 240)'
 const THEME_COLORS = new Map([
   ['blue500', THEME_BLUE],
@@ -2891,12 +2900,17 @@ const observeFavicon = (() => {
   let $shortcutIcon
   /** @type {HTMLLinkElement} */
   let $appleTouchIcon
+  /** @type {HTMLLinkElement} */
+  let $maskIcon
   async function observeFavicon() {
     $shortcutIcon = /** @type {HTMLLinkElement} */ (await getElement('link[rel~="icon"]', {
       name: 'shortcut icon'
     }))
     $appleTouchIcon = /** @type {HTMLLinkElement} */ (await getElement('link[rel="apple-touch-icon"]', {
       name: 'apple-touch-icon'
+    }))
+    $maskIcon = /** @type {HTMLLinkElement} */ (await getElement('link[rel="mask-icon"]', {
+      name: 'mask-icon'
     }))
 
     observeElement($shortcutIcon, () => {
@@ -2931,21 +2945,26 @@ const observeFavicon = (() => {
     observeElement($appleTouchIcon, () => {
       let href = $appleTouchIcon.href
       if (config.replaceLogo) {
-        if (href.startsWith('data:')) return
-        let icon = config.hideNotifications != 'ignore' && href.includes('-pip') ? (
-          Images.TWITTER_PIP_FAVICON
-        ) : (
-          Images.TWITTER_FAVICON
-        )
-        $appleTouchIcon.href = icon
-      } else {
-        if (config.hideNotifications != 'ignore' && href.includes('-pip')) {
-          $appleTouchIcon.href = href.replace('-pip', '')
-        }
+        if (href === TwitterLinks.APPLE_TOUCH_ICON) return
+        $appleTouchIcon.href = TwitterLinks.APPLE_TOUCH_ICON
       }
     }, {
       leading: true,
       name: 'apple-touch-icon href',
+      observers: globalObservers,
+    }, {
+      attributes: true,
+      attributeFilter: ['href'],
+    })
+    observeElement($maskIcon, () => {
+      let href = $maskIcon.href
+      if (config.replaceLogo) {
+        if (href === TwitterLinks.MASK_ICON) return
+        $maskIcon.href = TwitterLinks.MASK_ICON
+      }
+    }, {
+      leading: true,
+      name: 'mask-icon href',
       observers: globalObservers,
     }, {
       attributes: true,
@@ -2968,21 +2987,6 @@ const observeFavicon = (() => {
     }
     if (href != $shortcutIcon.href) {
       $shortcutIcon.href = href
-    }
-    let appleIconhref = $appleTouchIcon.href
-    if (config.replaceLogo) {
-      appleIconhref = config.hideNotifications == 'ignore' && showPip ? (
-        Images.TWITTER_PIP_FAVICON
-      ) : (
-        Images.TWITTER_FAVICON
-      )
-    } else {
-      appleIconhref = `//abs.twimg.com/favicons/twitter${
-        config.hideNotifications == 'ignore' && showPip ? '-pip' : ''
-      }.3.ico`
-    }
-    if (appleIconhref != $appleTouchIcon.href) {
-      $appleTouchIcon.href = href
     }
   }
 
