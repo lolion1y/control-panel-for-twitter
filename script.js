@@ -7277,6 +7277,33 @@ async function main() {
   observeFavicon()
   observeTitle()
 
+  let $loadingStyle
+  if (config.replaceLogo) {
+    getElement('html', {name: 'html element'}).then(($html) => {
+      $loadingStyle = document.createElement('style')
+      $loadingStyle.dataset.insertedBy = 'control-panel-for-twitter'
+      $loadingStyle.dataset.role = 'loading-logo'
+      $loadingStyle.textContent = dedent(`
+        ${Selectors.X_LOGO_PATH} {
+          fill: ${isSafari ? 'transparent' : THEME_BLUE};
+          d: path("${Svgs.TWITTER_LOGO_PATH}");
+        }
+        .tnt_logo {
+          fill: ${THEME_BLUE};
+        }
+      `)
+      $html.appendChild($loadingStyle)
+    })
+
+    if (isSafari) {
+      getElement(Selectors.X_LOGO_PATH, {name: 'pre-loading indicator logo', timeout: 1000}).then(($logoPath) => {
+        if ($logoPath) {
+          twitterLogo($logoPath)
+        }
+      })
+    }
+  }
+
   let $appWrapper = await getElement('#layers + div', {name: 'app wrapper'})
 
   $html = document.querySelector('html')
