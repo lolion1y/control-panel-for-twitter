@@ -4599,46 +4599,41 @@ const configureCss = (() => {
       if (config.hideLiveThreadsDesc) {
         const LiveThreadsDesc = `body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`;
         hideCssSelectors.push(LiveThreadsDesc)
-        let timelineHeader
-        let observer
-
-        let headerTransform
-        let heightElem
-        let transformElem
-        let heightStyle
-        let transformStyle
-        // func
         function findTimelineHeader(callback) {
           if (isOnHomeTimelinePage()) {
-            timelineHeader = document.querySelector(LiveThreadsDesc);
+            let timelineHeader = document.querySelector(LiveThreadsDesc);
             if (timelineHeader) {
               callback(timelineHeader);
-            } else {
-              observer = new MutationObserver(() => {
-                console.log('Timeline Header not found, Retrying...');
-                observer.disconnect();
-                findTimelineHeader(callback);
-              });
-              observer.observe(document.body, { attributes: true, subtree: true });
+              return;
             }
-          } else {
-            observer = new MutationObserver(() => {
-              console.log('Not on Timeline');
-              observer.disconnect();
+            observeElement(document.body, () => {
+              console.log('Timeline Header not found, Retrying...');
+              globalObservers.get('timelineHeader find')?.disconnect();
               findTimelineHeader(callback);
-            });
-            observer.observe(document.body, { attributes: true });
+            }, {
+              name: 'timelineHeader find',
+              observers: globalObservers,
+            }, { attributes: true, subtree: true });
+          } else {
+            observeElement(document.body, () => {
+              console.log('Not on Timeline');
+              globalObservers.get('timelineHeader page')?.disconnect();
+              findTimelineHeader(callback);
+            }, {
+              name: 'timelineHeader page',
+              observers: globalObservers,
+            }, { attributes: true });
           }
         }
         findTimelineHeader((timelineHeader) => {
-          headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
+          let headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
           console.log('Timeline Header transform stored:', headerTransform);
-          heightElem = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
-          transformElem = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
+          let heightElem = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
+          let transformElem = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
           if (headerTransform) {
-            observer = new MutationObserver(() => {
-              heightStyle = heightElem.style.height;
-              transformStyle = transformElem.style.transform.match(/translateY\((\d+px)\)/)[1];
+            observeElement(transformElem, () => {
+              let heightStyle = heightElem.style.height;
+              let transformStyle = transformElem.style.transform.match(/translateY\((\d+px)\)/)[1];
               if (heightElem && heightStyle !== '0px' && heightStyle !== headerTransform) {
                 heightElem.style.height = headerTransform;
                 console.log('Update height:', heightStyle);
@@ -4647,8 +4642,10 @@ const configureCss = (() => {
                 transformElem.style.transform = transformElem.style.transform.replace(transformStyle, headerTransform);
                 console.log('Update transform:', transformElem.style.transform);
               }
-            });
-            observer.observe(transformElem, { attributes: true, attributeFilter: ["style"] });
+            }, {
+              name: 'timelineHeader style',
+              observers: globalObservers,
+            }, { attributes: true, attributeFilter: ["style"] });
           } else if (headerTransform === '0px') {
             console.log('Transform value is 0px, re-running callback...');
             findTimelineHeader(timelineHeader);
