@@ -65,7 +65,6 @@ export type Config = {
   reducedInteractionMode: boolean
   // XXX This now controls all replacement of X brand changes
   replaceLogo: boolean
-  replaceManifest: boolean
   restoreLinkHeadlines: boolean
   restoreQuoteTweetsLink: boolean
   restoreOtherInteractionLinks: boolean
@@ -156,7 +155,6 @@ export type LocaleKey =
   | 'UNDO_RETWEET'
   | 'VIEW'
   | 'WHATS_HAPPENING'
-  | 'MANIFEST'
 
 export type NamedMutationObserver = MutationObserver & {name: string}
 
