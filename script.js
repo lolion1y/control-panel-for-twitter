@@ -75,7 +75,7 @@ const config = {
   hideBookmarkMetrics: true,
   hideBookmarksNav: true,
   hideCommunitiesNav: true,
-  hideChatNav: false,
+  hideChatNav: true,
   hideComposeTweet: false,
   hideExplorePageContents: true,
   hideFollowingMetrics: false,
