@@ -4604,7 +4604,7 @@ const configureCss = (() => {
               let currentTransform = transformDiv.style.transform.match(/translateY\((\d+px)\)/)[1];
               if (isOnHomeTimelinePage()) {
                 if (heightDiv && currentHeight !== '0px' && currentHeight !== timelineTransform) {
-                  currentHeight = timelineTransform;
+                  heightDiv.style.height = timelineTransform;
                   console.log('Update height:', currentHeight);
                 }
                 if (transformDiv && currentTransform !== '0px' && currentTransform !== timelineTransform) {
