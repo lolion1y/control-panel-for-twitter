@@ -129,7 +129,7 @@ const config = {
   sortReplies: 'relevant',
   tweakNewLayout: false,
   tweakQuoteTweetsPage: true,
-  twitterBlueChecks: 'replace',
+  twitterBlueChecks: 'ignore',
   unblurSensitiveContent: true,
   uninvertFollowButtons: false,
   // Experiments
@@ -4022,7 +4022,8 @@ const configureCss = (() => {
     }
     if (config.twitterBlueChecks == 'replace') {
       cssRules.push(`
-        :is(${Selectors.VERIFIED_TICK}, svg[data-testid="verificationBadge"]).cpft_blue_check path {
+        :is(${Selectors.VERIFIED_TICK}, svg[data-testid="verificationBadge"]).cpft_blue_check path,
+        ${Selectors.VERIFIED_TICK} path {
           d: path("${Svgs.BLUE_LOGO_PATH}");
         }
       `)
