@@ -3010,7 +3010,7 @@ const observeManifest = (() => {
       let manifestName = getString('MANIFEST')
       if (config.replaceManifest) {
         if (href.endsWith(manifestName)) return
-        $manifest.href = `https://raw.githubusercontent.com/lolion1y/control-panel-for-twitter/refs/heads/master/manifest/${manifestName}`
+        $manifest.href = `https://raw.githubusercontent.com/lolion1y/control-panel-for-twitter/refs/heads/master/twitter-manifest/${manifestName}`
         if (crossorigin === 'anonymous') return
         $manifest.crossOrigin = 'anonymous'
       }
