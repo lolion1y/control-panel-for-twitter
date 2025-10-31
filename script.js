@@ -4575,47 +4575,48 @@ const configureCss = (() => {
               return;
             }
             observeElement(document.body, () => {
-              console.log('Timeline Header not found, Retrying...');
-              globalObservers.get('timelineHeader find')?.disconnect();
+              console.log('Timeline Header not found');
+              globalObservers.get('timeline header')?.disconnect();
               findTimelineHeader(callback);
             }, {
-              name: 'timelineHeader find',
+              name: 'timeline header',
               observers: globalObservers,
             }, { attributes: true, subtree: true });
           } else {
             observeElement(document.body, () => {
               console.log('Not on Timeline');
-              globalObservers.get('timelineHeader page')?.disconnect();
+              globalObservers.get('timeline page')?.disconnect();
               findTimelineHeader(callback);
             }, {
-              name: 'timelineHeader page',
+              name: 'timeline page',
               observers: globalObservers,
             }, { attributes: true });
           }
         }
         findTimelineHeader((timelineHeader) => {
-          let headerTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
-          console.log('Timeline Header transform stored:', headerTransform);
-          let heightElem = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
-          let transformElem = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
-          if (headerTransform) {
-            observeElement(transformElem, () => {
-              let heightStyle = heightElem.style.height;
-              let transformStyle = transformElem.style.transform.match(/translateY\((\d+px)\)/)[1];
-              if (heightElem && heightStyle !== '0px' && heightStyle !== headerTransform) {
-                heightElem.style.height = headerTransform;
-                console.log('Update height:', heightStyle);
-              }
-              if (transformElem && transformStyle !== '0px' && transformStyle !== headerTransform) {
-                transformElem.style.transform = transformElem.style.transform.replace(transformStyle, headerTransform);
-                console.log('Update transform:', transformElem.style.transform);
+          let timelineTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
+          console.log('Timeline Header transform stored:', timelineTransform);
+          let heightDiv = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
+          let transformDiv = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
+          if (timelineTransform && timelineTransform !== '0px') {
+            observeElement(transformDiv, () => {
+              let currentHeight = heightDiv.style.height;
+              let currentTransform = transformDiv.style.transform.match(/translateY\((\d+px)\)/)[1];
+              if (isOnHomeTimelinePage()) {
+                if (heightDiv && currentHeight !== '0px' && currentHeight !== timelineTransform) {
+                  currentHeight = timelineTransform;
+                  console.log('Update height:', currentHeight);
+                }
+                if (transformDiv && currentTransform !== '0px' && currentTransform !== timelineTransform) {
+                  transformDiv.style.transform = transformDiv.style.transform.replace(currentTransform, timelineTransform);
+                  console.log('Update transform:', transformDiv.style.transform);
+                }
               }
             }, {
               name: 'timelineHeader style',
               observers: globalObservers,
             }, { attributes: true, attributeFilter: ["style"] });
-          } else if (headerTransform === '0px') {
-            console.log('Transform value is 0px, re-running callback...');
+          } else {
             findTimelineHeader(timelineHeader);
           }
         });
