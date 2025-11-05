@@ -3764,6 +3764,10 @@ const configureCss = (() => {
       hideCssSelectors.push(
         'body:not(.Bookmarks) [data-testid="tweet"][tabindex="0"] [role="group"] > div:has(> button[data-testid$="ookmark"])',
       )
+      // Media Viewer tweets
+      hideCssSelectors.push(
+        'body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(> button[data-testid$="ookmark"])',
+      )
       if (!config.showBookmarkButtonUnderFocusedTweets) {
         // Under the focused tweet
         hideCssSelectors.push(
