@@ -3972,7 +3972,9 @@ const configureCss = (() => {
       hideCssSelectors.push('.Views')
       hideCssSelectors.push(
         '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2)',
-        '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2) + div[dir]:last-child'
+        '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2) + div[dir]:last-child',
+        '[data-testid="tweet"][tabindex="-1"] span.TweetSource + div[aria-hidden="true"]:nth-child(4):nth-last-child(2)',
+        '[data-testid="tweet"][tabindex="-1"] span.TweetSource + div[aria-hidden="true"]:nth-child(4):nth-last-child(2) + div[dir]:last-child',
       )
     }
     if (config.hideWhoToFollowEtc) {
