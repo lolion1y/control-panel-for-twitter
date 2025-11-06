@@ -3887,6 +3887,16 @@ const configureCss = (() => {
     }
     if (config.hideTweetAnalyticsLinks) {
       hideCssSelectors.push('.AnalyticsButton')
+      cssRules.push(`
+          /* Under timeline tweets */
+          [data-testid="tweet"][tabindex="0"] [role="group"] > div a[href$="/analytics"],
+          /* In media modal */
+          [aria-modal="true"] > div > div:first-of-type [role="group"] > div a[href$="/analytics"],
+          /* In media viewer and media modal */
+          body:is(.MediaViewer, .MobileMedia) [role="group"] > div a[href$="/analytics"] {
+            pointer-events: none !important;
+          }
+      `)
     }
     if (config.hideTwitterBlueUpsells) {
       hideCssSelectors.push(
