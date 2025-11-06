@@ -3970,6 +3970,10 @@ const configureCss = (() => {
     if (config.hideViews) {
       // "Views" under the focused tweet
       hideCssSelectors.push('.Views')
+      hideCssSelectors.push(
+        '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2)',
+        '[data-testid="tweet"][tabindex="-1"] div[dir] + div[aria-hidden="true"]:nth-child(2):nth-last-child(2) + div[dir]:last-child'
+      )
     }
     if (config.hideWhoToFollowEtc) {
       hideCssSelectors.push(`body.Profile ${Selectors.PRIMARY_COLUMN} aside[role="complementary"]`)
