@@ -155,10 +155,9 @@ const config = {
   navDensity: 'default',
   showRelevantPeople: true,
   // Mobile only
-  hideLiveBroadcastBar: false,
+  hideLiveBroadcastBar: true,
   hideMessagesBottomNavItem: true,
-  hideLiveThreadsDesc: true,
-  hideFloatingTweetButton:true,
+  hideFloatingTweetButton: true,
   preventNextVideoAutoplay: true,
   disableVibrate: true,
 }
@@ -4583,63 +4582,6 @@ const configureCss = (() => {
           'body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(> a[href$="/analytics"])',
           `body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
         )
-      }
-      if (config.hideLiveThreadsDesc) {
-        const LiveThreadsDesc = `body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"]:not([style*="z-index"])`;
-        hideCssSelectors.push(LiveThreadsDesc)
-        function findTimelineHeader(callback) {
-          if (isOnHomeTimelinePage()) {
-            let timelineHeader = document.querySelector(LiveThreadsDesc);
-            if (timelineHeader) {
-              callback(timelineHeader);
-              return;
-            }
-            observeElement(document.body, () => {
-              console.log('Timeline Header not found');
-              globalObservers.get('timeline header')?.disconnect();
-              findTimelineHeader(callback);
-            }, {
-              name: 'timeline header',
-              observers: globalObservers,
-            }, { attributes: true, subtree: true });
-          } else {
-            observeElement(document.body, () => {
-              console.log('Not on Timeline');
-              globalObservers.get('timeline page')?.disconnect();
-              findTimelineHeader(callback);
-            }, {
-              name: 'timeline page',
-              observers: globalObservers,
-            }, { attributes: true });
-          }
-        }
-        findTimelineHeader((timelineHeader) => {
-          let timelineTransform = timelineHeader.style.transform.match(/translateY\((\d+px)\)/)[1];
-          console.log('Timeline Header transform stored:', timelineTransform);
-          let heightDiv = /** @type {HTMLElement} */ (document.querySelector('body.HomeTimeline header[role="banner"] > div[style^="height"]'));
-          let transformDiv = /** @type {HTMLElement} */ (document.querySelector(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} ~ div[style^="transform"][style*="z-index"]`));
-          if (timelineTransform && timelineTransform !== '0px') {
-            observeElement(transformDiv, () => {
-              let currentHeight = heightDiv.style.height;
-              let currentTransform = transformDiv.style.transform.match(/translateY\((\d+px)\)/)[1];
-              if (isOnHomeTimelinePage()) {
-                if (heightDiv && currentHeight !== '0px' && currentHeight !== timelineTransform) {
-                  heightDiv.style.height = timelineTransform;
-                  console.log('Update height:', currentHeight);
-                }
-                if (transformDiv && currentTransform !== '0px' && currentTransform !== timelineTransform) {
-                  transformDiv.style.transform = transformDiv.style.transform.replace(currentTransform, timelineTransform);
-                  console.log('Update transform:', transformDiv.style.transform);
-                }
-              }
-            }, {
-              name: 'timelineHeader style',
-              observers: globalObservers,
-            }, { attributes: true, attributeFilter: ["style"] });
-          } else {
-            findTimelineHeader(timelineHeader);
-          }
-        });
       }
       if (config.hideFloatingTweetButton) {
         hideCssSelectors.push('a[data-testid="FloatingActionButtons_Tweet_Button"]')

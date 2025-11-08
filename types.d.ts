@@ -108,7 +108,6 @@ export type Config = {
   hideLiveBroadcastBar: boolean
   hideMessagesBottomNavItem: boolean
   preventNextVideoAutoplay: boolean
-  hideLiveThreadsDesc: boolean
   hideFloatingTweetButton: boolean
   disableVibrate: boolean
 }
