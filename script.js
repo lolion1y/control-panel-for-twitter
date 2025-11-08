@@ -4370,7 +4370,7 @@ const configureCss = (() => {
         // Only show the first sidebar item by default
         // Re-show subsequent non-algorithmic sections on specific pages
         cssRules.push(`
-          body ${Selectors.SIDEBAR_WRAPPERS} > div > div:not(:first-of-type) {
+          body.HomeTimeline ${Selectors.SIDEBAR_WRAPPERS} > div > div:not(:first-of-type) {
             display: none;
           }
           ${Selectors.SIDEBAR_WRAPPERS} > div:not(:first-of-type) {
