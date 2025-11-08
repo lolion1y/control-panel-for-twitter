@@ -4558,6 +4558,11 @@ const configureCss = (() => {
           // Content
           `body.Explore ${Selectors.TIMELINE}`,
         )
+        cssRules.push(`
+          body.Explore header[role="banner"] > div[style^="height"] {
+            display: none !important;
+          }
+        `)
       }
       if (config.hideGrokNav) {
         hideCssSelectors.push(`${Selectors.PRIMARY_NAV_MOBILE} a[href="/i/grok"]`)
