@@ -4528,11 +4528,21 @@ const configureCss = (() => {
         }
       }
       if (config.hideLiveBroadcastBar) {
-        hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} + div[style^="transform"]`)
+        // hideCssSelectors.push(`body.HomeTimeline ${Selectors.MOBILE_TIMELINE_HEADER} + div[style^="transform"]`)
+        hideCssSelectors.push('body.HomeTimeline div[data-testid="TopNavBar"] ~ div:has([data-testid="placementTracking"])')
         // Reclaim the height reserved for the bar
         cssRules.push(`
           body.HomeTimeline header[role="banner"] > div[style="height: 162px;"] {
             height: 102px !important;
+          }
+          body.HomeTimeline header[role="banner"] > div[style="height: 153px;"] {
+            height: 100px !important;
+          }
+          body.HomeTimeline div[data-testid="TopNavBar"] ~ div[style*="transform: translate3d(0px, 0px, 0px) translateY(162px)"][style*="z-index"] {
+            transform: translate3d(0px, 0px, 0px) translateY(106px) !important;
+          }
+          body.HomeTimeline div[data-testid="TopNavBar"] ~ div[style*="transform: translate3d(0px, 0px, 0px) translateY(153px)"][style*="z-index"] {
+            transform: translate3d(0px, 0px, 0px) translateY(100px) !important;
           }
         `)
       }
