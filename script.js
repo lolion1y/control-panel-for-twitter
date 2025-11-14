@@ -8,14 +8,14 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     200.6
+// @version     201
 // ==/UserScript==
 void function() {
 
 // Patch XMLHttpRequest to modify requests
 const XMLHttpRequest_open = XMLHttpRequest.prototype.open
 XMLHttpRequest.prototype.open = function(method, url) {
-  if (config.sortReplies != 'relevant' && !userSortedReplies && url.includes('/TweetDetail?')) {
+  if (config.enabled && config.sortReplies != 'relevant' && !userSortedReplies && url.includes('/TweetDetail?')) {
     let request = new URL(url)
     let params = new URLSearchParams(request.search)
     let variables = JSON.parse(decodeURIComponent(params.get('variables')))
@@ -111,6 +111,7 @@ const config = {
   mutableQuoteTweets: false,
   mutedQuotes: [],
   quoteTweets: 'ignore',
+  redirectChatNav: false,
   redirectToTwitter: false,
   reducedInteractionMode: false,
   replaceLogo: true,
@@ -3037,6 +3038,18 @@ const observePopups = (() => {
   }
 })()
 
+async function observeReRenderBoundary() {
+  let $rerenderBoundary = await getElement('#react-root > div > div')
+  observeElement($rerenderBoundary, () => {
+    log('app re-rendered')
+    observePopups()
+    observeSideNavTweetButton()
+  }, {
+    name: 'app re-render boundary',
+    observers: globalObservers,
+  })
+}
+
 async function observeTitle() {
   let $title = await getElement('title', {name: '<title>'})
   observeElement($title, () => {
@@ -3672,6 +3685,26 @@ function checkReactNativeStylesheet() {
 
   findRules()
 }
+
+function patchHistory() {
+  let props = getTopLevelProps()
+  if (!props) return
+  if (!props.history) return warn('history not found')
+  let push = props.history.push
+  if (!push) return warn('history.push not found')
+  if (push.patched) return
+  props.history.push = function (args) {
+    if (config.enabled && config.redirectChatNav &&
+        args != null && typeof args == "object" && args.pathname == "/i/chat") {
+      log('redirecting Chat to Messages')
+      args.pathname = "/messages"
+    }
+    return push(args)
+  }
+  props.history.push.patched = true
+  log('history patched')
+}
+//#endregion
 
 //#region CSS
 const configureCss = (() => {
@@ -4458,7 +4491,7 @@ const configureCss = (() => {
         )
       }
       if (config.hideMessagesDrawer) {
-        cssRules.push(`div[data-testid="DMDrawer"] { visibility: hidden; }`)
+        cssRules.push(`div:is([data-testid="DMDrawer"], [data-testid="chat-drawer-root"]) { visibility: hidden; }`)
       }
       if (config.hideMessageSideNav)  {
         hideCssSelectors.push('a[data-testid="AppTabBar_DirectMessage_Link"]')
@@ -4569,7 +4602,7 @@ const configureCss = (() => {
         hideCssSelectors.push(`${Selectors.PRIMARY_NAV_MOBILE} a[href$="/communities"]`)
       }
       if (config.hideMessagesBottomNavItem) {
-        hideCssSelectors.push(`${Selectors.PRIMARY_NAV_MOBILE} a[href="/messages"]`)
+        hideCssSelectors.push(`${Selectors.PRIMARY_NAV_MOBILE} a:is([href="/messages"], [href="/i/chat"])`)
       }
       if (config.hideJobsNav) {
         hideCssSelectors.push(`${Selectors.PRIMARY_NAV_MOBILE} a[href="/jobs"]`)
@@ -5928,6 +5961,10 @@ function onTitleChange(title) {
     else if (desktop && location.pathname == '/messages' && currentPath != '/messages') {
       log('viewing root Messages page')
     }
+    // On desktop, Chat always has an empty title
+    else if (desktop && location.pathname == '/i/chat' && currentPath != '/i/chat') {
+      log('viewing root Chat page')
+    }
     // The Bookmarks page sets an empty title
     else if (location.pathname.startsWith(PagePaths.BOOKMARKS) && !currentPath.startsWith(PagePaths.BOOKMARKS)) {
       log('viewing Bookmarks page')
@@ -6527,8 +6564,6 @@ function tweakDisplaySettingsPage() {
       log('Color setting changed')
       themeColor = newThemeColor
       configureThemeCss()
-      observePopups()
-      observeSideNavTweetButton()
     }, {
       name: 'Color change re-render boundary',
       observers: pageObservers,
@@ -7311,6 +7346,8 @@ async function main() {
       // One-time setup
       checkReactNativeStylesheet()
       observeBodyBackgroundColor()
+      observeReRenderBoundary()
+      patchHistory()
       let initialThemeColor = getThemeColorFromState()
       if (initialThemeColor) {
         themeColor = initialThemeColor
