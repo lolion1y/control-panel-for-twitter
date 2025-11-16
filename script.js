@@ -8,7 +8,7 @@
 // @match       https://x.com/*
 // @match       https://mobile.x.com/*
 // @run-at      document-start
-// @version     201
+// @version     202
 // ==/UserScript==
 void function() {
 
@@ -3693,13 +3693,19 @@ function patchHistory() {
   let push = props.history.push
   if (!push) return warn('history.push not found')
   if (push.patched) return
-  props.history.push = function (args) {
-    if (config.enabled && config.redirectChatNav &&
-        args != null && typeof args == "object" && args.pathname == "/i/chat") {
-      log('redirecting Chat to Messages')
-      args.pathname = "/messages"
+  props.history.push = function (arg) {
+    if (config.enabled && config.redirectChatNav && arg != null) {
+      if (typeof arg == 'object' && arg.pathname == '/i/chat') {
+        log('Redirecting Chat to Messages')
+        arg.pathname = "/messages/home"
+      }
+      // Back button from Message requests
+      else if (arg === '/messages') {
+        log('Redirecting /messages to Messages')
+        arg = '/messages/home'
+      }
     }
-    return push(args)
+    return push(arg)
   }
   props.history.push.patched = true
   log('history patched')
