@@ -5,6 +5,7 @@ export type Config = {
   version?: 'desktop' | 'mobile'
   // Shared
   addAddMutedWordMenuItem: boolean
+  addFocusedTweetAccountLocation: boolean
   // XXX This is now more like "use the Following tab by default"
   alwaysUseLatestTweets: boolean
   bypassAgeVerification: boolean
@@ -37,6 +38,7 @@ export type Config = {
   // XXX This now controls hiding all "Discover" suggestions
   hideMoreTweets: boolean
   hideNotificationLikes: boolean
+  hideNotificationRetweets: boolean
   hideNotifications: 'ignore' | 'badges' | 'hide'
   hideProfileRetweets: boolean
   hideQuoteTweetMetrics: boolean

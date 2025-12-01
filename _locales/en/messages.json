@@ -5,6 +5,9 @@
   "addAddMutedWordMenuItemLabel_mobile": {
     "message": "Add \"Add muted word\" to the slide-out menu"
   },
+  "addFocusedTweetAccountLocationLabel": {
+    "message": "Show account location in focused tweets"
+  },
   "alwaysUseLatestTweetsLabel": {
     "message": "Use the \"Following\" (chronological) timeline by default"
   },
@@ -193,6 +196,9 @@
   },
   "hideNotificationLikesLabel": {
     "message": "Hide Likes in Notifications"
+  },
+  "hideNotificationRetweetsLabel": {
+    "message": "Hide Retweets in Notifications"
   },
   "hideNotificationsLabel": {
     "message": "Hide notifications"

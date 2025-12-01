@@ -60,6 +60,7 @@ const config = {
   debugLogTimelineStats: false,
   // Shared
   addAddMutedWordMenuItem: false,
+  addFocusedTweetAccountLocation: false,
   alwaysUseLatestTweets: false,
   bypassAgeVerification: true,
   defaultToLatestSearch: false,
@@ -90,6 +91,7 @@ const config = {
   hideMonetizationNav: true,
   hideMoreTweets: false,
   hideNotificationLikes: false,
+  hideNotificationRetweets: false,
   hideNotifications: 'ignore',
   hideProfileRetweets: false,
   hideQuoteTweetMetrics: true,
@@ -2431,6 +2433,39 @@ function getNotificationCount() {
   return state.badgeCount.unreadDMCount + state.badgeCount.unreadNTabCount;
 }
 
+let accountLocationCache = new Map()
+
+async function getAccountLocation(screenName) {
+  if (!accountLocationCache.has(screenName)) {
+    let csrfToken = document.cookie.split('; ').find(c => c.startsWith('ct0='))?.split('=')[1]
+    let response = await fetch(
+      `/i/api/graphql/XRqGa7EeokUU5kppkh13EA/AboutAccountQuery?variables=${encodeURIComponent(JSON.stringify({screenName}))}`,
+      {
+        credentials: 'include',
+        headers: {
+          'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
+          'content-type': 'application/json',
+          'x-twitter-active-user': 'yes',
+          'x-twitter-auth-type': 'OAuth2Session',
+          'x-twitter-client-language': lang,
+          ...(csrfToken && {'x-csrf-token': csrfToken}),
+        }
+      }
+    )
+    if (response.ok) {
+      try {
+        let body = await response.json()
+        accountLocationCache.set(screenName, body.data?.user_result_by_screen_name?.result?.about_profile)
+      } catch(e) {
+        error('error getting account location for', screenName, e)
+      }
+    } else {
+      error(response.status, 'response getting account location for', screenName)
+    }
+  }
+  return accountLocationCache.get(screenName)
+}
+
 function getStateEntities() {
   let state = getState()
   if (state) {
@@ -3454,6 +3489,25 @@ async function observeIndividualTweetTimeline(page) {
 //#endregion
 
 //#region Tweak functions
+async function addAccountLocationToFocusedTweet($permalinkBar, screenName) {
+  if (!config.addFocusedTweetAccountLocation) return
+  if ($permalinkBar.hasAttribute('cpft-account-location-added')) return
+  if (!screenName) return
+  let accountLocation = await getAccountLocation(screenName)
+  if (!accountLocation) return
+  let $separator = document.createElement('span')
+  $separator.className = 'AccountLocation cpft_separator cpft_text'
+  $separator.setAttribute('aria-hidden', 'true')
+  $separator.setAttribute('hidden', '')
+  $separator.textContent = '·'
+  let $locationLabel = document.createElement('span')
+  $locationLabel.className = 'AccountLocation cpft_text'
+  $locationLabel.setAttribute('hidden', '')
+  $locationLabel.textContent = `${accountLocation.account_based_in}${accountLocation.location_accurate ? '' : '?'}`
+  $permalinkBar.append($separator, $locationLabel)
+  $permalinkBar.setAttribute('cpft-account-location-added', '')
+}
+
 /**
  * Add an "Add muted word" menu item after the given link which takes you
  * straight to entering a new muted word (by clicking its way through all the
@@ -3462,12 +3516,12 @@ async function observeIndividualTweetTimeline(page) {
  * @param {string} linkSelector
  */
 async function addAddMutedWordMenuItem($link, linkSelector) {
-  log('adding "Add muted word" menu item')
+  log('addAddMutedWordMenuItem: adding "Add muted word" menu item')
 
   // Wait for the dropdown to appear on desktop
   if (desktop) {
     $link = await getElement(`#layers div[data-testid="Dropdown"] ${linkSelector}`, {
-      name: 'rendered menu item',
+      name: 'rendered menu item (addAddMutedWordMenuItem)',
       timeout: 100,
     })
     if (!$link) return
@@ -3480,7 +3534,20 @@ async function addAddMutedWordMenuItem($link, linkSelector) {
   $addMutedWord.querySelector('svg').innerHTML = Svgs.MUTE
   $addMutedWord.addEventListener('click', (e) => {
     e.preventDefault()
-    addMutedWord()
+    History_push?.({
+      pathname: '/settings/add_muted_keyword',
+      hash: '',
+      query: {},
+      search: '',
+    })
+    if (desktop) {
+      // Dismiss the menu
+      let $menuLayer = /** @type {HTMLElement} */ ($link.closest('[role="group"]')?.firstElementChild?.firstElementChild)
+      if (!$menuLayer) {
+        warn('addAddMutedWordMenuItem: could not find menu layer to dismiss menu')
+      }
+      $menuLayer?.click()
+    }
   })
   $link.parentElement.insertAdjacentElement('beforebegin', $addMutedWord)
 }
@@ -3556,27 +3623,6 @@ async function addMuteQuotesMenuItems($blockMenuItem) {
   }
 
   $blockMenuItem.insertAdjacentElement('beforebegin', $muteQuotes)
-}
-
-async function addMutedWord() {
-  if (!document.querySelector('a[href="/settings')) {
-    let $settingsAndSupport = /** @type {HTMLElement} */ (document.querySelector('[data-testid="settingsAndSupport"]'))
-    $settingsAndSupport?.click()
-  }
-
-  for (let path of [
-    '/settings',
-    '/settings/privacy_and_safety',
-    '/settings/mute_and_block',
-    '/settings/muted_keywords',
-    '/settings/add_muted_keyword',
-  ]) {
-    let $link = await getElement(`a[href="${path}"]`, {timeout: 500})
-    if (!$link) return
-    $link.click()
-  }
-  let $input = await getElement('input[name="keyword"]')
-  setTimeout(() => $input.focus(), 100)
 }
 
 /**
@@ -3686,26 +3732,40 @@ function checkReactNativeStylesheet() {
   findRules()
 }
 
+let History_push
+
 function patchHistory() {
   let props = getTopLevelProps()
   if (!props) return
   if (!props.history) return warn('history not found')
-  let push = props.history.push
-  if (!push) return warn('history.push not found')
-  if (push.patched) return
+  if (!props.history.push) return warn('history.push not found')
+  if (props.history.push.patched) return
+  History_push = props.history.push
   props.history.push = function (...args) {
-    if (config.enabled && config.redirectChatNav && args[0] != null) {
-      if (typeof args[0] == 'object' && args[0].pathname == '/i/chat') {
-        log('Redirecting Chat to Messages')
-        args[0].pathname = '/messages/home'
+    if (config.enabled && args[0] != null) {
+      if (config.hideVerifiedNotificationsTab && typeof args[0] == 'object' && typeof args[0].pathname == 'string') {
+        if (args[0].pathname == '/notifications/verified') {
+          log('Redirecting /notifications/verified to /notifications')
+          args[0].pathname = '/notifications'
+        }
+        else if (args[0].pathname.endsWith('/verified_followers')) {
+          log('Redirecting /verified_followers to /followers')
+          args[0].pathname = args[0].pathname.replace(/verified_followers$/, 'followers')
+        }
       }
-      // Back button from Message requests
-      else if (args[0] === '/messages') {
-        log('Redirecting /messages to Messages')
-        args[0] = '/messages/home'
+      if (config.redirectChatNav) {
+        if (typeof args[0] == 'object' && args[0].pathname == '/i/chat') {
+          log('Redirecting Chat to Messages')
+          args[0].pathname = desktop ? '/messages/home' : '/messages'
+        }
+        // Back button from Message requests
+        else if (desktop && args[0] === '/messages') {
+          log('Redirecting /messages to Messages')
+          args[0] = '/messages/home'
+        }
       }
     }
-    return push(...args)
+    return History_push(...args)
   }
   props.history.push.patched = true
   log('history patched')
@@ -3767,6 +3827,9 @@ const configureCss = (() => {
       .cpft_menu_item:hover { background-color: var(--hover-bg-color) !important; }
     `)
 
+    if (config.addFocusedTweetAccountLocation) {
+      cssRules.push('.AccountLocation[hidden] { display: inline; }')
+    }
     if (config.alwaysUseLatestTweets && config.hideForYouTimeline) {
       cssRules.push(`
         /* Prevent the For you tab container taking up space */
@@ -5184,7 +5247,6 @@ function handlePopup($popup) {
       let $selectedSvg = $popup.querySelector('div[role="menuitem"] svg')
       for (let [index, $menuItem] of $menuItems.entries()) {
         let shouldBeSelected = index == {recent: 1, liked: 2}[config.sortReplies]
-        log({index, $menuItem, shouldBeSelected})
         if (shouldBeSelected) {
           $menuItem.lastElementChild.append($selectedSvg)
         }
@@ -5603,6 +5665,7 @@ function onTimelineChange($timeline, page, options = {}) {
         }
         else if ($iconPath.startsWith('M4.75 3.79l4.603 4.3-1.706 1.8')) {
           notificationType = 'RETWEET'
+          hideItem = config.hideNotificationRetweets
         }
       }
       if (notificationType) {
@@ -6624,7 +6687,9 @@ function restoreTweetSource($permalinkBar, tweetInfo) {
 async function tweakFocusedTweet($focusedTweet, options) {
   log('tweaking focused tweet')
   let {observers} = options
-  let tweetId = location.pathname.match(URL_TWEET_BASE_RE)?.[2]
+  let focusedTweetUrlMatch = location.pathname.match(URL_TWEET_BASE_RE)
+  let screenName = focusedTweetUrlMatch?.[1]
+  let tweetId = focusedTweetUrlMatch?.[2]
   let tweetInfo = getTweetInfo(tweetId)
 
   // Tag View elements and restore Tweet source
@@ -6633,6 +6698,7 @@ async function tweakFocusedTweet($focusedTweet, options) {
     $permalinkBar.children[1]?.classList.toggle('Views', config.hideViews)
     $permalinkBar.children[2]?.classList.toggle('Views', config.hideViews)
     restoreTweetSource($permalinkBar, tweetInfo)
+    addAccountLocationToFocusedTweet($permalinkBar, screenName)
   } else {
     warn('focused tweet permalink bar not found')
   }
@@ -6929,9 +6995,10 @@ async function tweakMobileComposeTweetPage() {
         // Don't update the Tweet button if the list was re-rendered to display
         // a user dropdown, in which case it will already be in the DOM.
         if (config.replaceLogo && !document.querySelector('main [id^="typeaheadDropdown"]')) {
-          $tweetButtonText.textContent = getString($containers.length == 1 ? 'TWEET' : 'TWEET_ALL')
+          $tweetButtonText.textContent = getString($containers.length <= 1 ? 'TWEET' : 'TWEET_ALL')
         }
       }, {
+        leading: true,
         name: 'Tweets container',
         observers: pageObservers,
       })

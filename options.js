@@ -32,6 +32,7 @@ for (let optionValue of [
 for (let translationId of [
   'addAddMutedWordMenuItemLabel_desktop',
   'addAddMutedWordMenuItemLabel_mobile',
+  'addFocusedTweetAccountLocationLabel',
   'alwaysUseLatestTweetsLabel',
   'bypassAgeVerificationLabel',
   'customCssLabel',
@@ -84,6 +85,7 @@ for (let translationId of [
   'hideMoreSlideOutMenuItemsOptionsLabel_desktop',
   'hideMoreSlideOutMenuItemsOptionsLabel_mobile',
   'hideNotificationLikesLabel',
+  'hideNotificationRetweetsLabel',
   'hideProfileHeaderMetricsLabel',
   'hideProfileRetweetsLabel',
   'hideQuoteTweetMetricsLabel',
@@ -146,7 +148,12 @@ for (let translationId of [
   'uninvertFollowButtonsLabel',
   'xFixesLabel',
 ]) {
-  document.getElementById(translationId).textContent = chrome.i18n.getMessage(translationId)
+  let $el = document.getElementById(translationId)
+  if ($el) {
+    $el.textContent = chrome.i18n.getMessage(translationId)
+  } else {
+    console.warn('could not find element for translationId', translationId)
+  }
 }
 
 for (let translationClass of [
@@ -189,6 +196,7 @@ const defaultConfig = {
   version: /(Android|iP(ad|hone))/.test(navigator.userAgent) ? 'mobile' : 'desktop',
   // Shared
   addAddMutedWordMenuItem: true,
+  addFocusedTweetAccountLocation: false,
   alwaysUseLatestTweets: true,
   bypassAgeVerification: true,
   defaultToLatestSearch: false,
@@ -219,6 +227,7 @@ const defaultConfig = {
   hideMonetizationNav: true,
   hideMoreTweets: true,
   hideNotificationLikes: false,
+  hideNotificationRetweets: false,
   hideNotifications: 'ignore',
   hideProfileRetweets: false,
   hideQuoteTweetMetrics: true,
@@ -318,7 +327,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.15.2.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.16.0.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
