@@ -24,6 +24,8 @@ export type Config = {
   hideChatNav: boolean
   hideCommunitiesNav: boolean
   hideComposeTweet: boolean
+  hideConnectNav: boolean
+  hideCreatorStudioNav: boolean
   hideExplorePageContents: boolean
   hideFollowingMetrics: boolean
   hideForYouTimeline: boolean
@@ -126,6 +128,7 @@ export type LocaleKey =
   | 'HOME'
   | 'LIKES'
   | 'LIVE_ON_X'
+  | 'MESSAGES'
   | 'MOST_RELEVANT'
   | 'MUTE_THIS_CONVERSATION'
   | 'POST_ALL'

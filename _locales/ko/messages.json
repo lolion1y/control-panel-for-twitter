@@ -128,6 +128,12 @@
   "hideComposeTweetLabel": {
     "message": "트윗 작성 버튼 숨기기"
   },
+  "hideConnectNavLabel": {
+    "message": "연결하기"
+  },
+  "hideCreatorStudioNavLabel": {
+    "message": "크리에이터 스튜디오"
+  },
   "hideDiscoverSuggestionsLabel": {
     "message": "\"발견\" 제안 숨기기"
   },
@@ -177,7 +183,7 @@
     "message": "메시지"
   },
   "hideMessagesDrawerLabel": {
-    "message": "메시지 드로어"
+    "message": "채팅 드로어"
   },
   "hideMetricsLabel": {
     "message": "지표 숨기기"

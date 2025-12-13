@@ -128,6 +128,12 @@
   "hideComposeTweetLabel": {
     "message": "Masquer le bouton Rédiger un Tweet"
   },
+  "hideConnectNavLabel": {
+    "message": "Se connecter"
+  },
+  "hideCreatorStudioNavLabel": {
+    "message": "Creator Studio"
+  },
   "hideDiscoverSuggestionsLabel": {
     "message": "Masquer les suggestions \"Découvrir\""
   },
@@ -177,7 +183,7 @@
     "message": "Messages"
   },
   "hideMessagesDrawerLabel": {
-    "message": "Tiroir des messages"
+    "message": "Tiroir de chat"
   },
   "hideMetricsLabel": {
     "message": "Masquer les métriques"
