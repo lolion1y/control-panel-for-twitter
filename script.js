@@ -4572,13 +4572,13 @@ const configureCss = (() => {
         }
         if (config.hideSidebarSearchBox) {
           hideCssSelectors.push(
-            `${Selectors.SIDEBAR_WRAPPERS} > div:first-of-type`,
+            `.SidebarContents > div:first-of-type`,
           )
           cssRules.push(`
-            ${Selectors.SIDEBAR_WRAPPERS} > div:nth-of-type(2) {
+            .SidebarContents > div:nth-of-type(2) {
               height: 0;
-          }
-        `)
+            }
+         `)
         }
         hideCssSelectors.push(`body.HideSidebar ${Selectors.SIDEBAR}`)
       } else {
