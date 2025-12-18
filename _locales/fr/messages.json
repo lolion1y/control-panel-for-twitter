@@ -129,7 +129,7 @@
     "message": "Masquer le bouton Rédiger un Tweet"
   },
   "hideConnectNavLabel": {
-    "message": "Se connecter"
+    "message": "Suivre"
   },
   "hideCreatorStudioNavLabel": {
     "message": "Creator Studio"
@@ -250,6 +250,9 @@
   },
   "hideTimelineTweetBoxLabel": {
     "message": "Zone de tweet dans le fil"
+  },
+  "hideTodaysNewsLabel": {
+    "message": "Masquer les Actualités du jour"
   },
   "hideToggleNavigationLabel": {
     "message": "Masquer activer/désactiver la navigation"

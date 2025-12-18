@@ -129,7 +129,7 @@
     "message": "트윗 작성 버튼 숨기기"
   },
   "hideConnectNavLabel": {
-    "message": "연결하기"
+    "message": "팔로우"
   },
   "hideCreatorStudioNavLabel": {
     "message": "크리에이터 스튜디오"
@@ -250,6 +250,9 @@
   },
   "hideTimelineTweetBoxLabel": {
     "message": "타임라인 트윗 상자"
+  },
+  "hideTodaysNewsLabel": {
+    "message": "오늘의 뉴스 숨기기"
   },
   "hideToggleNavigationLabel": {
     "message": "탐색 전환 숨기기"

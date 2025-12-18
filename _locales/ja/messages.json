@@ -129,7 +129,7 @@
     "message": "ツイート作成ボタンを非表示"
   },
   "hideConnectNavLabel": {
-    "message": "つながる"
+    "message": "フォロー"
   },
   "hideCreatorStudioNavLabel": {
     "message": "Creator Studio"
@@ -250,6 +250,9 @@
   },
   "hideTimelineTweetBoxLabel": {
     "message": "タイムラインのツイートボックス"
+  },
+  "hideTodaysNewsLabel": {
+    "message": "「本日のニュース」を非表示"
   },
   "hideToggleNavigationLabel": {
     "message": "ナビゲーション切り替えを非表示"

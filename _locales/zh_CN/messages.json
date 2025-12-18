@@ -129,7 +129,7 @@
     "message": "隐藏撰写推文按钮"
   },
   "hideConnectNavLabel": {
-    "message": "连接"
+    "message": "关注"
   },
   "hideCreatorStudioNavLabel": {
     "message": "创作者工作室"
@@ -250,6 +250,9 @@
   },
   "hideTimelineTweetBoxLabel": {
     "message": "时间线推文框"
+  },
+  "hideTodaysNewsLabel": {
+    "message": "隐藏今日新闻"
   },
   "hideToggleNavigationLabel": {
     "message": "隐藏切换导航"
