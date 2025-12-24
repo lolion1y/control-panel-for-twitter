@@ -21,6 +21,7 @@ export type Config = {
   hideBookmarkButton: boolean
   hideBookmarkMetrics: boolean
   hideBookmarksNav: boolean
+  hideBusinessNav: boolean
   hideChatNav: boolean
   hideCommunitiesNav: boolean
   hideComposeTweet: boolean
@@ -36,7 +37,6 @@ export type Config = {
   hideLikeMetrics: boolean
   hideListsNav: boolean
   hideMetrics: boolean
-  hideMonetizationNav: boolean
   // XXX This now controls hiding all "Discover" suggestions
   hideMoreTweets: boolean
   hideNotificationLikes: boolean
@@ -82,6 +82,7 @@ export type Config = {
   showPremiumReplyFollowedBy: boolean
   showPremiumReplyFollowing: boolean
   showPremiumReplyGovernment: boolean
+  sortFollowing: 'mostRecent' | 'popular' | 'ignore'
   sortReplies: 'relevant' | 'recent' | 'liked'
   tweakNewLayout: boolean
   tweakQuoteTweetsPage: boolean
@@ -176,6 +177,7 @@ export type QuotedTweet = {
 export type SharedTweetsConfig = 'separate' | 'hide' | 'ignore'
 
 export type TweetType =
+  | 'COMMUNITY_TWEET'
   | 'PINNED_TWEET'
   | 'PROMOTED_TWEET'
   | 'QUOTE_TWEET'
@@ -204,6 +206,7 @@ export type TimelineItemType =
 export type NotificationType = 'AD' | 'FOLLOW' | 'LIKE' | 'RETWEET'
 
 export type TimelineOptions = {
+  checkSocialContext?: boolean
   classifyTweets?: boolean
   hideHeadings?: boolean
   isTabbed?: boolean

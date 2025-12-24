@@ -19,6 +19,8 @@ for (let optionValue of [
   'hide',
   'ignore',
   'liked',
+  'mostRecent',
+  'popular',
   'recent',
   'relevant',
   'separate',
@@ -82,7 +84,6 @@ for (let translationId of [
   'hideMessagesBottomNavItemLabel',
   'hideMessagesDrawerLabel',
   'hideMetricsLabel',
-  'hideMonetizationNavLabel',
   'hideMoreSlideOutMenuItemsOptionsLabel_desktop',
   'hideMoreSlideOutMenuItemsOptionsLabel_mobile',
   'hideNotificationLikesLabel',
@@ -138,6 +139,7 @@ for (let translationId of [
   'showPremiumReplyGovernmentLabel',
   'showRelevantPeopleLabel',
   'sidebarLabel',
+  'sortFollowingLabel',
   'sortRepliesLabel',
   'tweakNewLayoutInfo',
   'tweakNewLayoutLabel',
@@ -160,6 +162,7 @@ for (let translationId of [
 
 for (let translationClass of [
   'hideBookmarksNavLabel',
+  'hideBusinessNavLabel',
   'hideCommunitiesNavLabel',
   'hideConnectNavLabel',
   'hideListsNavLabel',
@@ -214,6 +217,7 @@ const defaultConfig = {
   hideBookmarkButton: false,
   hideBookmarkMetrics: true,
   hideBookmarksNav: false,
+  hideBusinessNav: true,
   hideChatNav: false,
   hideCommunitiesNav: false,
   hideComposeTweet: false,
@@ -229,7 +233,6 @@ const defaultConfig = {
   hideLikeMetrics: true,
   hideListsNav: false,
   hideMetrics: false,
-  hideMonetizationNav: true,
   hideMoreTweets: true,
   hideNotificationLikes: false,
   hideNotificationRetweets: false,
@@ -270,6 +273,7 @@ const defaultConfig = {
   showPremiumReplyFollowedBy: true,
   showPremiumReplyFollowing: true,
   showPremiumReplyGovernment: true,
+  sortFollowing: 'mostRecent',
   sortReplies: 'relevant',
   tweakNewLayout: false,
   tweakQuoteTweetsPage: true,
@@ -333,7 +337,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.18.0.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.19.0.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))

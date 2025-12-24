@@ -12,21 +12,96 @@
 // ==/UserScript==
 void function() {
 
-// Patch XMLHttpRequest to modify requests
 const XMLHttpRequest_open = XMLHttpRequest.prototype.open
 XMLHttpRequest.prototype.open = function(method, url) {
-  if (config.enabled && config.sortReplies != 'relevant' && !userSortedReplies && url.includes('/TweetDetail?')) {
-    let request = new URL(url)
-    let params = new URLSearchParams(request.search)
-    let variables = JSON.parse(decodeURIComponent(params.get('variables')))
-    variables.rankingMode = {
-      liked: 'Likes',
-      recent: 'Recency',
-    }[config.sortReplies]
-    params.set('variables', JSON.stringify(variables))
-    url = `${request.origin}${request.pathname}?${params.toString()}`
+  if (!config.enabled) return XMLHttpRequest_open.apply(this, [method, url])
+
+  if (config.sortReplies != 'relevant' && !userSortedReplies && url.includes('/TweetDetail?')) {
+    try {
+      let request = new URL(url)
+      let params = new URLSearchParams(request.search)
+      let variables = JSON.parse(decodeURIComponent(params.get('variables')))
+      if (typeof variables?.rankingMode == 'string') {
+        let rankingMode = {
+          liked: 'Likes',
+          recent: 'Recency',
+        }[config.sortReplies]
+        if (variables.rankingMode != rankingMode) {
+          log('sortReplies: forcing sort by', config.sortReplies)
+          variables.rankingMode = rankingMode
+          params.set('variables', JSON.stringify(variables))
+          url = `${request.origin}${request.pathname}?${params.toString()}`
+        }
+      } else {
+        warn('sortReplies: typeof variables.rankingMode is', typeof variables?.rankingMode)
+      }
+    } catch (e) {
+      error('sortReplies: error patching rankingMode', e)
+    }
   }
+  else if (config.sortFollowing != 'ignore' && !userSortedFollowing && url.includes('/HomeLatestTimeline')) {
+    if (method.toUpperCase() == 'GET') {
+      try {
+        let request = new URL(url)
+        let params = new URLSearchParams(request.search)
+        let variables = JSON.parse(decodeURIComponent(params.get('variables')))
+        if (typeof variables?.enableRanking == 'boolean') {
+          let enableRanking = config.sortFollowing == 'popular'
+          if (variables.enableRanking != enableRanking) {
+            log('sortFollowing: forcing sort by', config.sortFollowing)
+            variables.enableRanking = enableRanking
+            params.set('variables', JSON.stringify(variables))
+            url = `${request.origin}${request.pathname}?${params.toString()}`
+          }
+        } else {
+          warn('sortFollowing: typeof variables.enableRanking is', typeof variables?.enableRanking)
+        }
+      } catch (e) {
+        error('sortFollowing: error patching enableRanking', e)
+      }
+    } else {
+      // @ts-expect-error
+      this._method = method.toUpperCase()
+      // @ts-expect-error
+      this._url = url
+    }
+  }
+
   return XMLHttpRequest_open.apply(this, [method, url])
+}
+
+const XMLHttpRequest_send = XMLHttpRequest.prototype.send
+XMLHttpRequest.prototype.send = function(body) {
+  if (
+    !config.enabled || !body ||
+    // @ts-expect-error
+    this._method != 'POST' || !this._url
+  ) return XMLHttpRequest_send.apply(this, [body])
+
+  if (config.sortFollowing != 'ignore' && !userSortedFollowing &&
+      // @ts-expect-error
+      this._url?.includes('/HomeLatestTimeline')) {
+    try {
+      let data = JSON.parse(body)
+      if (data?.variables != null && typeof data.variables == 'object') {
+        let variables = data.variables
+        if (typeof variables?.enableRanking == 'boolean') {
+          let enableRanking = config.sortFollowing == 'popular'
+          if (variables.enableRanking != enableRanking) {
+            log('sortFollowing: forcing sort by', config.sortFollowing)
+            variables.enableRanking = enableRanking
+            body = JSON.stringify(data)
+          }
+        } else {
+          warn('sortFollowing: typeof variables.enableRanking is', typeof variables?.enableRanking)
+        }
+      }
+    } catch (e) {
+      error('sortFollowing: error patching enableRanking', e)
+    }
+  }
+
+  return XMLHttpRequest_send.apply(this, [body])
 }
 
 let debug = false
@@ -75,8 +150,9 @@ const config = {
   hideBookmarkButton: true,
   hideBookmarkMetrics: true,
   hideBookmarksNav: true,
-  hideCommunitiesNav: true,
+  hideBusinessNav: true,
   hideChatNav: true,
+  hideCommunitiesNav: true,
   hideComposeTweet: false,
   hideConnectNav: true,
   hideCreatorStudioNav: true,
@@ -90,7 +166,6 @@ const config = {
   hideLikeMetrics: false,
   hideListsNav: true,
   hideMetrics: true,
-  hideMonetizationNav: true,
   hideMoreTweets: false,
   hideNotificationLikes: false,
   hideNotificationRetweets: false,
@@ -131,6 +206,7 @@ const config = {
   showPremiumReplyFollowedBy: true,
   showPremiumReplyFollowing: true,
   showPremiumReplyGovernment: true,
+  sortFollowing: 'mostRecent',
   sortReplies: 'relevant',
   tweakNewLayout: false,
   tweakQuoteTweetsPage: true,
@@ -2101,6 +2177,9 @@ let quotedTweet = null
 /** `true` when a 'Block @${user}' menu item was seen in the last popup. */
 let blockMenuItemSeen = false
 
+/** `true` if the user has used the "Sort following" menu */
+let userSortedFollowing = false
+
 /** `true` if the user has used the "Sort replies by" menu */
 let userSortedReplies = false
 
@@ -2440,10 +2519,13 @@ function getElement(selector, {
 }
 
 function getTopLevelProps() {
-  let wrapped = $reactRoot.firstElementChild['wrappedJSObject'] || $reactRoot.firstElementChild
-  let reactPropsKey = Object.keys(wrapped).find(key => key.startsWith('__reactProps'))
+  if (!$reactRoot?.firstElementChild) {
+    warn('React top level props element not available yet')
+    return
+  }
+  let reactPropsKey = Object.keys($reactRoot.firstElementChild).find(key => key.startsWith('__reactProps'))
   if (reactPropsKey) {
-    return wrapped[reactPropsKey].children?.props?.children?.props
+    return $reactRoot.firstElementChild[reactPropsKey].children?.props?.children?.props
   } else {
     warn('React props key not found')
   }
@@ -3958,7 +4040,12 @@ const configureCss = (() => {
       hideCssSelectors.push(`${menuRole} a:is([href$="/i/connect_people"], [href$="/i/follow_people"])`)
     }
     if (config.hideCreatorStudioNav) {
-      hideCssSelectors.push(`${menuRole} a[href$="/creators/studio"]`)
+      hideCssSelectors.push(
+        `${menuRole} a[href$="/creators/studio"]`,
+        // Monetization and Subscriptions items in Settings
+        'body.Settings a[href="/settings/monetization"]',
+        'body.Settings a[href="/settings/manage_subscriptions"]',
+      )
     }
     if (!config.hideExplorePageContents) {
       hideCssSelectors.push(
@@ -4009,9 +4096,6 @@ const configureCss = (() => {
         '[data-testid="sheetDialog"] > [data-testid="subscribe"]',
         // "Subscriber" indicator in replies from subscribers
         '[data-testid="tweet"] [data-testid="icon-subscriber"]',
-        // Monetization and Subscriptions items in Settings
-        'body.Settings a[href="/settings/monetization"]',
-        'body.Settings a[href="/settings/manage_subscriptions"]',
         // Subscriptions tab link in Following/Follows
         `body.ProfileFollows.Subscriptions ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:last-child > [role="tab"]`,
       )
@@ -4056,8 +4140,11 @@ const configureCss = (() => {
         '[data-testid="card.wrapper"]:has(> div > a[href="https://itunes.apple.com/app/id6670324846"])',
       )
     }
-    if (config.hideMonetizationNav) {
-      hideCssSelectors.push(`${menuRole} a[href$="/i/monetization"]`)
+    if (config.hideBusinessNav) {
+      hideCssSelectors.push(`${menuRole} a:is([href^="/i/premium-business"], [href^="/i/verified-orgs-signup"])`)
+      if (desktop) {
+        hideCssSelectors.push(`${Selectors.PRIMARY_NAV_DESKTOP} a:is([href^="/i/premium-business"], [href^="/i/verified-orgs-signup"])`)
+      }
     }
     if (config.hideAdsNav) {
       hideCssSelectors.push(`${menuRole} a:is([href*="ads.twitter.com"], [href*="ads.x.com"])`)
@@ -4087,8 +4174,8 @@ const configureCss = (() => {
       hideCssSelectors.push(
         // Manually-tagged upsells
         '.PremiumUpsell',
-        // Premium/Verified menu items
-        `${menuRole} a:is([href^="/i/premium"], [href^="/i/verified"])`,
+        // Premium menu item
+        `${menuRole} a[href^="/i/premium_sign_up"]`,
         // In new More dialog
         `${Selectors.MORE_DIALOG} a:is([href^="/i/premium"], [href^="/i/verified"])`,
         // Analytics menu item
@@ -4098,9 +4185,9 @@ const configureCss = (() => {
         // "Edit" upsell on recent tweets
         '[role="menuitem"][data-testid="editWithPremium"]',
         // Premium item in Settings
-        'body.Settings a[href^="/i/premium"]',
+        'body.Settings a[href^="/i/premium_sign_up"]',
         // Misc upsells in your own profile
-        `.OwnProfile ${Selectors.PRIMARY_COLUMN} a[href^="/i/premium"]`,
+        `.OwnProfile ${Selectors.PRIMARY_COLUMN} a[href^="/i/premium_sign_up"]`,
         // Unlock Analytics button in your own profile
         '.OwnProfile [data-testid="analytics-preview"]',
         // Button in Communities header
@@ -4114,7 +4201,11 @@ const configureCss = (() => {
         // "you aren't verified yet" in Premium user profile
         '[data-testid="verified_profile_visitor_upsell"]',
         // "Upgrade to Premium+ to write longer posts" in Tweet composer
-        `${mobile ? 'body.ComposeTweetPage' : ':is(.ComposeTweetModal, .TweetBox)'} [aria-live="polite"][role="status"]:has(a[href="/i/premium_sign_up?referring_page=post-composer"])`,
+        `${mobile ? 'body.ComposeTweetPage' : ':is(.ComposeTweetModal, .TweetBox)'} [aria-live="polite"][role="status"]:has(a[href^="/i/premium_sign_up"])`,
+        // Box in focused Tweet with "Upgrade to Premium+" / "Get Verified" upsell
+        '[data-testid="tweet"][tabindex="-1"] [aria-live="polite"][role="status"]:has(a[href^="/i/premium_sign_up"])',
+        // Upsell on the Likes tab in your own profile
+        `body.OwnProfile ${Selectors.PRIMARY_COLUMN} nav + div:has(a[href^="/i/premium"])`,
       )
       // Hide Highlights and Articles tabs in your own profile if you don't have Premium
       let profileTabsList = `body.OwnProfile:not(.PremiumProfile) ${Selectors.PRIMARY_COLUMN} nav div[role="tablist"]`
@@ -4126,12 +4217,6 @@ const configureCss = (() => {
           margin-right: 0;
         }
         ${profileTabsList} > div > ${upsellTabLinks} {
-          display: none;
-        }
-      `)
-      // Hide upsell on the Likes tab in your own profile
-      cssRules.push(`
-        body.OwnProfile ${Selectors.PRIMARY_COLUMN} nav + div:has(a[href^="/i/premium"]) {
           display: none;
         }
       `)
@@ -4270,7 +4355,7 @@ const configureCss = (() => {
           }
           body.SeparatedTweets #cpftSeparatedTweetsTab > [role="tab"] > div > div {
             font-weight: bold;
-            color: var(--color-emphasis); !important;
+            color: var(--color-emphasis) !important;
           }
           body:not(.SeparatedTweets) #cpftSeparatedTweetsTab > [role="tab"] > div > div > div,
           body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:not(#cpftSeparatedTweetsTab) > [role="tab"] > div > div > div {
@@ -4529,10 +4614,6 @@ const configureCss = (() => {
           // In new More dialog
           `${Selectors.MORE_DIALOG} a[href$="/lists"]`,
         )
-      }
-      if (config.hideMonetizationNav) {
-        // In new More dialog
-        hideCssSelectors.push(`${Selectors.MORE_DIALOG} a[href$="/i/monetization"]`)
       }
       if (config.hideSpacesNav) {
         hideCssSelectors.push(
@@ -5218,17 +5299,18 @@ function getColorScheme() {
  * data-testid="tweet" on it, falling back to TWEET if it doesn't appear to be
  * one of the particular types we care about.
  * @param {HTMLElement} $tweet
- * @param {?boolean} checkSocialContext
+ * @param {?boolean} [checkSocialContext]
  * @returns {import("./types").TweetType}
  */
 function getTweetType($tweet, checkSocialContext = false) {
   if ($tweet.closest(Selectors.PROMOTED_TWEET_CONTAINER)) {
     return 'PROMOTED_TWEET'
   }
-  // Assume social context tweets are Retweets
   if ($tweet.querySelector('[data-testid="socialContext"]')) {
     if (checkSocialContext) {
+      // Assume social context tweets are Retweets if we're not checking
       let svgPath = $tweet.querySelector('svg path')?.getAttribute('d') ?? ''
+      if (svgPath.startsWith('M7.471 21H.472l.029-1.027c.184')) return 'COMMUNITY_TWEET'
       if (svgPath.startsWith('M7 4.5C7 3.12 8.12 2 9.5 2h5C1')) return 'PINNED_TWEET'
     }
     // Quoted tweets from accounts you blocked or muted are displayed as an
@@ -5616,7 +5698,12 @@ function onPopup($popup) {
  */
 function onTimelineChange($timeline, page, options = {}) {
   let startTime = Date.now()
-  let {classifyTweets = true, hideHeadings = true, isUserTimeline = false} = options
+  let {
+    checkSocialContext = false,
+    classifyTweets = true,
+    hideHeadings = true,
+    isUserTimeline = false,
+  } = options
 
   let isOnHomeTimeline = isOnHomeTimelinePage()
   let isOnListTimeline = isOnListPage()
@@ -5656,7 +5743,7 @@ function onTimelineChange($timeline, page, options = {}) {
     let isBlueTweet = false
 
     if ($tweet != null) {
-      itemType = getTweetType($tweet, isOnProfileTimeline)
+      itemType = getTweetType($tweet, checkSocialContext)
       if (timelineHasSpecificTweetHandling) {
         isReply = isReplyToPreviousTweet($tweet)
         if (isReply && hidPreviousItem != null) {
@@ -5758,8 +5845,7 @@ function onTimelineChange($timeline, page, options = {}) {
       if ($item.querySelector('[data-testid="inlinePrompt"]')) {
         itemType = 'INLINE_PROMPT'
         hideItem = config.hideInlinePrompts || (
-          config.hideTwitterBlueUpsells && Boolean($item.querySelector('a[href^="/i/premium"]')) ||
-          config.hideMonetizationNav && Boolean($item.querySelector('a[href="/settings/monetization"]'))
+          config.hideTwitterBlueUpsells && Boolean($item.querySelector('a[href^="/i/premium"]'))
         )
       } else if ($item.querySelector(Selectors.TIMELINE_HEADING)) {
         itemType = 'HEADING'
@@ -6540,6 +6626,7 @@ function shouldHideHomeTimelineItem(type, page) {
         ) : (
           shouldHideSharedTweet(config.retweets, page) || shouldHideSharedTweet(config.quoteTweets, page)
         )
+    case 'COMMUNITY_TWEET':
     case 'TWEET':
       return page == separatedTweetsTimelineTitle
     case 'UNAVAILABLE_QUOTE_TWEET':
@@ -6557,6 +6644,7 @@ function shouldHideHomeTimelineItem(type, page) {
  */
 function shouldHideProfileTimelineItem(type) {
   switch (type) {
+    case 'COMMUNITY_TWEET':
     case 'PINNED_TWEET':
     case 'QUOTE_TWEET':
     case 'TWEET':
@@ -6577,6 +6665,7 @@ function shouldHideProfileTimelineItem(type) {
  */
  function shouldHideOtherTimelineItem(type) {
   switch (type) {
+    case 'COMMUNITY_TWEET':
     case 'QUOTE_TWEET':
     case 'RETWEET':
     case 'RETWEETED_QUOTE_TWEET':
@@ -6840,6 +6929,7 @@ async function tweakIndividualTweetPage() {
 
 function tweakListPage() {
   observeTimeline(currentPage, {
+    checkSocialContext: true,
     hideHeadings: false,
   })
 }
@@ -6984,6 +7074,7 @@ function tweakHomeTimelinePage() {
   })
 
   observeTimeline(currentPage, {
+    checkSocialContext: true,
     isTabbed: true,
     onTabChanged: () => {
       updateSelectedHomeTabIndex()
@@ -7260,6 +7351,7 @@ async function tweakProfilePage() {
   let tab = currentPath.match(URL_PROFILE_RE)?.[2] || 'tweets'
   log(`on ${tab} tab`)
   observeTimeline(currentPage, {
+    checkSocialContext: tab == 'tweets' || tab == 'with_replies',
     isUserTimeline: tab == 'affiliates'
   })
 
