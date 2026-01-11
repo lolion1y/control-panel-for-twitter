@@ -67,7 +67,6 @@ for (let translationId of [
   'hideBookmarkMetricsLabel',
   'hideChatNavLabel',
   'hideComposeTweetLabel',
-  'hideCreatorStudioNavLabel',
   'hideDiscoverSuggestionsLabel',
   'hideEditImageLabel',
   'hideExploreNavLabel',
@@ -166,6 +165,7 @@ for (let translationClass of [
   'hideBusinessNavLabel',
   'hideCommunitiesNavLabel',
   'hideConnectNavLabel',
+  'hideCreatorStudioNavLabel',
   'hideListsNavLabel',
   'notificationsLabel',
   'saveAndApplyButton',
@@ -339,7 +339,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.19.2.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.19.4.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
