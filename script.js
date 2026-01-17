@@ -3470,7 +3470,7 @@ const observeSideNavTweetButton = (() => {
     if (!desktop || !config.replaceLogo) return
 
     // This element is updated when text is added or removed on resize
-    let $buttonTextContainer = await getElement('a[data-testid="SideNav_NewTweet_Button"] > div > span', {
+    let $buttonTextContainer = await getElement('a[data-testid="SideNav_NewTweet_Button"] span', {
       name: 'sidenav tweet button text container',
     })
     observer = observeElement($buttonTextContainer, () => {
@@ -3766,11 +3766,11 @@ async function addAddMutedWordMenuItem($link, linkSelector) {
 
 function addCaretMenuListenerForQuoteTweet($tweet) {
   let $caret = /** @type {HTMLElement} */ ($tweet.querySelector('[data-testid="caret"]'))
-  if ($caret && !$caret.dataset.tweakNewTwitterListener) {
+  if ($caret && !$caret.dataset.cpftListener) {
     $caret.addEventListener('click', () => {
       quotedTweet = getQuotedTweetDetails($tweet, {getText: true})
     })
-    $caret.dataset.tweakNewTwitterListener = 'true'
+    $caret.dataset.cpftListener = 'true'
   }
 }
 
@@ -4106,6 +4106,7 @@ const configureCss = (() => {
         '.EditImage',
         // On images in Tweets
         '[data-testid="tweet"] div[aria-labelledby] a[href^="/i/imagine"]',
+        '[data-testid="tweet"] [data-testid="tweetText"] a[href^="/i/imagine"]',
         // In menus
         '[role="menuitem"][href^="/i/imagine"]',
         // In media modal
@@ -4436,6 +4437,10 @@ const configureCss = (() => {
             position: absolute;
             bottom: 0;
             border-radius: 9999px;
+          }
+          /* Following menu indicator */
+          body.HomeTimeline.SeparatedTweets ${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:nth-child(2) > [role="tab"] svg {
+            display: none;
           }
         `)
       }
@@ -5481,7 +5486,7 @@ function handlePopup($popup) {
       $popup.innerHTML.includes(`>${getString('SORT_BY')}<`)) {
     // Pinned Communities also have a Sort by menu, which we should ignore
     let isFollowingTabSelected = Boolean(document.querySelector(`${mobile ? Selectors.MOBILE_TIMELINE_HEADER : Selectors.PRIMARY_COLUMN} nav div[role="tablist"] > div:nth-child(2) > [role="tab"][aria-selected="true"]`))
-    if (!isFollowingTabSelected) return
+    if (!isFollowingTabSelected) return result
 
     log('sortFollowing: Following Sort by menu opened')
     void (async () => {
@@ -7440,7 +7445,7 @@ async function tweakTimelineTabs($timelineTabs) {
 
       // Return to the Home timeline when any other tab is clicked
       $followingTabLink.parentElement.parentElement.addEventListener('click', () => {
-        if (location.pathname == '/home' && !document.title.startsWith(getString('HOME'))) {
+        if (location.pathname == '/home' && currentPage != getString('HOME')) {
           log('setting title to Home')
           homeNavigationIsBeingUsed = true
           setTitle(getString('HOME'))
@@ -7452,15 +7457,27 @@ async function tweakTimelineTabs($timelineTabs) {
         name: 'home nav link',
         stopIf: pathIsNot(currentPath),
       })
-      if ($homeNavLink && !$homeNavLink.dataset.tweakNewTwitterListener) {
+      if ($homeNavLink && !$homeNavLink.dataset.cpftListener) {
         $homeNavLink.addEventListener('click', () => {
           homeNavigationIsBeingUsed = true
-          if (location.pathname == '/home' && !document.title.startsWith(getString('HOME'))) {
+          if (location.pathname == '/home' && currentPage != getString('HOME')) {
             setTitle(getString('HOME'))
           }
         })
-        $homeNavLink.dataset.tweakNewTwitterListener = 'true'
+        $homeNavLink.dataset.cpftListener = 'true'
       }
+
+      // Click the Home nav link when the Following tab is clicked while on the
+      // separated Tweets timeline to switch back to Following without opening
+      // the menu.
+      $followingTabLink.parentElement.addEventListener('click', (e) => {
+        if (currentPage != getString('HOME') && $homeNavLink) {
+          e.preventDefault()
+          e.stopPropagation()
+          log('clicking the Home nav link to return to Following')
+          $homeNavLink.click()
+        }
+      })
     }
   } else {
     removeMobileTimelineHeaderElements()
