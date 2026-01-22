@@ -34,6 +34,7 @@ for (let optionValue of [
 for (let translationId of [
   'addAddMutedWordMenuItemLabel_desktop',
   'addAddMutedWordMenuItemLabel_mobile',
+  'addUserHoverCardAccountLocationLabel',
   'addFocusedTweetAccountLocationLabel',
   'alwaysUseLatestTweetsLabel',
   'bypassAgeVerificationLabel',
@@ -264,7 +265,7 @@ const defaultConfig = {
   reducedInteractionMode: false,
   replaceLogo: true,
   restoreLinkHeadlines: true,
-  restoreOtherInteractionLinks: false,
+  restoreOtherInteractionLinks: true,
   restoreQuoteTweetsLink: true,
   restoreTweetSource: true,
   retweets: 'separate',
@@ -285,6 +286,7 @@ const defaultConfig = {
   // Experiments
   customCss: '',
   // Desktop only
+  addUserHoverCardAccountLocation: true,
   fullWidthContent: false,
   fullWidthMedia: true,
   hideAccountSwitcher: false,
@@ -339,7 +341,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.19.6.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.20.0.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
