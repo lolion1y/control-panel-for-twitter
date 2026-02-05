@@ -103,12 +103,12 @@ for (let translationId of [
   'hideTimelineTweetBoxLabel',
   'hideTodaysNewsLabel',
   'hideToggleNavigationLabel',
-  'hideTweetAnalyticsLinksLabel',
   'hideTwitterBlueRepliesLabel',
   'hideTwitterBlueUpsellsLabel',
   'hideUnavailableQuoteTweetsLabel',
   'hideUnusedUiItemsOptionsLabel',
   'hideVerifiedNotificationsTabLabel',
+  'hideViewActivityLinksLabel',
   'hideViewsLabel',
   'hideWhatsHappeningLabel',
   'hideWhoToFollowEtcLabel',
@@ -247,13 +247,14 @@ const defaultConfig = {
   hideRetweetMetrics: true,
   hideSeeNewTweets: false,
   hideShareTweetButton: false,
+  hideSortRepliesMenu: false,
   hideSubscriptions: true,
   hideTotalTweetsMetrics: true,
-  hideTweetAnalyticsLinks: false,
   hideTwitterBlueReplies: false,
   hideTwitterBlueUpsells: true,
   hideUnavailableQuoteTweets: true,
   hideVerifiedNotificationsTab: true,
+  hideViewActivityLinks: true,
   hideViews: true,
   hideWhoToFollowEtc: true,
   listRetweets: 'ignore',
@@ -341,7 +342,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.20.0.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.21.1.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
