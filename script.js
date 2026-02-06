@@ -4466,6 +4466,8 @@ const configureCss = (() => {
         '.ViewActivity',
         // View post activity menu item
         `${menuRole} a[href$="/quotes"]`,
+        // Under timeline tweets
+        [data-testid="tweet"][tabindex="0"] [role="group"] > div a[href$="/analytics"],
       )
     }
     if (config.hideTwitterBlueUpsells) {
