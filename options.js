@@ -16,8 +16,10 @@ for (let optionValue of [
   'comfortable',
   'compact',
   'default',
+  'dim',
   'hide',
   'ignore',
+  'lightsOut',
   'liked',
   'mostRecent',
   'popular',
@@ -39,6 +41,7 @@ for (let translationId of [
   'alwaysUseLatestTweetsLabel',
   'bypassAgeVerificationLabel',
   'customCssLabel',
+  'darkModeThemeLabel',
   'debugInfo',
   'debugLabel',
   'debugLogTimelineStatsLabel',
@@ -207,6 +210,7 @@ const defaultConfig = {
   addFocusedTweetAccountLocation: false,
   alwaysUseLatestTweets: true,
   bypassAgeVerification: true,
+  darkModeTheme: 'lightsOut',
   defaultToLatestSearch: false,
   disableHomeTimeline: false,
   disabledHomeTimelineRedirect: 'notifications',
@@ -342,7 +346,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.21.1.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.22.0.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))
