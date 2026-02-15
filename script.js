@@ -4535,8 +4535,6 @@ const configureCss = (() => {
         '.ViewActivity',
         // View post activity menu item
         `${menuRole} a[href$="/quotes"]`,
-        // In media modal
-        '[aria-modal="true"] > div > div:first-of-type [role="group"] > div a[href$="/analytics"]',
       )
     }
     if (config.hideTwitterBlueUpsells) {
