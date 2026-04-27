@@ -4919,7 +4919,7 @@ const configureCss = (() => {
             justify-content: space-between;
           }
           /* Restore primary column borders */
-          header[role="banner"] > div > div > div  {
+          header[role="banner"] > div > div > div {
             border-right: 1px solid var(--cpft-border);
           }
           ${Selectors.PRIMARY_COLUMN} {
@@ -5214,7 +5214,7 @@ const configureCss = (() => {
       if (config.hideMessagesDrawer) {
         cssRules.push(`div:is([data-testid="DMDrawer"], [data-testid="chat-drawer-root"]) { visibility: hidden; }`)
       }
-      if (config.hideMessageSideNav)  {
+      if (config.hideMessageSideNav) {
         hideCssSelectors.push('a[data-testid="AppTabBar_DirectMessage_Link"]')
       }
       if (config.hideViews) {
