@@ -5347,7 +5347,7 @@ const configureCss = (() => {
           `[data-testid="tweet"][tabindex="0"] [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
           // In media viewer and media modal
           'body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(> a[href$="/analytics"])',
-          // `body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
+          `body:is(.MediaViewer, .MobileMedia) [role="group"] > div:has(path[d="${Svgs.ANALYTICS_PATH}"])`,
         )
       }
       if (config.hideFloatingTweetButton) {
