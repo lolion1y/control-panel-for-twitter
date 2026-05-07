@@ -4245,6 +4245,7 @@ const configureCss = (() => {
         --cpft-active-bg: rgb(239, 243, 244);
         --cpft-border: rgb(239, 243, 244);
         --cpft-hover-bg: rgb(247, 249, 249);
+        --cpft-menu-hover-bg: rgba(0, 0, 0, 0.03);
         --cpft-tab-hover-backdrop: rgba(15, 20, 25, 0.1);
         --cpft-text-primary: rgb(15, 20, 25);
         --cpft-text-secondary: rgb(83, 100, 113);
@@ -4253,12 +4254,20 @@ const configureCss = (() => {
         --cpft-active-bg: rgb(32, 35, 39);
         --cpft-border: rgb(47, 51, 54);
         --cpft-hover-bg: rgb(22, 24, 28);
+        --cpft-menu-hover-bg: rgba(255, 255, 255, 0.03);
         --cpft-tab-hover-backdrop: rgba(231, 233, 234, 0.1);
         --cpft-text-primary: rgb(231, 233, 234);
         --cpft-text-secondary: rgb(113, 118, 123);
       }
+      .cpft_menu_item, .cpft_menu_item a {
+        background-color: transparent !important;
+      }
       .cpft_menu_item:hover {
-        background-color: var(--cpft-hover-bg) !important;
+        background-color: var(--cpft-menu-hover-bg) !important;
+        /* The nav menu is still using the old color */
+        &:has(> a[href="/settings/add_muted_keyword"]) {
+          background-color: var(--cpft-hover-bg) !important;
+        }
       }
     `)
 
@@ -4270,7 +4279,6 @@ const configureCss = (() => {
 
           [data-testid="dm-search-bar"].bg-gray-0,
           :is(.animate-pulse, .motion-safe\\:animate-pulse).bg-gray-100, /* Chat skeletons */
-          :is([data-testid="dm-message-list"], [data-testid="dm-composer-container"]) .bg-gray-50,
           .r-z32n2g {
             background-color: var(--cpft-active-bg);
           }
@@ -4296,6 +4304,13 @@ const configureCss = (() => {
           .r-5zmot {
             background-color: var(--cpft-backdrop);
           }
+          .r-cl2sl0 {
+            background-color: var(--cpft-raised-bg);
+          }
+          .r-qo02w8,
+          .r-1uusn97 {
+            box-shadow: var(--cpft-box-shadow);
+          }
           .r-1kqtdi0, /* all */
           .r-1igl3o0, /* bottom */
           .r-2sztyj,  /* top */
@@ -4303,26 +4318,15 @@ const configureCss = (() => {
           .r-1roi411  /* input */ {
             border-color: var(--cpft-border);
           }
-          .r-qo02w8,
-          .r-1uusn97 {
-            box-shadow: var(--cpft-box-shadow);
-          }
-          [data-testid^="dm-conversation-item-"] .hover\\:bg-gray-50:hover,
-          [data-testid="dm-inbox-tab-requests"].hover\\:bg-gray-50:hover,
-          [data-testid="dm-conversation-header"] button.hover\\:bg-gray-50:hover,
           .r-g2wdr4,
           .r-cuuowz {
             background-color: var(--cpft-hover-bg);
-          }
-          [data-testid^="dm-conversation-item-"] .border-gray-50 {
-            border-color: var(--cpft-hover-bg);
           }
           [data-testid="dm-conversation-header"] button.bg-gray-0,
           .jf-element .j-cw4uj611 {
             background-color: var(--cpft-hover-bg);
           }
           [data-testid="dm-empty-conversation-state"] .bg-gray-0,
-          [data-radix-popper-content-wrapper] .hover\\:bg-gray-50:hover,
           .r-1hdo0pc {
             background-color: var(--cpft-tab-hover-backdrop);
           }
@@ -4344,12 +4348,6 @@ const configureCss = (() => {
           [role="dialog"][id^="radix"] {
             &.bg-gray-0 {
               background-color: var(--cpft-background);
-            }
-            .bg-gray-50, .bg-gray-100 {
-              background-color: var(--cpft-hover-bg);
-            }
-            .hover\\:bg-gray-100:hover {
-              background-color: var(--cpft-tab-hover-bg) !important;
             }
             .text-gray-700 {
               color: var(--cpft-text-secondary);
@@ -4387,6 +4385,8 @@ const configureCss = (() => {
             --background: 210 34% 13%;
             --border: 206 16% 26%;
             --color-background: 210 34% 13%;
+            --color-gray-50: 213 25% 16%;
+            --color-gray-100: 211 34% 24%;
             /* Theme */
             --cpft-active-bg-dark: rgb(27, 36, 47);
             --cpft-active-bg: rgb(40, 50, 61);
@@ -4395,6 +4395,7 @@ const configureCss = (() => {
             --cpft-border: rgb(56, 68, 77);
             --cpft-box-shadow: rgba(136, 153, 166, 0.2) 0px 0px 15px, rgba(136, 153, 166, 0.15) 0px 0px 3px 1px;
             --cpft-hover-bg: rgb(30, 39, 50);
+            --cpft-raised-bg: rgb(40, 50, 61);
             --cpft-tab-hover-backdrop: rgba(247, 249, 249, 0.1);
             --cpft-tab-hover-bg: rgba(44, 53, 64);
             --cpft-text-primary: rgb(247, 249, 249);
