@@ -5722,7 +5722,7 @@ function getTweetType($tweet, checkSocialContext = false) {
       // Assume social context tweets are Retweets if we're not checking
       let svgPath = $tweet.querySelector('svg path')?.getAttribute('d') ?? ''
       if (svgPath.startsWith('M7.471 21H.472l.029-1.027c.184')) return 'COMMUNITY_TWEET'
-      if (svgPath.startsWith('M7 4.5C7 3.12 8.12 2 9.5 2h5C1')) return 'PINNED_TWEET'
+      if (svgPath.startsWith('M13 21l-1 2-1-2v-5H4.5v-2.287l')) return 'PINNED_TWEET'
     }
     // Quoted tweets from accounts you blocked or muted are displayed as an
     // <article> with "This Tweet is unavailable."
