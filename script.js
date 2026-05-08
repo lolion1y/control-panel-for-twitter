@@ -3704,6 +3704,9 @@ const observeSideNavTweetButton = (() => {
           warn('could not find tweet button text')
         }
       }
+      if (isSafari && config.replaceLogo) {
+        tweakTweetIcon()
+      }
     }, {
       leading: true,
       name: 'sidenav tweet button',
@@ -6850,6 +6853,7 @@ function processCurrentPage() {
   }
   if (isSafari && config.replaceLogo) {
     tweakHomeIcon()
+    tweakTweetIcon()
   }
 
   if (config.twitterBlueChecks != 'ignore' && (isOnSearchPage() || isOnExplorePage())) {
@@ -7518,6 +7522,17 @@ async function tweakMessagesIcon() {
     let targetPath = isOnMessagesPage() ? Svgs.MESSAGES_ACTIVE_PATH : Svgs.MESSAGES_INACTIVE_PATH
     if ($messagesIconPath.getAttribute('d') != targetPath) {
       $messagesIconPath.setAttribute('d', targetPath)
+    }
+  }
+}
+
+async function tweakTweetIcon() {
+  let $iconPath = document.querySelector(`:is([data-testid="SideNav_NewTweet_Button"], [data-testid="FloatingActionButtons_Tweet_Button"]) path[d="${Svgs.PLUS_PATH}"]`)
+  if ($iconPath) {
+    // Safari doesn't support using `d: path(…)` to replace paths in an SVG, so
+    // we have to manually patch the path in it.
+    if ($iconPath.getAttribute('d') != Svgs.TWITTER_FEATHER_PLUS_PATH) {
+      $iconPath.setAttribute('d', Svgs.TWITTER_FEATHER_PLUS_PATH)
     }
   }
 }
