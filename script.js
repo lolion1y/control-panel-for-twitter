@@ -3105,34 +3105,42 @@ async function observeDesktopComposeTweetModal($popup) {
   $popup.classList.add('ComposeTweetModal')
   if (!config.replaceLogo) return
 
-  let $mask = await getElement('[data-testid="twc-cc-mask"]', {
+  let $firstEditorRoot = await getElement('.DraftEditor-root', {
     context: $popup,
-    name: 'Compose Tweet modal mask',
+    name: 'Compose Tweet first editor root',
     stopIf: () => !isDesktopComposeTweetModalOpen
   })
-  if (!$mask) return
+  if (!$firstEditorRoot) return
 
   let $tweetButtonText = $popup.querySelector('button[data-testid="tweetButton"] span > span')
   if ($tweetButtonText) {
     setTweetButtonText($tweetButtonText)
   }
 
-  observeElement($mask.nextElementSibling, () => {
+  let $container = $firstEditorRoot.closest('div:not([class])')?.parentElement
+  if (!$container) {
+    warn('could not find container to observe in compose Tweet modal')
+    return
+  }
+
+  observeElement($container, () => {
     let $editorRoots = $popup.querySelectorAll('.DraftEditor-root')
     $editorRoots.forEach((/** @type {HTMLElement} */ $editorRoot, index) => {
-      $editorRoot.setAttribute('data-placeholder', getString(index == 0 ? 'WHATS_HAPPENING' : 'ADD_ANOTHER_TWEET'))
+      if (index == 0) return
+      $editorRoot.setAttribute('data-placeholder', getString('ADD_ANOTHER_TWEET'))
       observeDesktopTweetEditorPlaceholder($editorRoot, {
-        name: 'Modal Tweet editor root (for placeholder)',
+        name: `Modal Tweet editor root ${index} (for placeholder)`,
         observers: modalObservers,
       })
     })
   }, {
+    leading: true,
     name: 'Compose Tweet modal Tweets container (for Tweets being added or removed)',
     observers: modalObservers,
   })
 
   // The Tweet button gets moved around when Tweets are added or removed
-  observeElement($mask.nextElementSibling, (mutations) => {
+  observeElement($container, (mutations) => {
     for (let mutation of mutations) {
       for (let $addedNode of mutation.addedNodes) {
         if (!($addedNode instanceof HTMLElement) || $addedNode.nodeName != 'DIV') continue
@@ -7679,18 +7687,25 @@ async function tweakMobileComposeTweetPage() {
       observeUserTypeaheadDropdown(document.querySelector('main div[data-testid^="tweetTextarea"]'))
     }
   } else {
-    let $mask = document.querySelector('[data-testid="twc-cc-mask"]')
+    let $tweetTextarea =  await getElement('main div[data-testid^="tweetTextarea"]', {
+      name: 'first Tweet textarea',
+      stopIf: pageIsNot(currentPage),
+    })
+    if (!$tweetTextarea) return
+    let $tweetsContainer = $tweetTextarea.closest('div:not([class])')?.parentElement
     let $tweetButtonText = document.querySelector('main button[data-testid^="tweetButton"] span > span')
-    if ($mask && $tweetButtonText) {
+    if ($tweetsContainer && $tweetButtonText) {
       // We need to re-apply tweaks every time the child list changes. When
       // you use the username typeahead dropdown in any Tweet box, the list
       // re-renders so it's the only Tweet while the dropdown is open.
-      observeElement($mask.nextElementSibling, () => {
+      observeElement($tweetsContainer, () => {
         let $containers = document.querySelectorAll('main div[data-testid^="tweetTextarea"]')
         $containers.forEach(($container, index) => {
           if (config.replaceLogo) {
             let $textarea = $container.querySelector('textarea')
-            $textarea.placeholder = getString(index == 0 ? 'WHATS_HAPPENING' : 'ADD_ANOTHER_TWEET')
+            if (index > 0) {
+              $textarea.placeholder = getString('ADD_ANOTHER_TWEET')
+            }
           }
           if (index == 0 && config.twitterBlueChecks) {
             observeUserTypeaheadDropdown($container)
@@ -7707,7 +7722,7 @@ async function tweakMobileComposeTweetPage() {
         observers: pageObservers,
       })
     } else {
-      warn('could not find all elements needed to tweak the Compose Tweet page', {$mask, $tweetButtonText})
+      warn('could not find all elements needed to tweak the Compose Tweet page', {$tweetsContainer, $tweetButtonText})
     }
   }
 }
