@@ -3670,8 +3670,15 @@ const observeSideNavChatLink = (() => {
     })
     observer = observeElement($linkTextContainer, () => {
       if ($linkTextContainer.childElementCount > 1) {
-        for (let $linkText of $linkTextContainer.querySelectorAll('span[style] > span')) {
+        // Regular React Native for Web markup, e.g. Japanese display language
+        let $linkText = /** @type {HTMLElement} */ ($linkTextContainer.querySelector('div[dir]:not([aria-live]) > span'))
+        if ($linkText) {
           $linkText.textContent = getString('MESSAGES')
+        } else {
+          // New inline style markup, e.g. English display language
+          for (let $linkText of $linkTextContainer.querySelectorAll('span[style] > span')) {
+            $linkText.textContent = getString('MESSAGES')
+          }
         }
       }
     }, {
@@ -5399,6 +5406,9 @@ const configureDynamicCss = (() => {
 
     if (fontSize != null && config.navBaseFontSize) {
       cssRules.push(`
+        /* Regular React Native for Web markup */
+        ${Selectors.PRIMARY_NAV_DESKTOP} div[dir]:not([aria-live]) span,
+        /* New inline style markup */
         ${Selectors.PRIMARY_NAV_DESKTOP} span[style] > span {
           font-size: ${fontSize} !important;
           font-weight: normal !important;
