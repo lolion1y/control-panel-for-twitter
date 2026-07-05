@@ -203,6 +203,9 @@
   "hideMetricsLabel": {
     "message": "隐藏指标"
   },
+  "hideMoreFromThisAuthorLabel": {
+    "message": "隐藏“此作者的更多内容”"
+  },
   "hideMoreSlideOutMenuItemsOptionsLabel_desktop": {
     "message": "隐藏你不使用的\"更多\"菜单项"
   },

@@ -203,6 +203,9 @@
   "hideMetricsLabel": {
     "message": "Ocultar métricas"
   },
+  "hideMoreFromThisAuthorLabel": {
+    "message": "Ocultar \"Más de este autor\""
+  },
   "hideMoreSlideOutMenuItemsOptionsLabel_desktop": {
     "message": "Ocultar elementos no usados en el menú \"Más\""
   },

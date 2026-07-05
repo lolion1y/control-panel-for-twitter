@@ -203,6 +203,9 @@
   "hideMetricsLabel": {
     "message": "Nascondi statistiche"
   },
+  "hideMoreFromThisAuthorLabel": {
+    "message": "Nascondi \"Altro di questo autore\""
+  },
   "hideMoreSlideOutMenuItemsOptionsLabel_desktop": {
     "message": "Nascondi elementi del menu \"Altro\" che non usi"
   },

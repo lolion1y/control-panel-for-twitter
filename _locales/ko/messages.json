@@ -203,6 +203,9 @@
   "hideMetricsLabel": {
     "message": "지표 숨기기"
   },
+  "hideMoreFromThisAuthorLabel": {
+    "message": "\"이 작성자의 더 많은 게시물\" 숨기기"
+  },
   "hideMoreSlideOutMenuItemsOptionsLabel_desktop": {
     "message": "사용하지 않는 \"더 보기\" 메뉴 항목숨기기 (데스크톱)"
   },
