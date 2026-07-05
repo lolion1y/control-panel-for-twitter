@@ -167,7 +167,9 @@ const config = {
   hideJobsNav: true,
   hideLikeMetrics: false,
   hideListsNav: true,
+  hideManageTimelines: false,
   hideMetrics: true,
+  hideMoreFromThisAuthor: false,
   hideMoreTweets: false,
   hideNotificationLikes: false,
   hideNotificationRetweets: false,
@@ -4587,6 +4589,9 @@ const configureCss = (() => {
         'a[href$="/i/chat"][data-testid="pivot"]',
       )
     }
+    if (config.hideManageTimelines) {
+      hideCssSelectors.push('.ManageTimelines')
+    }
     if (config.hideShareTweetButton) {
       hideCssSelectors.push(
         // Under timeline tweets
@@ -6678,18 +6683,24 @@ function onIndividualTweetTimelineChange($timeline, options) {
           }
         }
 
-        // Hide "More From This Author" → 3 Tweets → "See more" link
+        // Hide "More From This Author" → Up to 3 Tweets → "See more" link,
+        // working backwards from "See more" once it renders.
         if (itemType == null) {
           let $userLink = $item.querySelector(':scope > div > div > a[href^="/i/user/"]')
-          if ($userLink && seen.get(items[i - 4])?.itemType == 'HEADING') {
-            itemType = 'SEE_MORE'
-            hideItem = config.hideMoreTweets
-            for (let j = i - 4; j < i; j++) {
-              if (j < 0 || !items[j]?.firstElementChild) continue
-              changes.push({
-                $item: items[j],
-                hideItem: config.hideMoreTweets || seen.get(items[j])?.hidden == true,
-              })
+          if ($userLink) {
+            for (let headingOffset = 2; headingOffset <= 4; headingOffset++) {
+              if (seen.get(items[i - headingOffset])?.itemType == 'HEADING') {
+                itemType = 'SEE_MORE'
+                hideItem = config.hideMoreFromThisAuthor
+                for (let j = i - headingOffset; j < i; j++) {
+                  if (j < 0 || !items[j]?.firstElementChild) continue
+                  changes.push({
+                    $item: items[j],
+                    hideItem: config.hideMoreFromThisAuthor || seen.get(items[j])?.hidden == true,
+                  })
+                }
+                break
+              }
             }
           }
         }
@@ -7719,6 +7730,13 @@ function tweakHomeTimelinePage() {
   if ($timelineTabs == null) {
     warn('could not find Home timeline tabs')
     return
+  }
+
+  let $manageTimelinesButton = $timelineTabs.parentElement.nextElementSibling
+  if ($manageTimelinesButton?.querySelector('path[d="M11 11V4h2v7h7v2h-7v7h-2v-7H4v-2h7z"]')) {
+    $manageTimelinesButton.classList.add('ManageTimelines')
+  } else {
+    $manageTimelinesButton = null
   }
 
   tweakTimelineTabs($timelineTabs)

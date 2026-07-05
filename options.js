@@ -85,9 +85,11 @@ for (let translationId of [
   'hideLikeMetricsLabel',
   'hideLiveBroadcastBarLabel',
   'hideLiveBroadcastsLabel',
+  'hideManageTimelinesLabel',
   'hideMessagesBottomNavItemLabel',
   'hideMessagesDrawerLabel',
   'hideMetricsLabel',
+  'hideMoreFromThisAuthorLabel',
   'hideMoreSlideOutMenuItemsOptionsLabel_desktop',
   'hideMoreSlideOutMenuItemsOptionsLabel_mobile',
   'hideNotificationLikesLabel',
@@ -240,7 +242,9 @@ const defaultConfig = {
   hideJobsNav: true,
   hideLikeMetrics: true,
   hideListsNav: false,
+  hideManageTimelines: false,
   hideMetrics: false,
+  hideMoreFromThisAuthor: true,
   hideMoreTweets: true,
   hideNotificationLikes: false,
   hideNotificationRetweets: false,
@@ -348,7 +352,7 @@ let $showBlueReplyFollowersCountLabel = /** @type {HTMLElement} */ (document.que
 //#region Utility functions
 function exportConfig() {
   let $a = document.createElement('a')
-  $a.download = 'control-panel-for-twitter-v4.22.5.config.txt'
+  $a.download = 'control-panel-for-twitter-v4.23.0.config.txt'
   $a.href = URL.createObjectURL(new Blob([
     JSON.stringify(optionsConfig, null, 2)
   ], {type: 'text/plain'}))

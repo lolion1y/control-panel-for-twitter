@@ -194,6 +194,9 @@
   "hideLiveBroadcastsLabel": {
     "message": "Hide Live broadcasts"
   },
+  "hideManageTimelinesLabel": {
+    "message": "Hide \"Manage timelines\" button"
+  },
   "hideMessagesBottomNavItemLabel": {
     "message": "Messages"
   },
@@ -202,6 +205,9 @@
   },
   "hideMetricsLabel": {
     "message": "Hide metrics"
+  },
+  "hideMoreFromThisAuthorLabel": {
+    "message": "Hide \"More From This Author\""
   },
   "hideMoreSlideOutMenuItemsOptionsLabel_desktop": {
     "message": "Hide \"More\" menu items you don't use"
