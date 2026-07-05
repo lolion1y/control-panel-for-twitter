@@ -155,6 +155,7 @@ const config = {
   hideJobsNav: true,
   hideLikeMetrics: true,
   hideListsNav: false,
+  hideManageTimelines: false,
   hideMetrics: false,
   hideMoreTweets: true,
   hideNotificationLikes: false,
@@ -4517,6 +4518,9 @@ const configureCss = (() => {
         'a[href$="/i/chat"][data-testid="pivot"]',
       )
     }
+    if (config.hideManageTimelines) {
+      hideCssSelectors.push('.ManageTimelines')
+    }
     if (config.hideShareTweetButton) {
       hideCssSelectors.push(
         // Under timeline tweets
@@ -7602,6 +7606,13 @@ function tweakHomeTimelinePage() {
   if ($timelineTabs == null) {
     warn('could not find Home timeline tabs')
     return
+  }
+
+  let $manageTimelinesButton = $timelineTabs.parentElement.nextElementSibling
+  if ($manageTimelinesButton?.querySelector('path[d="M11 11V4h2v7h7v2h-7v7h-2v-7H4v-2h7z"]')) {
+    $manageTimelinesButton.classList.add('ManageTimelines')
+  } else {
+    $manageTimelinesButton = null
   }
 
   tweakTimelineTabs($timelineTabs)

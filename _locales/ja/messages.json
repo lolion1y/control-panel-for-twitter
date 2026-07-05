@@ -191,6 +191,9 @@
   "hideLiveBroadcastsLabel": {
     "message": "ライブ放送を非表示"
   },
+  "hideManageTimelinesLabel": {
+    "message": "「タイムラインを管理」ボタンを非表示"
+  },
   "hideMessagesBottomNavItemLabel": {
     "message": "メッセージ"
   },
