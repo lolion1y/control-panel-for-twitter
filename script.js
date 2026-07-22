@@ -189,7 +189,7 @@ const config = {
   hideTwitterBlueUpsells: true,
   hideUnavailableQuoteTweets: false,
   hideVerifiedNotificationsTab: true,
-  hideViewActivityLinks: true,
+  hideViewActivityLinks: false,
   hideViews: true,
   hideWhoToFollowEtc: true,
   listRetweets: 'ignore',
