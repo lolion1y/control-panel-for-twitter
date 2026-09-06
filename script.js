@@ -205,6 +205,7 @@ const config = {
   retweets: 'ignore',
   revertMediaCarousel: true,
   revertProfileTabs: true,
+  revertTwemoji: true,
   showBlueReplyFollowersCount: false,
   showBlueReplyFollowersCountAmount: '1000000',
   showBookmarkButtonUnderFocusedTweets: false,
@@ -4680,6 +4681,7 @@ const configureCss = (() => {
           display: block;
           border-top: 1px solid var(--cpft-border);
           padding: 14px;
+          line-height: normal;
         }
       `)
       hideCssSelectors.push(
@@ -5335,6 +5337,7 @@ const configureFeatureFlags = (() => {
       if (config.bypassAgeVerification && flag == 'rweb_age_assurance_flow_enabled') return false
       if (config.revertMediaCarousel && flag == 'rweb_media_carousel_enabled') return false
       if (config.revertProfileTabs && flag == 'responsive_web_profile_redesign_enabled') return false
+      if (config.revertTwemoji && flag == 'responsive_web_native_emojis_enabled') return false
       return isTrue(flag)
     }
     log('featureSwitches patched')
